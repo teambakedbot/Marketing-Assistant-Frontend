@@ -11,8 +11,8 @@ function CannabotWorkspace({streamOutput}:any) {
                   <div>
                      <div className="flex sm:flex-row flex-col items-center gap-4 px-4 py-8 [@media(min-width:1281px)]:py-28">
                         <img src="/images/image 7.png" alt="" />
-                        <p className="font-bold text-[#110F0F] font-istok-web">
-                           <pre id="streamOutput">{streamOutput}</pre>
+                        <p className="font-bold text-[#110F0F] font-istok-web" id="streamOutput">
+                           {streamOutput}
                         </p>
                      </div>
                      <div className="h-[1200px]" />
