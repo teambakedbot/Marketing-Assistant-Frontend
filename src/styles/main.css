@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.scrollbar-hidden {
+  scrollbar-width: none;
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+* {
+  @apply box-border p-0 m-0;
+}
+
+body {
+  @apply font-roboto text-white font-normal text-3xl;
+}
+
+.li-customer-name {
+  color: white;
+  margin-bottom: 5px;
+  background-color: #414141;
+  width: 50%;
+  border-radius: 5px;
+  padding: 5px;
+  display: flex;
+}
+
+.li-customer-name label {
+  width: 100%;
+  margin-left: 5px;
+}
