@@ -74,7 +74,7 @@ function Home() {
    const [prompts, setPrompts] = useState("");
    const promptsRow = prompts.split("\n").length;
    const fileRef = useRef < HTMLInputElement > (null)
-   const [contentType, setContentType] = useState("email")
+   // const [contentType, setContentType] = useState("")
    const [customers, setCustomers] = useState([])
    const [streamOutput, setStreamOutput] = useState("")
    const [customerSelected, setCustomerSelected] = useState(null)
@@ -110,11 +110,15 @@ function Home() {
       }
    }
 
-   const start = () => {
+   const typeBtnClick = (type: string) => {
+      start(type);
+   }
+
+   const start = (type: string) => {
       if (Array.isArray(customerSelected)) {
-         generateCSVAndCallAPI(customerSelected);
+         generateCSVAndCallAPI(customerSelected, type);
       } else {
-         generateCSVAndCallAPI([customerSelected]);
+         generateCSVAndCallAPI([customerSelected], type);
       }
    }
 
@@ -123,15 +127,12 @@ function Home() {
       return csv;
    };
 
-   const generateCSVAndCallAPI = async (customerData: any) => {
+   const generateCSVAndCallAPI = async (customerData: any, contentType: String) => {
       const csv = generateCSV(customerData);
-      // downloadCSV(csv);
       const blob = new Blob([csv], { type: 'text/csv' });
-      console.log(blob, contentType)
       const formData = new FormData();
       formData.append('file', blob);
       formData.append('content_type', contentType);
-      console.log(blob, contentType)
       const response = await fetch('http://localhost:8000/upload/', {
          method: 'POST',
          body: formData,
@@ -145,16 +146,9 @@ function Home() {
       const streamOutput = document.getElementById('streamOutput');
       if (streamOutput && reader) {
          while (true) {
-
             const { done, value } = await reader.read();
-            console.log(done)
-            console.log(decoder.decode(value, { stream: true }))
             if (done) break;
-            // content+=decoder.decode(value, { stream: true })
-            // console.log(content)
-            // setStreamOutput(streamOutput+decoder.decode(value, { stream: true }));
             streamOutput.innerHTML += decoder.decode(value, { stream: true });
-            // console.log(streamOutput)
          }
       }
       setIsRun(false)
@@ -210,8 +204,8 @@ function Home() {
                         <div
                            role="button"
                            key={index}
-                           className={`${type == contentType ? 'bg-[#d1d1d1]' : 'bg-white'} bg- rounded-xl px-6 py-1 relative flex flex-col items-center`}
-                           onClick={() => setContentType(type)}
+                           className={`bg-white bg- rounded-xl px-6 py-1 relative flex flex-col items-center`}
+                           onClick={() => typeBtnClick(type)}
                         >
                            <h3 className="text-cyan-900 font-bold ml-5 self-start">{title}</h3>
                            <p
@@ -238,20 +232,19 @@ function Home() {
                                  fontSize: "30px",
                                  fontWeight: "bold"
                               }
-
                            }>
                               Now running...
                            </h1>
                         </div>
                         :
                         <>
-                           <li key="-1" style={{ color: "white" }}>
+                           <li key="-1" className="li-customer-name">
                               <input type="radio" onChange={() => setAllCustomerSelected()} name="customer_name" id={`radio_-1`} />
                               <label for={`radio_-1`} style={{ cursor: "pointer" }}>All Customers</label>
                            </li>
                            {customers.map((customer: any, index: any) => {
                               return customer["Customer Name"] && (
-                                 <li key={index} style={{ color: "white" }}>
+                                 <li key={index} className="li-customer-name">
                                     <input type="radio" onChange={() => setCustomerSelected(customer)} name="customer_name" id={`radio_${index}`} />
                                     <label for={`radio_${index}`} style={{ cursor: "pointer" }}>{customer["Customer Name"]}</label>
                                  </li>
@@ -277,7 +270,7 @@ function Home() {
                <div className="flex [@media(min-width:600px)]:flex-row flex-col items-center justify-center gap-4">
                   <div className="flex gap-4">
                      <button className="bg-emerald-500 py-1.5 px-9 rounded-md border border-[#999999]">
-                        <LuPlay className="text-3xl text-black" onClick={start} />
+                        <LuPlay className="text-3xl text-black" />
                      </button>
                      <button className="bg-yellow-600 py-1.5 px-9 rounded-md border border-[#999999]">
                         <PiPause className="text-3xl text-white" />
