@@ -100,7 +100,7 @@ function Home() {
                   const text = event.target?.result;
                   if (typeof text === 'string') {
                      const parsedData: any = Papa.parse(text, { header: true });
-                     console.log(parsedData.data);
+                     
                      setCustomers(parsedData.data);
                   }
                }
