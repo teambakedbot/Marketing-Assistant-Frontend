@@ -85,6 +85,10 @@ function Home() {
       fileRef.current?.click()
    }
 
+   const setAllCustomerSelected = () => {
+      setCustomerSelected(customers)
+   }
+
    const showCustomers = () => {
 
       if (fileRef?.current?.files) {
@@ -107,14 +111,18 @@ function Home() {
    }
 
    const start = () => {
-      console.log(customerSelected['Customer Name'])
-      generateCSVAndCallAPI([customerSelected]);
+      if (Array.isArray(customerSelected)) {
+         generateCSVAndCallAPI(customerSelected);
+      } else {
+         generateCSVAndCallAPI([customerSelected]);
+      }
    }
 
    const generateCSV = (data: any) => {
       const csv = Papa.unparse(data);
       return csv;
    };
+
    const generateCSVAndCallAPI = async (customerData: any) => {
       const csv = generateCSV(customerData);
       // downloadCSV(csv);
@@ -230,20 +238,27 @@ function Home() {
                                  fontSize: "30px",
                                  fontWeight: "bold"
                               }
-                           
+
                            }>
                               Now running...
-                              </h1>
+                           </h1>
                         </div>
                         :
-                        customers.map((customer: any, index: any) => {
-                           return customer["Customer Name"] && (
-                              <li key={index} className="li-customer-name">
-                                 <input type="radio" onChange={() => setCustomerSelected(customer)} name="customer_name" id={`radio_${index}`} />
-                                 <label for={`radio_${index}`} style={{ cursor: "pointer" }}>{customer["Customer Name"]}</label>
-                              </li>
-                           )
-                        })}
+                        <>
+                           <li key="-1" style={{ color: "white" }}>
+                              <input type="radio" onChange={() => setAllCustomerSelected()} name="customer_name" id={`radio_-1`} />
+                              <label for={`radio_-1`} style={{ cursor: "pointer" }}>All Customers</label>
+                           </li>
+                           {customers.map((customer: any, index: any) => {
+                              return customer["Customer Name"] && (
+                                 <li key={index} style={{ color: "white" }}>
+                                    <input type="radio" onChange={() => setCustomerSelected(customer)} name="customer_name" id={`radio_${index}`} />
+                                    <label for={`radio_${index}`} style={{ cursor: "pointer" }}>{customer["Customer Name"]}</label>
+                                 </li>
+                              )
+                           })}
+                        </>
+                     }
                   </ul>
                </div>
                <div className="flex [@media(min-width:600px)]:flex-row flex-col items-center [@media(min-width:600px)]:gap-5 gap-3 px-4 [@media(min-width:1440px)]:px-11 mb-7">
