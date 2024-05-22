@@ -1,16 +1,13 @@
 import { Link } from "react-router-dom";
-import ConnabotTasks from "./CannabotTasks";
 import { IoStopOutline } from "react-icons/io5";
 import { LuPlay } from "react-icons/lu";
 import { PiPause } from "react-icons/pi";
 import ReviewRate from "./ReviewRate";
 import CannabotWorkspace from "./CannabotWorkspace";
+import CannabotTasks from "./CannabotTasks";
 import { useRef, useState } from "react";
 import Papa from 'papaparse';
 import '../../styles/main.css'
-
-// import SimpleBar from "simplebar-react";
-// import "simplebar-react/dist/simplebar.min.css";
 
 
 const buttons = [
@@ -70,16 +67,19 @@ const marketingSite = [
    },
 ];
 
-function Home() {
-   const [prompts, setPrompts] = useState("");
-   const promptsRow = prompts.split("\n").length;
-   const fileRef = useRef < HTMLInputElement > (null)
-   // const [contentType, setContentType] = useState("")
-   const [customers, setCustomers] = useState([])
-   const [streamOutput, setStreamOutput] = useState("")
-   const [customerSelected, setCustomerSelected] = useState(null)
-   const [isRun, setIsRun] = useState(false)
+interface Customer {
+   "Customer Name": string;
+   [key: string]: any;
+}
 
+function Home() {
+   const [prompts, setPrompts] = useState < string > ("");
+   const promptsRow = prompts.split("\n").length;
+   const fileRef = useRef < HTMLInputElement > (null);
+   const [customers, setCustomers] = useState < Customer[] > ([]);
+   const [customerSelected, setCustomerSelected] = useState < Customer[] | Customer | null > (null);
+   const [isRun, setIsRun] = useState < boolean > (false);
+   const [streamOutput, setStreamOutput] = useState < string > ("");
 
    const handleClick = () => {
       fileRef.current?.click()
@@ -90,7 +90,6 @@ function Home() {
    }
 
    const showCustomers = () => {
-
       if (fileRef?.current?.files) {
          const file = fileRef?.current?.files[0];
          if (file) {
@@ -99,8 +98,7 @@ function Home() {
                if (event) {
                   const text = event.target?.result;
                   if (typeof text === 'string') {
-                     const parsedData: any = Papa.parse(text, { header: true });
-                     
+                     const parsedData = Papa.parse < Customer > (text, { header: true });
                      setCustomers(parsedData.data);
                   }
                }
@@ -117,17 +115,17 @@ function Home() {
    const start = (type: string) => {
       if (Array.isArray(customerSelected)) {
          generateCSVAndCallAPI(customerSelected, type);
-      } else {
+      } else if (customerSelected) {
          generateCSVAndCallAPI([customerSelected], type);
       }
    }
 
-   const generateCSV = (data: any) => {
+   const generateCSV = (data: Customer[]) => {
       const csv = Papa.unparse(data);
       return csv;
    };
 
-   const generateCSVAndCallAPI = async (customerData: any, contentType: String) => {
+   const generateCSVAndCallAPI = async (customerData: Customer[], contentType: string) => {
       const csv = generateCSV(customerData);
       const blob = new Blob([csv], { type: 'text/csv' });
       const formData = new FormData();
@@ -140,19 +138,19 @@ function Home() {
             'Accept': 'text/event-stream',
          },
       });
-      setIsRun(true)
+      setIsRun(true);
       const reader = response?.body?.getReader();
       const decoder = new TextDecoder();
-      const streamOutput = document.getElementById('streamOutput');
-      if (streamOutput && reader) {
+      if (reader) {
          while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            streamOutput.innerHTML += decoder.decode(value, { stream: true });
+            setStreamOutput(prev => prev + decoder.decode(value, { stream: true }));
          }
       }
-      setIsRun(false)
+      setIsRun(false);
    };
+
 
    return (
       <div className="flex gap-3 bg-[#1E1E1E] min-h-screen overflow-hidden">
@@ -179,16 +177,14 @@ function Home() {
                                  {name}
                               </div>
                            </>
-                        ) :
-                           (
-                              <div
-                                 role="button"
-                                 className={`py-2.5 px-9 font-bold font-istok-web bg-gray-600 rounded-[20px]`}
-                              >
-                                 {name}
-                              </div>
-                           )}
-
+                        ) : (
+                           <div
+                              role="button"
+                              className={`py-2.5 px-9 font-bold font-istok-web bg-gray-600 rounded-[20px]`}
+                           >
+                              {name}
+                           </div>
+                        )}
                      </div>
                   ))}
                </div>
@@ -240,13 +236,13 @@ function Home() {
                         <>
                            <li key="-1" className="li-customer-name">
                               <input type="radio" onChange={() => setAllCustomerSelected()} name="customer_name" id={`radio_-1`} />
-                              <label for={`radio_-1`} style={{ cursor: "pointer" }}>All Customers</label>
+                              <label htmlFor={`radio_-1`} style={{ cursor: "pointer" }}>All Customers</label>
                            </li>
-                           {customers.map((customer: any, index: any) => {
+                           {customers.map((customer, index) => {
                               return customer["Customer Name"] && (
                                  <li key={index} className="li-customer-name">
                                     <input type="radio" onChange={() => setCustomerSelected(customer)} name="customer_name" id={`radio_${index}`} />
-                                    <label for={`radio_${index}`} style={{ cursor: "pointer" }}>{customer["Customer Name"]}</label>
+                                    <label htmlFor={`radio_${index}`} style={{ cursor: "pointer" }}>{customer["Customer Name"]}</label>
                                  </li>
                               )
                            })}
@@ -290,28 +286,10 @@ function Home() {
             <div className="pt-9">
                <div className="mb-10">
                   <div className="mb-3.5">
-                     <ConnabotTasks isRun={isRun} />
+                     <CannabotTasks isRun={isRun} />
                   </div>
                   <div>
                      <CannabotWorkspace streamOutput={streamOutput} />
-                     {/* <div>
-                        <h2 className="font-bold leading-[1.22em] mb-2 text-center">Cannabot Workspace</h2>
-                        <div className="border border-white py-4 [@media(min-width:600px)]:py-7 [@media(min-width:600px)]:px-6 px-3 rounded-lg">
-                           <div className="bg-white rounded-[20px]">
-                              <SimpleBar className="max-h-[160px] [@media(min-width:1281px)]:max-h-[350px]">
-                                 <div>
-                                    <div className="flex sm:flex-row flex-col items-center gap-4 px-4 py-8 [@media(min-width:1281px)]:py-28">
-                                       <img src="/images/image 7.png" alt="" />
-                                       <p className="font-bold text-[#110F0F] font-istok-web">
-                                          <pre id="streamOutput"></pre>
-                                       </p>
-                                    </div>
-                                    <div className="h-[1200px]" />
-                                 </div>
-                              </SimpleBar>
-                           </div>
-                        </div>
-                     </div> */}
                   </div>
                </div>
                <div className="grid gap-x-2 gap-y-6 grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
