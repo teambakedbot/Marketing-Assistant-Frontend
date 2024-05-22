@@ -1,7 +1,11 @@
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 
-function CannabotWorkspace({streamOutput}:any) {
+interface CannabotWorkspaceProps {
+   streamOutput: string;
+}
+
+function CannabotWorkspace({ streamOutput }: CannabotWorkspaceProps) {
    return (
       <div>
          <h2 className="font-bold leading-[1.22em] mb-2 text-center">Cannabot Workspace</h2>
