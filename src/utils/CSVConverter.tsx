@@ -39,6 +39,8 @@ function CSVConverter() {
         }
     }
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     const generateCSVAndCallAPI = async (customerData: Customer[]) => {
         const csv = generateCSV(customerData);
         const blob = new Blob([csv], { type: 'text/csv' });
@@ -48,7 +50,7 @@ function CSVConverter() {
         formData.append('file', blob);
         formData.append('content_type', contentType || '');
 
-        const response = await fetch('http://localhost:8000/upload/', {
+        const response = await fetch(`${apiUrl}/upload/`, {
             method: 'POST',
             body: formData,
             headers: {
