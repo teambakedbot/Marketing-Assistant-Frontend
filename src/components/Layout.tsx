@@ -1,19 +1,9 @@
-import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
-import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 import Navigation from "./Navigation";
 function Layout() {
-  // Check if user is loggedin
-  const { isAuthenticated, isLoading } = useKindeAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      // User is not loggedin; redirect to login page
-      navigate("/login");
-    }
-  }, [isAuthenticated, isLoading]);
-
+  // Use the hook to validate user session
+  const { isAuthenticated } = useAuth();
   return (
     isAuthenticated && (
       <div>
