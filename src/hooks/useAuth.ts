@@ -7,10 +7,12 @@ const useAuth = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      navigate("/login");
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        navigate("/login");
+      }
     }
-  }, [isLoading, isAuthenticated]);
+  }, [isLoading, isAuthenticated, user]);
 
   return { isAuthenticated, isLoading, user };
 };
