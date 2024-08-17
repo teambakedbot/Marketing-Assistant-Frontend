@@ -12,28 +12,32 @@ interface CannabotTasksProps {
    isRun: boolean;
 }
 
+const tasks = [
+   {
+      img: "/images/Sebo_logo (1).png",
+      text: "Calling Cannabots to send a personalized SMS Messages"
+   },
+   {
+      img: "/images/image 3.png",
+      text: "Task Added: Collect purchase history, demographics, and psychographics data"
+   },
+   {
+      img: "/images/image 3.png",
+      text: "Task Added: Analyze the data to identify patterns and preferences"
+   },
+   {
+      img: "/images/image 3.png",
+      text: "Task Added: Compose personalized sms messages based on the analysis"
+   },
+   {
+      img: "/images/image 3.png",
+      text: "Task Added: Sending personalized sms messages"
+   }
+];
 function CannabotTasks({ isRun }: CannabotTasksProps) {
-   const tasks: Task[] = [
-      {
-         img: "/images/Sebo_logo (1).png",
-         text: "Calling Cannabots to send a personalized SMS Messages"
-      },
-      {
-         img: "/images/image 3.png",
-         text: "Task Added: Collect purchase history, demographics, and psychographics data"
-      },
-      {
-         img: "/images/image 5.png",
-         text: "Starting Task: Collect purchase history, demographics, and psychographics data"
-      },
-      {
-         img: "/images/image 6.png",
-         text: "Executing Workspace Response"
-      }
-   ];
 
-   const [currentIndex, setCurrentIndex] = useState < number > (0);
-   const [process, setProcess] = useState < Task[] > ([]);
+   const [currentIndex, setCurrentIndex] = useState<number>(0);
+   const [process, setProcess] = useState<Task[]>([]);
 
    useEffect(() => {
       if (isRun && currentIndex < tasks.length) {
@@ -60,18 +64,18 @@ function CannabotTasks({ isRun }: CannabotTasksProps) {
    }, [isRun]);
 
    return (
-      <div>
-         <h2 className="font-bold leading-[1.22em] mb-3.5 text-center">Cannabot Tasks</h2>
-         <SimpleBar style={{ maxHeight: 150 }}>
-            <div className="flex flex-col gap-1.5">
-               {process.map((task, index) => (
-                  <Fragment key={index}>
+      <div className="lg:mt-0 mt-5">
+         <h2 className="font-bold leading-[1.22em] mb-3.5 text-center">Smokey Tasks</h2>
+         <SimpleBar className="lg:max-h-[150px]" >
+            <div className="flex flex-col gap-2 mr-2">
+               {
+                  tasks.map((item) => (
                      <div className="flex items-center gap-1 bg-gray-600 rounded-[20px] py-[1px] pl-2.5 pr-1 mr-2.5">
-                        <img src={task.img} alt="" />
-                        <p className="font-bold font-istok-web">{task.text}</p>
+                        <img className="w-4 lg:w-6" src={item.img} alt="" />
+                        <p className="font-bold lg:text-base text-sm font-istok-web">{item.text}</p>
                      </div>
-                  </Fragment>
-               ))}
+                  ))
+               }
             </div>
          </SimpleBar>
       </div>
