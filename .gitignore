@@ -40,6 +40,8 @@ dist-ssr
 
 # Project specific
 .env
+.env.*
+!.env.example
 .aider*
 
 # Optional: Uncomment if using TypeScript
