@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Conversations from "./Conversations";
+import Papa from "papaparse";
 
 interface ProfileProps {
   setCustomerFile: (file: File) => void;
