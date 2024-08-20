@@ -13,8 +13,14 @@ function Profile({ setCustomerFile, fileRef }: ProfileProps) {
     const file = files[0];
     setCustomerFile(file);
 
-    // use the file
-    console.log(file.name);
+    // Parse the CSV file
+    Papa.parse(file, {
+      complete: (results) => {
+        console.log("Parsed CSV data:", results.data);
+        // You can store this data in state or pass it to a parent component
+      },
+      header: true,
+    });
   }
 
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {

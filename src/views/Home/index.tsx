@@ -1,15 +1,10 @@
-import { Link } from "react-router-dom";
 import { IoStopOutline } from "react-icons/io5";
 import { LuPlay } from "react-icons/lu";
-import { PiPause } from "react-icons/pi";
-import ReviewRate from "./ReviewRate";
 import CannabotWorkspace from "./CannabotWorkspace";
-import CannabotTasks from "./CannabotTasks";
 import { useEffect, useRef, useState } from "react";
 import Papa from "papaparse";
 import "../../styles/main.css";
 import Profile from "./Profile";
-import axios from "axios";
 import Swal from "sweetalert2";
 
 const marketingSite = [
@@ -154,7 +149,7 @@ function Home() {
     return csv;
   };
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = "https://bakedbot-agents-backend-67046231641c.herokuapp.com";
 
   const generateCSVAndCallAPI = async (
     customerData: Customer[],
@@ -163,28 +158,37 @@ function Home() {
     const csv = generateCSV(customerData);
     const blob = new Blob([csv], { type: "text/csv" });
     const formData = new FormData();
-    formData.append("file", blob);
+    formData.append("file", new File([blob], "customers.csv"));
     formData.append("content_type", contentType);
-    const response = await fetch(`${apiUrl}/upload/`, {
-      method: "POST",
-      body: formData,
-      headers: {
-        Accept: "text/event-stream",
-      },
-    });
-    setIsRun(true);
-    const reader = response?.body?.getReader();
-    const decoder = new TextDecoder();
-    if (reader) {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        setStreamOutput(
-          (prev) => prev + decoder.decode(value, { stream: true })
-        );
+  
+    try {
+      setIsRun(true);
+      const response = await fetch(`${apiUrl}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          setStreamOutput((prev) => prev + chunk);
+        }
       }
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({
+        title: "Error",
+        text: "An error occurred while processing your request.",
+        icon: "error",
+      });
+    } finally {
+      setIsRun(false);
     }
-    setIsRun(false);
   };
 
   return (
