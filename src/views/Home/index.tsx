@@ -69,7 +69,7 @@ const marketingSite = [
 
 interface Customer {
   "Customer Name": string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 function Home() {
