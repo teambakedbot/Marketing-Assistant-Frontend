@@ -130,7 +130,7 @@ function Navigation() {
             >
               <CloseCircle />
             </button>
-            <Profile setCustomerFile={() => {}} />
+            <Profile />
           </div>
         </Drawer>
       </div>
