@@ -61,7 +61,6 @@ function Home() {
   const [prompts, setPrompts] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const promptsRow = prompts.split("\n").length;
-  const fileRef = useRef<HTMLInputElement>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [customerSelected, setCustomerSelected] = useState<Customer[]>([]);
   const [isRun, setIsRun] = useState<boolean>(false);
@@ -72,11 +71,6 @@ function Home() {
     `Hey John, new strain Gelato Zkittlez at Green Rose, 20% off coupon. It's like Pink Runtz you loved - phenotype of Runtz crossed with Gelato & Zkittlez. Don't miss this deal! <br> <br> `
   );
 
-  // const handleClick = () => {
-  //   fileRef.current?.click();
-  //   fileRef.current?.addEventListener("change", showCustomers, { once: true });
-  // };
-
   const setAllCustomerSelected = () => {
     setCustomerSelected(customers);
   };
@@ -84,6 +78,7 @@ function Home() {
   function playHandler() {
     if (!prompts) return;
     setLoading(true);
+    setPrompts("");
     axios
       .post(
         "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
@@ -93,8 +88,6 @@ function Home() {
         setChatHistory(
           (prevHistory) => prevHistory + res?.data?.response + "<br>"
         );
-        // setMessages([...messages, prompts]);
-        setPrompts("");
       })
       .catch((err) => {
         Swal.fire({
@@ -131,6 +124,7 @@ function Home() {
   };
 
   const start = (type: string) => {
+    setLoading(true);
     if (Array.isArray(customerSelected)) {
       generateCSVAndCallAPI(customerSelected, type);
     } else if (customerSelected) {
@@ -168,7 +162,6 @@ function Home() {
       // eslint-disable-next-line no-constant-condition
       while (true) {
         const { done, value } = await reader.read();
-        console.log({ value });
         if (done) break;
         setChatHistory(
           (prev) => prev + decoder.decode(value, { stream: true })
@@ -191,14 +184,17 @@ function Home() {
   return (
     <div className="lg:flex">
       <div className="hidden lg:block bg-[#383434] px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-[20%]">
-        <Profile />
+        <Profile onFileUpload={showCustomers} />
       </div>
       <div className="bg-[#1E1E1E] min-h-screen w-full overflow-hidden">
         <div className="xl:h-[75%] lg:grid [@media(min-width:1020px)]:grid-cols-2 flex-grow gap-3 py-9 [@media(min-width:600px)]:pr-10 pr-4 pl-3">
           <div className="h-[100%] mt-0 md:mt-7">
             <div className="min-h-[400px] h-full [@media(min-width:1281px)]:min-h-[590px] bg-[#1C1919] border border-white rounded-lg px-5 py-10">
               <p className="mb-10 flex flex-wrap gap-2">
-                <button className="bg-[#636363] px-3 py-2 text-white font-istok-web font-medium text-sm  rounded-3xl text-[14px]">
+                <button
+                  onClick={() => {}}
+                  className="bg-[#636363] px-3 py-2 text-white font-istok-web font-medium text-sm  rounded-3xl text-[14px]"
+                >
                   Search Customer(s)
                 </button>
                 <button
@@ -225,7 +221,23 @@ function Home() {
                   {d}
                 </p>
               ))}
-              {loading ? <p>Loading...</p> : ""}
+              {customers.map((customer: Customer, index: number) => (
+                <div
+                  className="flex items-center gap-2"
+                  key={`${customer["Customer Name"]}-${index}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={customerSelected.includes(customer)}
+                    onChange={() => handleCustomerSelect(customer)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  />
+                  <p className="text-[16px] font-rhodium-libre mb-1">
+                    {customer["Customer Name"]}
+                  </p>
+                </div>
+              ))}
+              {loading && <p>Loading...</p>}
             </div>
           </div>
           <div className="h-[100%] mt-5 md:m-0 ">
@@ -233,7 +245,7 @@ function Home() {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center my-5">
-          <div className="flex mb-5 [@media(min-width:600px)]:flex-row flex-col items-center justify-center gap-4">
+          {/* <div className="flex mb-5 [@media(min-width:600px)]:flex-row flex-col items-center justify-center gap-4">
             <div className="md:flex gap-4">
               <button
                 onClick={playHandler}
@@ -247,16 +259,33 @@ function Home() {
                 <span className="text-black">Stop</span>
               </button>
             </div>
-          </div>
-          <div className="flex w-[100%] lg:w-[80%] [@media(min-width:600px)]:flex-row flex-col items-center [@media(min-width:600px)]:gap-5 gap-3 px-4 [@media(min-width:1440px)]:px-11 mb-7">
+          </div> */}
+          <div className="flex w-[100%] mt-20 lg:w-[80%] [@media(min-width:600px)]:flex-row flex-col items-center [@media(min-width:600px)]:gap-5 gap-3 px-4 [@media(min-width:1440px)]:px-11 mb-7">
             <textarea
-              className="text-xl md:pt-[20px] lg:pt-[20px] py-1 lg:py-0 resize-none italic font-istok-web placeholder:text-white bg-neutral-800 rounded-lg flex-grow placeholder:text-center focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 overflow-hidden"
-              placeholder="Chat with Smokey or Enter your goal and Click Start"
-              onChange={(e) => setPrompts(e.target.value)}
+              disabled={loading}
+              placeholder={
+                loading ? "Loading..." : "Chat with Smokey or Enter your goal"
+              }
+              className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder:text-white bg-neutral-800 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none overflow-hidden"
+              onChange={(e) => {
+                setPrompts(e.target.value);
+                e.target.style.height = "auto";
+                e.target.style.height = `${e.target.scrollHeight}px`;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  playHandler();
+                }
+              }}
               value={prompts}
-            ></textarea>
-            <button className="text-[20px] font-istok-web italic bg-[#2305fb] text-white py-3 px-11 rounded-lg [@media(min-width:600px)]:w-auto w-full">
-              Toolkit
+              rows={1}
+            />
+            <button
+              onClick={playHandler}
+              className="text-[20px] font-istok-web italic bg-[#2305fb] text-white py-3 px-11 rounded-lg [@media(min-width:600px)]:w-auto w-full"
+            >
+              Send
             </button>
           </div>
         </div>

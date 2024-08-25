@@ -6,6 +6,7 @@ import {
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../config/firebase-config";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ const Login = () => {
     try {
       await signInWithPopup(auth, googleProvider);
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error signing in with Google:", error);
     }
   };
@@ -28,11 +29,15 @@ const Login = () => {
         navigate("/");
       });
     } catch (error) {
-      alert("Invalid email or password");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Invalid email or password",
+      });
     }
   };
   return (
-    <div className="h-screen w-screen  flex items-center justify-center">
+    <div className="h-screen w-screen flex items-center justify-center">
       <div className="min-w-96 min-h-[50%] rounded-lg text-black flex flex-col items-center gap-5 justify-center">
         <h1 className="font-bold text-2xl text-center">Login to Application</h1>
         <input

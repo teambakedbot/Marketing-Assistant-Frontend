@@ -2,6 +2,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../config/firebase-config";
+import Swal from "sweetalert2";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,11 @@ const Register = () => {
 
   const register = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
       await updateProfile(user, {
         displayName: displayName,
@@ -21,13 +26,29 @@ const Register = () => {
       navigate("/");
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
-        alert("Email already in use");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Email already in use",
+        });
       } else if (error.code === "auth/invalid-email") {
-        alert("Invalid email");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Invalid email",
+        });
       } else if (error.code === "auth/weak-password") {
-        alert("Password should be at least 6 characters");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Password should be at least 6 characters",
+        });
       } else {
-        alert("Error registering user");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Error registering user",
+        });
       }
     }
   };
