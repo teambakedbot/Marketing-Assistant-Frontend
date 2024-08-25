@@ -1,18 +1,26 @@
-import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../config/firebase-config";
 
 const useAuth = () => {
-  const { isAuthenticated, isLoading, user } = useKindeAuth();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const isAuthenticated = !!user;
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (!isLoading) {
-      if (!isAuthenticated) {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setIsLoading(false);
+      console.log({ currentUser });
+      if (!currentUser) {
         navigate("/login");
       }
-    }
-  }, [isLoading, isAuthenticated, user]);
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   return { isAuthenticated, isLoading, user };
 };

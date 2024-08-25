@@ -1,8 +1,30 @@
-import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
-import { Link } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../config/firebase-config";
 
 const Register = () => {
-  const { register } = useKindeAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const register = async () => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password).then(() => {
+        navigate("/");
+      });
+    } catch (error: any) {
+      if (error.code === "auth/email-already-in-use") {
+        alert("Email already in use");
+      } else if (error.code === "auth/invalid-email") {
+        alert("Invalid email");
+      } else if (error.code === "auth/weak-password") {
+        alert("Password should be at least 6 characters");
+      } else {
+        alert("Error registering user");
+      }
+    }
+  };
 
   return (
     <div className="h-screen w-screen  flex items-center justify-center">
@@ -10,23 +32,35 @@ const Register = () => {
         <h1 className="font-bold text-2xl text-center">
           Register to Application
         </h1>
-        <div className="w-full">
-          <button
-            onClick={async () => {
-              await register();
-            }}
-            className="bg-black/70 text-white w-full py-3 rounded-lg"
-          >
-            Click here
-          </button>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full mb-2 p-2 border rounded"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full mb-4 p-2 border rounded"
+        />
+        <button
+          onClick={async () => {
+            await register();
+          }}
+          className="bg-black/70 text-white w-full py-3 rounded-lg"
+        >
+          Click here
+        </button>
 
-          <p className="text-black/80 pl-2 text-base">
-            Or{" "}
-            <Link to={"/login"} className="text-blue-600 hover:underline">
-              Login here
-            </Link>
-          </p>
-        </div>
+        <p className="text-black/80 pl-2 text-base">
+          Or{" "}
+          <Link to={"/login"} className="text-blue-600 hover:underline">
+            Login here
+          </Link>
+        </p>
       </div>
     </div>
   );

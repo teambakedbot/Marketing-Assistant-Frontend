@@ -46,3 +46,4 @@ dist-ssr
 
 # Optional: Uncomment if using TypeScript
 # *.tsbuildinfo
+/new_env

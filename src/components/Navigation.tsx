@@ -1,4 +1,4 @@
-import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
+import { signOut } from "firebase/auth";
 import {
   BrushSquare,
   Category,
@@ -15,6 +15,7 @@ import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
 import { Link } from "react-router-dom";
 import Profile from "../views/Home/Profile";
+import { auth } from "../config/firebase-config";
 
 const pages = [
   {
@@ -60,7 +61,13 @@ function Navigation() {
   const currentPath = "/copy";
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const { logout } = useKindeAuth();
+  const logout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <div>
