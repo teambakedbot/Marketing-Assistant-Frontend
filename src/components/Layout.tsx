@@ -8,7 +8,7 @@ function Layout() {
     isAuthenticated && (
       <div>
         <Navigation />
-        <div className="ml-[66px] min-h-screen">
+        <div className="ml-[110px] min-h-screen">
           <Outlet />
         </div>
       </div>

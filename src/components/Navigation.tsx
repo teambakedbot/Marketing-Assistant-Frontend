@@ -11,10 +11,11 @@ import {
   Setting,
 } from "iconsax-react";
 import { useState } from "react";
+import useAuth from "../hooks/useAuth";
 import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
 import { Link } from "react-router-dom";
-import Profile from "../views/Home/Profile";
+import Profile from "../views/Profile";
 import { auth } from "../config/firebase-config";
 
 const pages = [
@@ -58,6 +59,7 @@ const pages = [
 ];
 
 function Navigation() {
+  const { displayName, photoURL } = useAuth();
   const currentPath = "/copy";
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -71,13 +73,13 @@ function Navigation() {
 
   return (
     <div>
-      <div className="fixed top-0 left-0 bottom-0 w-[66px] bg-[#111111] text-white">
+      <div className="fixed top-0 left-0 bottom-0 w-[110px] bg-[#111111] text-white">
         <div className="flex justify-between flex-col py-8 gap-4 h-screen overflow-y-scroll scrollbar-hidden">
           <div className="flex flex-col gap-2 items-center">
             <div
               onClick={() => setMenuOpen((v) => !v)}
               role="button"
-              className="mb-6"
+              className="mb-6 p-3"
             >
               <img className="" src="/images/Rectangle 37.png" alt="" />
             </div>
@@ -110,15 +112,22 @@ function Navigation() {
             >
               <Setting size={24} />
             </Link>
-            <Link to="/profile" role="button">
-              <img
-                width={32}
-                height={32}
-                src="/images/person-image.png"
-                className="rounded-full"
-                alt=""
-              />
-            </Link>
+            <div className="flex flex-col items-center">
+              <Link to="/profile" role="button">
+                <img
+                  width={32}
+                  height={32}
+                  src={photoURL || "/images/person-image.png"}
+                  className="rounded-full"
+                  alt="Profile"
+                />
+              </Link>
+              {displayName && (
+                <p className="text-white text-center mt-2 text-md max-w-[100px] overflow-hidden whitespace-normal text-ellipsis">
+                  {displayName}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
