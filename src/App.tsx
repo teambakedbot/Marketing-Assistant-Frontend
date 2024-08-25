@@ -1,20 +1,20 @@
-import { Route, Routes } from "react-router-dom";
-import Home from "./views/Home";
-import "./styles/main.css";
-import Layout from "./components/Layout";
-import Category from "./views/Category";
-import Document from "./views/Document";
-import BrushSquare from "./views/BrushSquare";
-import FolderAdd from "./views/FolderAdd";
-import Message from "./views/Message";
-import Settings from "./views/Settings";
-import Profile from "./views/Profile";
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
-import { BrowserRouter as Router } from "react-router-dom";
-import { useEffect, useState } from "react";
-import Login from "./auth/Login";
-import Register from "./auth/Register";
+import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
+import { initializeApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import Home from './views/Home';
+import './styles/main.css';
+import Layout from './components/Layout';
+import Category from './views/Category';
+import Document from './views/Document';
+import BrushSquare from './views/BrushSquare';
+import FolderAdd from './views/FolderAdd';
+import Message from './views/Message';
+import Settings from './views/Settings';
+import Profile from './views/Profile';
+import Login from './auth/Login';
+import Register from './auth/Register';
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string,
@@ -31,29 +31,30 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
     });
 
     return () => unsubscribe();
   }, []);
+
   return (
     <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />}></Route>
-            <Route path="category" element={<Category />}></Route>
-            <Route path="document" element={<Document />}></Route>
-            <Route path="copy" element={<Home />}></Route>
-            <Route path="brush-square" element={<BrushSquare />}></Route>
-            <Route path="folder-add" element={<FolderAdd />}></Route>
-            <Route path="message" element={<Message />}></Route>
-            <Route path="settings" element={<Settings />}></Route>
-            <Route path="profile" element={<Profile />}></Route>
-          </Route>
-        </Routes>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="category" element={<Category />} />
+          <Route path="document" element={<Document />} />
+          <Route path="copy" element={<Home />} />
+          <Route path="brush-square" element={<BrushSquare />} />
+          <Route path="folder-add" element={<FolderAdd />} />
+          <Route path="message" element={<Message />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+      </Routes>
     </Router>
   );
 }
