@@ -10,7 +10,7 @@ import Message from "./views/Message";
 import Settings from "./views/Settings";
 import Profile from "./views/Profile";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
@@ -27,7 +27,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 function App() {
-  const [user, setUser] = useState<firebase.User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
