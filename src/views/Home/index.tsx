@@ -188,8 +188,8 @@ function Home() {
       </div>
       <div className="bg-[#1E1E1E] min-h-screen w-full overflow-hidden">
         <div className="xl:h-[75%] lg:grid [@media(min-width:1020px)]:grid-cols-2 flex-grow gap-3 py-9 [@media(min-width:600px)]:pr-10 pr-4 pl-3">
-          <div className="h-[100%] mt-0 md:mt-7">
-            <div className="min-h-[400px] h-full [@media(min-width:1281px)]:min-h-[590px] bg-[#1C1919] border border-white rounded-lg px-5 py-10">
+          <div className="h-[100%] mt-0 md:mt-7 flex flex-col">
+            <div className="flex-grow bg-[#1C1919] border border-white rounded-lg px-5 py-10 overflow-auto">
               <p className="mb-10 flex flex-wrap gap-2">
                 <button
                   onClick={() => {}}
@@ -240,7 +240,7 @@ function Home() {
               {loading && <p>Loading...</p>}
             </div>
           </div>
-          <div className="h-[100%] mt-5 md:m-0 ">
+          <div className="h-[100%] mt-5 md:m-0 flex flex-col">
             <CannabotWorkspace chatHistory={chatHistory} />
           </div>
         </div>
@@ -260,13 +260,13 @@ function Home() {
               </button>
             </div>
           </div> */}
-          <div className="flex w-[100%] mt-20 lg:w-[80%] [@media(min-width:600px)]:flex-row flex-col items-center [@media(min-width:600px)]:gap-5 gap-3 px-4 [@media(min-width:1440px)]:px-11 mb-7">
+          <div className="flex w-[100%] mt-20 lg:w-[80%] [@media(min-width:600px)]:flex-row flex-col items-center [@media(min-width:600px)]:gap-5 gap-3 px-4 [@media(min-width:1440px)]:px-11 mb-7 flex-grow">
             <textarea
               disabled={loading}
               placeholder={
                 loading ? "Loading..." : "Chat with Smokey or Enter your goal"
               }
-              className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder:text-white bg-neutral-800 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none overflow-hidden"
+              className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder:text-white bg-neutral-800 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none"
               onChange={(e) => {
                 setPrompts(e.target.value);
                 e.target.style.height = "auto";
