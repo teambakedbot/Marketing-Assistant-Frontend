@@ -18,7 +18,10 @@ export const addDataToFirestore = async (
 export const fetchDataFromFirestore = async (collectionName: string) => {
   try {
     const querySnapshot = await getDocs(collection(db, collectionName));
-    const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const data = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     console.log("Fetched data: ", data);
     return data;
   } catch (e) {

@@ -13,7 +13,6 @@ const useAuth = () => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setIsLoading(false);
-      console.log({ currentUser });
       if (!currentUser) {
         navigate("/login");
       }
