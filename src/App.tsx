@@ -11,6 +11,7 @@ import Settings from "./views/Settings";
 import Profile from "./views/Profile";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { BrowserRouter as Router } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
@@ -37,7 +38,7 @@ function App() {
     return () => unsubscribe();
   }, []);
   return (
-    <div>
+    <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -53,7 +54,7 @@ function App() {
             <Route path="profile" element={<Profile />}></Route>
           </Route>
         </Routes>
-    </div>
+    </Router>
   );
 }
 
