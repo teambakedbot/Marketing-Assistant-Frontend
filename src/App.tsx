@@ -9,18 +9,35 @@ import FolderAdd from "./views/FolderAdd";
 import Message from "./views/Message";
 import Settings from "./views/Settings";
 import Profile from "./views/Profile";
-import { KindeProvider } from "@kinde-oss/kinde-auth-react";
+import { initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from "react";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID as string,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET as string,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID as string,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID as string,
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
 function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
   return (
     <div>
-      <KindeProvider
-        clientId={import.meta.env.VITE_KINDE_CLIENT_ID as string}
-        domain={import.meta.env.VITE_KINDE_DOMAIN as string}
-        logoutUri={import.meta.env.VITE_KINDE_LOGOUT_URL as string}
-        redirectUri={import.meta.env.VITE_KINDE_REDIRECT_URL as string}
-      >
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -36,7 +53,6 @@ function App() {
             <Route path="profile" element={<Profile />}></Route>
           </Route>
         </Routes>
-      </KindeProvider>
     </div>
   );
 }
