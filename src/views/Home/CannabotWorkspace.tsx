@@ -3,25 +3,15 @@ import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 
 interface CannabotWorkspaceProps {
-  streamOutput: string;
   chatHistory: string;
 }
 
-function CannabotWorkspace({
-  streamOutput,
-  chatHistory,
-}: CannabotWorkspaceProps) {
+function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
   const [activeTab, setActiveTab] = useState("Chat");
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
-
-  useEffect(() => {
-    if (streamOutput) {
-      console.log(streamOutput);
-    }
-  }, [streamOutput]);
 
   const renderContent = () => {
     switch (activeTab) {

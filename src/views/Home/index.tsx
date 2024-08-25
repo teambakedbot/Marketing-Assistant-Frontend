@@ -65,12 +65,11 @@ function Home() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [customerSelected, setCustomerSelected] = useState<Customer[]>([]);
   const [isRun, setIsRun] = useState<boolean>(false);
-  const [streamOutput, setStreamOutput] = useState<string>("");
   const [messages, setMessages] = useState<string[]>([
     "Hi, Brandon. Welcome Back",
   ]);
   const [chatHistory, setChatHistory] = useState<string>(
-    `Hey John, new strain Gelato Zkittlez at Green Rose, 20% off coupon. It's like Pink Runtz you loved - phenotype of Runtz crossed with Gelato & Zkittlez. Don't miss this deal! <br> `
+    `Hey John, new strain Gelato Zkittlez at Green Rose, 20% off coupon. It's like Pink Runtz you loved - phenotype of Runtz crossed with Gelato & Zkittlez. Don't miss this deal! <br> <br> `
   );
 
   // const handleClick = () => {
@@ -92,7 +91,7 @@ function Home() {
       )
       .then((res) => {
         setChatHistory(
-          (prevHistory) => prevHistory + "<br>" + res?.data?.response
+          (prevHistory) => prevHistory + res?.data?.response + "<br>"
         );
         // setMessages([...messages, prompts]);
         setPrompts("");
@@ -169,8 +168,9 @@ function Home() {
       // eslint-disable-next-line no-constant-condition
       while (true) {
         const { done, value } = await reader.read();
+        console.log({ value });
         if (done) break;
-        setStreamOutput(
+        setChatHistory(
           (prev) => prev + decoder.decode(value, { stream: true })
         );
       }
@@ -190,6 +190,9 @@ function Home() {
 
   return (
     <div className="lg:flex">
+      <div className="hidden lg:block bg-[#383434] px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-[20%]">
+        <Profile />
+      </div>
       <div className="bg-[#1E1E1E] min-h-screen w-full overflow-hidden">
         <div className="xl:h-[75%] lg:grid [@media(min-width:1020px)]:grid-cols-2 flex-grow gap-3 py-9 [@media(min-width:600px)]:pr-10 pr-4 pl-3">
           <div className="h-[100%] mt-0 md:mt-7">
@@ -226,10 +229,7 @@ function Home() {
             </div>
           </div>
           <div className="h-[100%] mt-5 md:m-0 ">
-            <CannabotWorkspace
-              chatHistory={chatHistory}
-              streamOutput={streamOutput}
-            />
+            <CannabotWorkspace chatHistory={chatHistory} />
           </div>
         </div>
         <div className="flex flex-col items-center justify-center my-5">
