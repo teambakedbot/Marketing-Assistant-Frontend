@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../config/firebase-config";
@@ -6,13 +6,19 @@ import { auth } from "../config/firebase-config";
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [photoURL, setPhotoURL] = useState("");
   const navigate = useNavigate();
 
   const register = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password).then(() => {
-        navigate("/");
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      await updateProfile(user, {
+        displayName: displayName,
+        photoURL: photoURL || undefined,
       });
+      navigate("/");
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
         alert("Email already in use");
@@ -27,11 +33,25 @@ const Register = () => {
   };
 
   return (
-    <div className="h-screen w-screen  flex items-center justify-center">
+    <div className="h-screen w-screen flex items-center justify-center">
       <div className="min-w-96 min-h-[50%] rounded-lg text-black flex flex-col items-center gap-5 justify-center">
         <h1 className="font-bold text-2xl text-center">
           Register to Application
         </h1>
+        <input
+          type="text"
+          placeholder="Display Name"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+          className="w-full mb-2 p-2 border rounded"
+        />
+        <input
+          type="text"
+          placeholder="Photo URL (optional)"
+          value={photoURL}
+          onChange={(e) => setPhotoURL(e.target.value)}
+          className="w-full mb-2 p-2 border rounded"
+        />
         <input
           type="email"
           placeholder="Email"

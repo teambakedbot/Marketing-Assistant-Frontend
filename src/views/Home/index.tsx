@@ -1,11 +1,7 @@
-import { Link } from "react-router-dom";
 import { IoStopOutline } from "react-icons/io5";
 import { LuPlay } from "react-icons/lu";
-import { PiPause } from "react-icons/pi";
-import ReviewRate from "./ReviewRate";
 import CannabotWorkspace from "./CannabotWorkspace";
-import CannabotTasks from "./CannabotTasks";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Papa from "papaparse";
 import "../../styles/main.css";
 import Profile from "./Profile";
@@ -67,21 +63,20 @@ function Home() {
   const promptsRow = prompts.split("\n").length;
   const fileRef = useRef<HTMLInputElement>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [customerSelected, setCustomerSelected] = useState<
-    Customer[] | Customer | null
-  >(null);
+  const [customerSelected, setCustomerSelected] = useState<Customer[]>([]);
   const [isRun, setIsRun] = useState<boolean>(false);
   const [streamOutput, setStreamOutput] = useState<string>("");
-  const [messages, setMesages] = useState<string[]>([
+  const [messages, setMessages] = useState<string[]>([
     "Hi, Brandon. Welcome Back",
   ]);
-  const [smaResult, setSmsResult] = useState<string>(
-    `Hey John, new strain Gelato Zkittlez at Green Rose, 20% off coupon. It's like Pink Runtz you loved - phenotype of Runtz crossed with Gelato & Zkittlez. Don't miss this deal!`
+  const [chatHistory, setChatHistory] = useState<string>(
+    `Hey John, new strain Gelato Zkittlez at Green Rose, 20% off coupon. It's like Pink Runtz you loved - phenotype of Runtz crossed with Gelato & Zkittlez. Don't miss this deal! <br> `
   );
 
-  const handleClick = () => {
-    fileRef.current?.click();
-  };
+  // const handleClick = () => {
+  //   fileRef.current?.click();
+  //   fileRef.current?.addEventListener("change", showCustomers, { once: true });
+  // };
 
   const setAllCustomerSelected = () => {
     setCustomerSelected(customers);
@@ -96,8 +91,10 @@ function Home() {
         { message: prompts }
       )
       .then((res) => {
-        setSmsResult(res?.data?.response);
-        setMesages([...messages, prompts]);
+        setChatHistory(
+          (prevHistory) => prevHistory + "<br>" + res?.data?.response
+        );
+        // setMessages([...messages, prompts]);
         setPrompts("");
       })
       .catch((err) => {
@@ -111,9 +108,9 @@ function Home() {
       });
   }
 
-  const showCustomers = () => {
-    if (fileRef?.current?.files) {
-      const file = fileRef?.current?.files[0];
+  const showCustomers = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -181,12 +178,19 @@ function Home() {
     setIsRun(false);
   };
 
+  const handleCustomerSelect = (customer: Customer) => {
+    setCustomerSelected((prevSelected) => {
+      if (prevSelected.includes(customer)) {
+        return prevSelected.filter((c) => c !== customer);
+      } else {
+        return [...prevSelected, customer];
+      }
+    });
+  };
+
   return (
     <div className="lg:flex">
-      <div className="hidden lg:block bg-[#383434] px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-[20%]">
-        <Profile />
-      </div>
-      <div className=" bg-[#1E1E1E] min-h-screen lg:w-[80%] overflow-hidden">
+      <div className="bg-[#1E1E1E] min-h-screen w-full overflow-hidden">
         <div className="xl:h-[75%] lg:grid [@media(min-width:1020px)]:grid-cols-2 flex-grow gap-3 py-9 [@media(min-width:600px)]:pr-10 pr-4 pl-3">
           <div className="h-[100%] mt-0 md:mt-7">
             <div className="min-h-[400px] h-full [@media(min-width:1281px)]:min-h-[590px] bg-[#1C1919] border border-white rounded-lg px-5 py-10">
@@ -223,7 +227,7 @@ function Home() {
           </div>
           <div className="h-[100%] mt-5 md:m-0 ">
             <CannabotWorkspace
-              smsResults={smaResult}
+              chatHistory={chatHistory}
               streamOutput={streamOutput}
             />
           </div>
