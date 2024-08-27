@@ -63,9 +63,7 @@ function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
 
   return (
     <div className="h-full">
-      <h2 className="font-bold leading-[1.22em] mb-2 text-center">
-        Cannabot Workspace
-      </h2>
+      <h2 className="font-bold leading-[1.22em] mb-2 text-center">Workspace</h2>
       <div
         style={{ height: "inherit" }}
         className="border border-white py-0 [@media(min-width:600px)]:py-4 [@media(min-width:600px)]:px-3 px-0 rounded-3xl lg:rounded-lg"
