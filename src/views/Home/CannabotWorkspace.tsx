@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 
 interface CannabotWorkspaceProps {
-  chatHistory: string;
+  chatHistory: string[];
 }
 
 function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
@@ -17,10 +17,15 @@ function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
     switch (activeTab) {
       case "Chat":
         return (
-          <div className="text-[#110F0F] text-xxl font-istok-web max-h-[55vh]" style={{overflowY:"auto"}}>
-            <div
-              dangerouslySetInnerHTML={{ __html: chatHistory }}
-            />
+          <div
+            className="text-[#110F0F] text-xxl font-istok-web max-h-[55vh]"
+            style={{ overflowY: "auto" }}
+          >
+            {chatHistory.map((message, index) => (
+              <div key={index} className="chat-message">
+                <strong>{index % 2 === 0 ? "You:" : "Bot:"}</strong> {message}
+              </div>
+            ))}
           </div>
         );
       case "Goals":

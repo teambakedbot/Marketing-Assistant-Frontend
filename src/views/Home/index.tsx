@@ -67,9 +67,9 @@ function Home() {
   const [messages, setMessages] = useState<string[]>([
     "Hi, Brandon. Welcome Back",
   ]);
-  const [chatHistory, setChatHistory] = useState<string>(
-    `Hey John, new strain Gelato Zkittlez at Green Rose, 20% off coupon. It's like Pink Runtz you loved - phenotype of Runtz crossed with Gelato & Zkittlez. Don't miss this deal! <br> <br> `
-  );
+  const [chatHistory, setChatHistory] = useState<string[]>([
+    "Hey John, new strain Gelato Zkittlez at Green Rose, 20% off coupon. It's like Pink Runtz you loved - phenotype of Runtz crossed with Gelato & Zkittlez. Don't miss this deal!",
+  ]);
 
   const setAllCustomerSelected = () => {
     setCustomerSelected(customers);
@@ -85,7 +85,11 @@ function Home() {
         { message: prompts }
       )
       .then((res) => {
-        setChatHistory(res?.data?.response);
+        setChatHistory((prev) => [
+          ...prev,
+          prompts,
+          res?.data?.response,
+        ]);
       })
       .catch((err) => {
         Swal.fire({
@@ -94,7 +98,7 @@ function Home() {
         });
       })
       .finally(() => {
-        setMessages([...messages, prompts])
+        setMessages([...messages, prompts]);
         setLoading(false);
       });
   }
@@ -162,9 +166,10 @@ function Home() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        setChatHistory(
-          (prev) => prev + decoder.decode(value, { stream: true })
-        );
+        setChatHistory((prev) => [
+          ...prev,
+          decoder.decode(value, { stream: true }),
+        ]);
       }
     }
     setIsRun(false);
@@ -215,8 +220,8 @@ function Home() {
                   Create Content
                 </button>
               </p>
-              {messages.map((d: string) => (
-                <p className="text-[16px] font-rhodium-libre mb-1" key={d}>
+              {messages.map((d: string, index: number) => (
+                <p className="text-[16px] font-rhodium-libre mb-1" key={`${d}-${index}`}>
                   {d}
                 </p>
               ))}
@@ -239,7 +244,10 @@ function Home() {
               {loading && <p>Loading...</p>}
             </div>
           </div>
-          <div className="max-h-[68vh] mt-5 md:m-0" style={{boxSizing: "border-box"}}>
+          <div
+            className="max-h-[68vh] mt-5 md:m-0"
+            style={{ boxSizing: "border-box" }}
+          >
             <CannabotWorkspace chatHistory={chatHistory} />
           </div>
         </div>
