@@ -22,7 +22,11 @@ function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
             style={{ overflowY: "auto" }}
           >
             {chatHistory.map((message, index) => (
-              <div key={index} className="chat-message">
+              <div
+                key={index}
+                className="chat-message"
+                style={{ paddingBottom: "10px" }}
+              >
                 <strong>{index % 2 === 0 ? "Pops:" : "You:"}</strong> {message}
               </div>
             ))}
