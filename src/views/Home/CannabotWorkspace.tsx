@@ -17,9 +17,8 @@ function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
     switch (activeTab) {
       case "Chat":
         return (
-          <div>
+          <div className="text-[#110F0F] text-xxl font-istok-web max-h-[55vh]" style={{overflowY:"auto"}}>
             <div
-              className="font-bold text-[#110F0F] text-base font-istok-web"
               dangerouslySetInnerHTML={{ __html: chatHistory }}
             />
           </div>

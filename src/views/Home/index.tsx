@@ -85,9 +85,7 @@ function Home() {
         { message: prompts }
       )
       .then((res) => {
-        setChatHistory(
-          (prevHistory) => prevHistory + res?.data?.response + "<br>"
-        );
+        setChatHistory(res?.data?.response);
       })
       .catch((err) => {
         Swal.fire({
@@ -96,6 +94,7 @@ function Home() {
         });
       })
       .finally(() => {
+        setMessages([...messages, prompts])
         setLoading(false);
       });
   }
@@ -240,7 +239,7 @@ function Home() {
               {loading && <p>Loading...</p>}
             </div>
           </div>
-          <div className="h-[100%] mt-5 md:m-0 flex flex-col">
+          <div className="max-h-[68vh] mt-5 md:m-0" style={{boxSizing: "border-box"}}>
             <CannabotWorkspace chatHistory={chatHistory} />
           </div>
         </div>
