@@ -68,7 +68,7 @@ function Home() {
     "Hi, Brandon. Welcome Back",
   ]);
   const [chatHistory, setChatHistory] = useState<string[]>([
-    "Hey John, new strain Gelato Zkittlez at Green Rose, 20% off coupon. It's like Pink Runtz you loved - phenotype of Runtz crossed with Gelato & Zkittlez. Don't miss this deal!",
+    "Whassup, whassup! It's Pops, baby! How can I help you today?",
   ]);
 
   const setAllCustomerSelected = () => {
@@ -85,11 +85,7 @@ function Home() {
         { message: prompts }
       )
       .then((res) => {
-        setChatHistory((prev) => [
-          ...prev,
-          prompts,
-          res?.data?.response,
-        ]);
+        setChatHistory((prev) => [...prev, prompts, res?.data?.response]);
       })
       .catch((err) => {
         Swal.fire({
@@ -221,7 +217,10 @@ function Home() {
                 </button>
               </p>
               {messages.map((d: string, index: number) => (
-                <p className="text-[16px] font-rhodium-libre mb-1" key={`${d}-${index}`}>
+                <p
+                  className="text-[16px] font-rhodium-libre mb-1"
+                  key={`${d}-${index}`}
+                >
                   {d}
                 </p>
               ))}
@@ -271,7 +270,7 @@ function Home() {
             <textarea
               disabled={loading}
               placeholder={
-                loading ? "Loading..." : "Chat with Smokey or Enter your goal"
+                loading ? "Loading..." : "Chat with Pops or Enter your goal"
               }
               className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder:text-white bg-neutral-800 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none"
               onChange={(e) => {

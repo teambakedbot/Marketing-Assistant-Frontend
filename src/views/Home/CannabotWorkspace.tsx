@@ -23,7 +23,7 @@ function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
           >
             {chatHistory.map((message, index) => (
               <div key={index} className="chat-message">
-                <strong>{index % 2 === 0 ? "You:" : "Bot:"}</strong> {message}
+                <strong>{index % 2 === 0 ? "Pops:" : "You:"}</strong> {message}
               </div>
             ))}
           </div>
