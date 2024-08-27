@@ -25,15 +25,15 @@ function Profile({ onFileUpload }: ProfileProps) {
           alt=""
         />
       </Link>
-      <div className="font-bold text-center mb-[15px] md:mb-[50px]">
+      <div className="font-bold text-center my-[15px] md:mb-[50px]">
         Cultivating Unforgettable Experiences
       </div>
 
       <Conversations />
-      <p className="bg-[#636363] font-istok-web text-white text-base text-center font-semibold py-1 rounded-2xl">
+      {/* <p className="bg-[#636363] font-istok-web text-white text-base text-center font-semibold py-1 rounded-2xl">
         Calling Smokey to send an SMS
-      </p>
-      <div className="text-center mx-2 mt-[20px] md:mt-[30px]">
+      </p> */}
+      <div className="text-center mx-2 mb-10 mt-[20px] md:mt-[30px]">
         <p className="text-[13px] mb-2 md:mb-3 font-rhodium-libre">
           You are using the Limited Free Version of BakedBot.
         </p>
