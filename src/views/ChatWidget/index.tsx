@@ -78,7 +78,9 @@ export const ChatWidget: React.FC = () => {
         <img src={bottom} className="w-10" alt="Open Chatbot" />
       </button>
       {isModalOpen && (
-        <div className="absolute right-2 bottom-14 flex justify-center items-center z-50">
+        <div
+          className={`absolute right-2 bottom-14 flex justify-center items-center z-50 animate-open`}
+        >
           <div className="bg-[#0D211D] p-3 pb-0md:p-5 rounded-lg shadow-lg relative">
             <div className="md:flex md:flex-row flex-col gap-3 min-h-[250px] min-w-[180px] lg:min-h-[350px] lg:min-w-[800px]">
               {/* left box */}
