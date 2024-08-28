@@ -77,13 +77,13 @@ function Navigation() {
       <div className="fixed top-0 left-0 bottom-0 w-[110px] dark-green-background-4 off-white">
         <div className="flex justify-between flex-col py-8 gap-4 h-screen overflow-y-scroll scrollbar-hidden">
           <div className="flex flex-col gap-2 items-center">
-            <div
+            {/* <div
               onClick={() => setMenuOpen((v) => !v)}
               role="button"
               className="mb-6 p-3"
             >
               <img className="" src="/images/Rectangle 37.png" alt="" />
-            </div>
+            </div> */}
             <div></div>
             {pages.map(({ icon, id, path }) => {
               const IconElement = icon;
