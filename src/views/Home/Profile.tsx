@@ -22,7 +22,7 @@ function Profile({ onFileUpload }: ProfileProps) {
       <Link to="/" className="flex justify-center mb-5">
         <img
           className="w-[120px] md:w-[150px]"
-          src="/images/large-logo.png"
+          src="/images/bakedBot_logo.png"
           alt=""
         />
       </Link>
