@@ -12,7 +12,7 @@
 .simplebar-track.simplebar-horizontal .simplebar-scrollbar {
   opacity: 1 !important;
   visibility: visible !important;
-  background-color: #A1A6A2 !important;
+  background-color: #d9d9d9 !important;
 }
 
 .simplebar-track.simplebar-vertical .simplebar-scrollbar:before,
@@ -62,4 +62,11 @@ body {
 .li-customer-name label {
   width: 100%;
   margin-left: 5px;
+}
+.chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  max-height: "40vh";
+  z-index: 1000; /* Ensure it is above other elements */
 }

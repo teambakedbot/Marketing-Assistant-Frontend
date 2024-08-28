@@ -31,7 +31,11 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
               >
                 <strong className="capitalize">
                   {index % 2 === 0
-                    ? `${voiceType === "normal" ? "BakedBot" : capitalizeFirstLetter(voiceType)}:`
+                    ? `${
+                        voiceType === "normal"
+                          ? "BakedBot"
+                          : capitalizeFirstLetter(voiceType)
+                      }:`
                     : "You:"}
                 </strong>{" "}
                 <ReactMarkdown>{message}</ReactMarkdown>
