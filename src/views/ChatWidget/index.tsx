@@ -79,7 +79,7 @@ export const ChatWidget: React.FC = () => {
       </button>
       {isModalOpen && (
         <div className="absolute right-2 bottom-14 flex justify-center items-center z-50">
-          <div className="bg-[#0D211D] p-3 md:p-5 rounded-lg shadow-lg relative">
+          <div className="bg-[#0D211D] p-3 pb-0md:p-5 rounded-lg shadow-lg relative">
             <div className="md:flex md:flex-row flex-col gap-3 min-h-[250px] min-w-[180px] lg:min-h-[350px] lg:min-w-[800px]">
               {/* left box */}
               <div className="border-2 h-[450px] bg-white w-full md:w-3/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden">
@@ -100,7 +100,11 @@ export const ChatWidget: React.FC = () => {
                           index % 2 === 0 ? "Receiver Icon" : "BakedBot Icon"
                         }
                       />
-                      <div className="bg-[#22AD85] rounded-md py-2 px-4">
+                      <div
+                        className={`${
+                          index % 2 === 0 ? "bg-[#22AD89]" : "bg-[#23504A]"
+                        } rounded-md py-2 px-4`}
+                      >
                         <p className="text-white text-base md:text-lg">
                           <ReactMarkdown>{message}</ReactMarkdown>
                         </p>
@@ -109,15 +113,21 @@ export const ChatWidget: React.FC = () => {
                   ))}
                   <div ref={chatEndRef} />
                 </div>
-                <div className="flex items-center gap-3 bottom-2 w-11/12">
+                <div className="flex items-center gap-2 bottom-2 w-full">
                   <textarea
-                    className="border-black h-8 md:h-12 text-[#23504A] text-base md:text-lg border-2 rounded-3xl resize-none w-full px-4 py-0 pt-1"
+                    className="text-[#23504A] text-base md:text-lg border-none resize-none w-full placeholder-gray-600"
                     onKeyDown={playHandler}
                     disabled={loading}
                     placeholder="Type your message..."
                     value={prompts}
                     onChange={(e) => setPrompts(e.target.value)}
-                  ></textarea>
+                    rows={1}
+                    style={{
+                      overflowY: "auto",
+                      padding: "8px",
+                      maxHeight: "4.5em",
+                    }}
+                  />
                   <button
                     className="bg-[#22AD85] rounded-full text-white"
                     onClick={playHandler}
@@ -144,7 +154,7 @@ export const ChatWidget: React.FC = () => {
                     <img
                       src={product1}
                       alt="Product Viewer"
-                      className="w-full h-auto object-contain h-[100px] md:h-[150px]"
+                      className="w-full object-contain h-[100px] md:h-[150px]"
                     />
                   </div>
                 </div>
@@ -224,7 +234,7 @@ export const ChatWidget: React.FC = () => {
                 </div>
               </div>
             </div>
-            <p className="text-white mt-2  text-md">Powered by BakedBot AI</p>
+            <p className="text-white mt-4  text-md">Powered by BakedBot AI</p>
           </div>
         </div>
       )}
