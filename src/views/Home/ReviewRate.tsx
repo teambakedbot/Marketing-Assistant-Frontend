@@ -9,7 +9,7 @@ interface ReviewRateProps {
 function ReviewRate(props: ReviewRateProps) {
    const {icon, value, content, color = "success"} = props;
 
-   let background = {
+   const background = {
       success: "bg-green-emerald",
       primary: "bg-blue-blue",
       error: "bg-red-pink",
@@ -24,7 +24,7 @@ function ReviewRate(props: ReviewRateProps) {
          >
             <img src={icon} alt="" />
          </div>
-         <h3 className="text-7xl font-bold text-cyan-900 text-center xl:text-end mb-1 px-2">
+         <h3 className="text-4xl md:text-7xl font-bold text-cyan-900 text-center xl:text-end mb-1 px-2">
             {value}
          </h3>
          <p className="text-sm font-medium text-gray-950 text-center group-last:text-3xl group-last:leading-[1.0em]">

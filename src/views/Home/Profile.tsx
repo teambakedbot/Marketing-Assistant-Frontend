@@ -41,7 +41,7 @@ function Profile({ onFileUpload }: ProfileProps) {
           Upgrade and Go Unlimited? Starting at $25/Month
         </p>
       </div>
-      <div className="flex justify-center mx-1">
+      <div className="flex justify-center mx-1 mt-5">
         <button
           onClick={handleButtonClick}
           className="bg-white mt-2 mx-10 md:m-4 flex flex-col items-center justify-center md:gap-2 text-gray-700 text-[12px] md:text-[15px] font-roboto font-bold rounded-2xl py-5 px-3 "

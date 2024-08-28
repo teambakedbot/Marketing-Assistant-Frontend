@@ -183,13 +183,13 @@ function Home() {
 
   return (
     <div className="lg:flex">
-      <div className="hidden lg:block bg-[#383434] px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-[20%]">
+      <div className="bg-[#383434] px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-full lg:w-[20%]">
         <Profile onFileUpload={showCustomers} />
       </div>
       <div className="bg-[#1E1E1E] min-h-screen w-full overflow-hidden">
-        <div className="xl:h-[75%] lg:grid [@media(min-width:1020px)]:grid-cols-2 flex-grow gap-3 py-9 [@media(min-width:600px)]:pr-10 pr-4 pl-3">
-          <div className="h-[100%] mt-0 md:mt-7 flex flex-col">
-            <div className="flex-grow bg-[#1C1919] border border-white rounded-lg px-5 py-10 overflow-auto">
+        <div className="xl:h-[75%] lg:grid grid-cols-1 lg:grid-cols-2 flex-grow gap-3 py-9 px-3">
+          <div className="h-full mt-0 md:mt-7 flex flex-col">
+            <div className="flex-grow bg-[#1C1919] border border-white rounded-lg px-5 py-5 overflow-auto">
               <p className="mb-10 flex flex-wrap gap-2">
                 <button
                   onClick={() => {}}
@@ -243,10 +243,7 @@ function Home() {
               {loading && <p>Loading...</p>}
             </div>
           </div>
-          <div
-            className="max-h-[68vh] mt-5 md:m-0"
-            style={{ boxSizing: "border-box" }}
-          >
+          <div className="max-h-[68vh] mt-5 md:m-0 box-border">
             <CannabotWorkspace chatHistory={chatHistory} />
           </div>
         </div>

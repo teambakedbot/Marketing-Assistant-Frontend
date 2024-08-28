@@ -18,12 +18,11 @@ function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
       case "Chat":
         return (
           <div
-            className="text-[#110F0F] text-xxl font-istok-web max-h-[55vh]"
-            style={{ overflowY: "auto" }}
+            className="text-[#110F0F] text-xxl font-istok-web max-h-[55vh] overflow-y-auto"
           >
             {chatHistory.map((message, index) => (
               <div
-                key={index}
+                key={`${message}-${index}`}
                 className="chat-message"
                 style={{ paddingBottom: "10px" }}
               >
