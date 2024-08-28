@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import SimpleBar from "simplebar-react";
 import ReactMarkdown from "react-markdown";
 import "simplebar-react/dist/simplebar.min.css";
@@ -17,6 +17,7 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+
   const renderContent = () => {
     switch (activeTab) {
       case "Chat":
@@ -36,6 +37,7 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
                 <ReactMarkdown>{message}</ReactMarkdown>
               </div>
             ))}
+            <div ref={chatEndRef} />
           </div>
         );
       case "Goals":
@@ -66,6 +68,12 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
         return null;
     }
   };
+
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatHistory]);
 
   return (
     <div className="h-full">
