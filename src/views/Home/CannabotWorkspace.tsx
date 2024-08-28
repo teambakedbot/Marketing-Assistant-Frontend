@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 
@@ -17,10 +17,10 @@ function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
     switch (activeTab) {
       case "Chat":
         return (
-          <div className="text-[#110F0F] text-xxl font-istok-web max-h-[55vh] overflow-y-auto">
+          <div className="text-[#110F0F] text-xl font-istok-web max-h-[55vh] overflow-y-auto">
             {chatHistory.map((message, index) => (
               <div
-                key={`${message}-${index}`}
+                key={`chat-message-${index}`}
                 className="chat-message"
                 style={{ paddingBottom: "10px" }}
               >
@@ -66,40 +66,40 @@ function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
         className="border h-full border-white py-0 [@media(min-width:600px)]:py-4 [@media(min-width:600px)]:px-3 px-0 rounded-3xl lg:rounded-lg"
       >
         <div className="bg-white rounded-[20px] h-full">
-          <div className="rounded-xl flex flex-wrap">
+          <div id="tabs" className="rounded-xl flex w-full">
             <button
               onClick={() => handleTabClick("Chat")}
-              className="md:px-5 px-3 py-2 lg:py-2 lg:text-lg text-sm bg-[#7e7b7b] rounded-tl-2xl lg:rounded-tl-xl"
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#7e7b7b] rounded-tl-2xl lg:rounded-tl-xl"
             >
               Chat
             </button>
             <button
               onClick={() => handleTabClick("Goals")}
-              className="md:px-5 px-3 py-2 lg:py-2 lg:text-lg text-sm bg-[#3f3d3d] border-l-2 border-white"
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#3f3d3d]"
             >
               Goals
             </button>
             <button
               onClick={() => handleTabClick("SMS")}
-              className="md:px-5 px-3 py-2 lg:py-2 lg:text-lg text-sm bg-[#07e81a] border-l-2"
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#07e81a] "
             >
               SMS
             </button>
             <button
               onClick={() => handleTabClick("Email")}
-              className="md:px-5 px-3 py-2 lg:py-2 lg:text-lg text-sm bg-[#659422] border-l-2 border-r-2"
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#659422] "
             >
               Email
             </button>
             <button
               onClick={() => handleTabClick("Content")}
-              className="md:px-5 px-3 py-2 lg:py-2 lg:text-lg text-sm bg-[#304e05] md:rounded-none"
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#304e05] md:rounded-none rounded-tr-2xl lg:rounded-tr-xl "
             >
               Content
             </button>
           </div>
           <SimpleBar>
-            <div className="h-full flex items-center justify-center">
+            <div className="h-full flex flex-col items-center justify-center">
               <div className="flex items-center justify-center gap-4 px-4 py-8 ">
                 <img src="/images/image 7.png" alt="" />
                 {renderContent()}
