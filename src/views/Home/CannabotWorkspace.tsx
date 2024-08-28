@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SimpleBar from "simplebar-react";
+import ReactMarkdown from "react-markdown";
 import "simplebar-react/dist/simplebar.min.css";
 
 interface CannabotWorkspaceProps {
@@ -29,10 +30,10 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
               >
                 <strong className="capitalize">
                   {index % 2 === 0
-                    ? `${voiceType === "normal" ? "BakedBot" : voiceType}:`
+                    ? `${voiceType === "normal" ? "BakedBot" : capitalizeFirstLetter(voiceType)}:`
                     : "You:"}
                 </strong>{" "}
-                {message}
+                <ReactMarkdown>{message}</ReactMarkdown>
               </div>
             ))}
           </div>
