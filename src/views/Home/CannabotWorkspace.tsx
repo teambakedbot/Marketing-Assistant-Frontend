@@ -5,6 +5,7 @@ import "simplebar-react/dist/simplebar.min.css";
 import receiverIcon from "/images/receiver.jpeg";
 import receiverIcon2 from "/images/receiver2.jpeg";
 import "../../styles/theme.css";
+import ChatHistory from "../../components/ChatHistory";
 import useAuth from "../../hooks/useAuth";
 import loadingIcon from "/images/loading-spinner-white.gif";
 
@@ -35,31 +36,14 @@ function CannabotWorkspace({
       case "Chat":
         return (
           <div className="text-[#110F0F] text-xl font-istok-web max-h-[55vh] overflow-y-auto">
-            {chatHistory.map((message, index) => (
-              <div className="flex gap-2 mb-4" key={`chat-message-${index}`}>
-                <img
-                  src={index % 2 === 0 ? receiverIcon : userPhoto}
-                  className="w-8 h-8 rounded-full md:w-10 md:h-10"
-                  alt={index % 2 === 0 ? "Receiver Icon" : "BakedBot Icon"}
-                />
-                <div
-                  className={`${
-                    index % 2 === 0 ? "bg-[#22AD89]" : "bg-[#23504A]"
-                  } rounded-md py-2 px-4`}
-                >
-                  <p className="text-white text-base md:text-lg">
-                    <ReactMarkdown>
-                      {index % 2 === 0
-                        ? loading
-                          ? loadingIcon
-                          : message
-                        : message}
-                    </ReactMarkdown>
-                  </p>
-                </div>
-              </div>
-            ))}
-            <div ref={chatEndRef} />
+            <ChatHistory
+              chatHistory={chatHistory}
+              loading={loading}
+              userPhoto={userPhoto}
+              receiverIcon={receiverIcon}
+              loadingIcon={loadingIcon}
+              chatEndRef={chatEndRef}
+            />
           </div>
         );
       case "Goals":
@@ -95,7 +79,7 @@ function CannabotWorkspace({
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatHistory]);
+  }, [chatHistory, loading]);
 
   return (
     <div className="h-full">

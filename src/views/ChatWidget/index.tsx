@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import bottom from "/images/Chatbot logo white background large-circle.png";
 import receiverIcon from "/images/receiver.jpeg";
-import receiverIcon2 from "/images/receiver2.jpeg";
 import product1 from "/images/product1.png";
 import sendIcon from "/images/send.png";
 import axios from "axios";
-import loadingIcon from "/images/loading-spinner-white.gif"; // Add a loading spinner icon
+import loadingIcon from "/images/loading-spinner-white.gif";
 import Swal from "sweetalert2";
 import ChatHistory from "../../components/ChatHistory";
 import "./main.css";
-import ReactMarkdown from "react-markdown";
 import useAuth from "../../hooks/useAuth";
 
 export const ChatWidget: React.FC = () => {
@@ -72,7 +70,7 @@ export const ChatWidget: React.FC = () => {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatHistory]);
+  }, [chatHistory.length, loading]);
 
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -93,20 +91,18 @@ export const ChatWidget: React.FC = () => {
                 <p className="text-[#23504A] text-lg md:text-xl font-bold">
                   BakedBot Chat
                 </p>
-
                 <ChatHistory
                   chatHistory={chatHistory}
                   loading={loading}
                   userPhoto={userPhoto}
                   receiverIcon={receiverIcon}
                   loadingIcon={loadingIcon}
+                  chatEndRef={chatEndRef}
                 />
-                <div ref={chatEndRef} />
                 <div className="flex items-center gap-2 bottom-2 w-full">
                   <textarea
                     className="text-[#23504A] text-base md:text-lg border-none resize-none w-full placeholder-gray-600"
                     onKeyDown={playHandler}
-                    disabled={loading}
                     placeholder="Type your message..."
                     value={prompts}
                     onChange={(e) => setPrompts(e.target.value)}

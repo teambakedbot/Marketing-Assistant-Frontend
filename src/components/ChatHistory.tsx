@@ -7,6 +7,7 @@ interface ChatHistoryProps {
   userPhoto: string;
   receiverIcon: string;
   loadingIcon: string;
+  chatEndRef: React.RefObject<HTMLDivElement>;
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
@@ -15,6 +16,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   userPhoto,
   receiverIcon,
   loadingIcon,
+  chatEndRef,
 }) => {
   return (
     <div className="flex-1 overflow-y-auto mb-2">
@@ -36,11 +38,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
             <div className={`${bgColor} rounded-md py-2 px-4`}>
               {isLoading ? (
                 <p className="text-white text-base md:text-lg">
-                  <img
-                    src={loadingIcon}
-                    className="w-6 h-6"
-                    alt="Loading"
-                  />
+                  <img src={loadingIcon} className="w-6 h-6" alt="Loading" />
                 </p>
               ) : (
                 <p className="text-white text-base md:text-lg">
@@ -51,6 +49,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
           </div>
         );
       })}
+      <div ref={chatEndRef} />
     </div>
   );
 };

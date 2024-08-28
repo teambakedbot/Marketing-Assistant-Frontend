@@ -82,16 +82,21 @@ function Home() {
   };
 
   function playHandler() {
-    if (!prompts) return;
-    setLoading(true);
+    if (!prompts || loading) return;
+    setChatHistory((prevHistory) => [...prevHistory, prompts, "loading"]);
     setPrompts("");
+    setLoading(true);
     axios
       .post(
         "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
         { message: prompts, voice_type: voiceType }
       )
       .then((res) => {
-        setChatHistory((prev) => [...prev, prompts, res?.data?.response]);
+        setChatHistory((prevHistory) => {
+          const updatedHistory = [...prevHistory];
+          updatedHistory[updatedHistory.length - 1] = res?.data?.response;
+          return updatedHistory;
+        });
       })
       .catch((err) => {
         Swal.fire({
@@ -100,7 +105,6 @@ function Home() {
         });
       })
       .finally(() => {
-        // setMessages([...messages, prompts]);
         setLoading(false);
       });
   }
@@ -251,7 +255,6 @@ function Home() {
                   </p>
                 </div>
               ))}
-              {loading && <p>Loading...</p>}
             </div>
           </div>
           {/* right panel */}
@@ -285,16 +288,11 @@ function Home() {
           </div> */}
           <div className="flex w-[100%] mt-20 lg:w-[80%] [@media(min-width:600px)]:flex-row flex-col items-center [@media(min-width:600px)]:gap-5 gap-3 px-4 [@media(min-width:1440px)]:px-11 mb-7 flex-grow">
             <textarea
-              disabled={loading}
-              placeholder={
-                loading
-                  ? "Loading..."
-                  : `Chat with ${
-                      voiceType === "normal"
-                        ? "BakedBot"
-                        : capitalizeFirstLetter(voiceType)
-                    } or Enter your goal`
-              }
+              placeholder={`Chat with ${
+                voiceType === "normal"
+                  ? "BakedBot"
+                  : capitalizeFirstLetter(voiceType)
+              } or Enter your goal`}
               className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder-white dark-green-background-4 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none"
               onChange={(e) => {
                 setPrompts(e.target.value);
