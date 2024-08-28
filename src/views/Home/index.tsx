@@ -69,7 +69,11 @@ function Home() {
     "Hi, Brandon. Welcome Back",
   ]);
   const [chatHistory, setChatHistory] = useState<string[]>([
-    "Whassup, whassup! It's Pops, baby! How can I help you today?",
+    voiceType === "normal"
+      ? "Hey, how can i help?"
+      : `Whassup, whassup! It's ${capitalizeFirstLetter(
+          voiceType
+        )}, baby! How can I help you today?`,
   ]);
 
   const setAllCustomerSelected = () => {
@@ -306,7 +310,16 @@ function Home() {
             />
             <select
               value={voiceType}
-              onChange={(e) => setVoiceType(e.target.value)}
+              onChange={(e) => {
+                setVoiceType(e.target.value);
+                setChatHistory([
+                  e.target.value === "normal"
+                    ? "Hey, how can i help?"
+                    : `Whassup, whassup! It's ${capitalizeFirstLetter(
+                        e.target.value
+                      )}, baby! How can I help you today?`,
+                ]);
+              }}
               className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web bg-neutral-800 text-white rounded-lg focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 appearance-none"
             >
               <option value="pops">Pops</option>
