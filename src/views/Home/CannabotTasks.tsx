@@ -53,7 +53,7 @@ function CannabotTasks({ isRun }: CannabotTasksProps) {
 
          return () => clearInterval(interval);
       }
-   }, [isRun, currentIndex, tasks]);
+   }, [isRun, currentIndex]);
 
    useEffect(() => {
       if (!isRun) {
@@ -64,11 +64,11 @@ function CannabotTasks({ isRun }: CannabotTasksProps) {
 
    return (
       <div className="lg:mt-0 mt-5">
-         <h2 className="font-bold leading-[1.22em] mb-3.5 text-center">Smokey Tasks</h2>
+         <h2 className="font-bold leading-[1.22em] mb-3.5 text-left">Smokey Tasks</h2>
          <SimpleBar className="max-h-[150px] overflow-y-auto">
             <div className="flex flex-col gap-2 mr-2">
                {
-                  tasks.map((item, index) => (
+                  process.map((item, index) => (
                      <div key={`${item.text}-${index}`} className="flex items-center gap-1 bg-gray-600 rounded-[20px] py-[1px] pl-2.5 pr-1 mr-2.5">
                         <img className="w-4 lg:w-6" src={item.img} alt="" />
                         <p className="font-bold lg:text-base text-sm font-istok-web">{item.text}</p>

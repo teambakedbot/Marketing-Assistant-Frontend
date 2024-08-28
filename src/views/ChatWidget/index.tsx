@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import bottom from "/images/Chatbot logo white background large-circle.png";
 import receiverIcon from "/images/receiver.jpeg";
-import product1 from "/images/product1.png";
 import receiverIcon2 from "/images/receiver2.jpeg";
+import product1 from "/images/product1.png";
 import sendIcon from "/images/send.png";
 import axios from "axios";
 import loadingIcon from "/images/loading-spinner-white.gif"; // Add a loading spinner icon
 import Swal from "sweetalert2";
 import "./main.css";
 import ReactMarkdown from "react-markdown";
+import useAuth from "../../hooks/useAuth";
 
 export const ChatWidget: React.FC = () => {
+  const { displayName, photoURL, user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [value, setValue] = useState(1);
   const [prompts, setPrompts] = useState<string>("");
@@ -64,6 +66,7 @@ export const ChatWidget: React.FC = () => {
     }
   };
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const userPhoto = photoURL || "/images/person-image.png";
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -96,7 +99,7 @@ export const ChatWidget: React.FC = () => {
                       key={`chat-message-${index}`}
                     >
                       <img
-                        src={index % 2 === 0 ? receiverIcon : receiverIcon2}
+                        src={index % 2 === 0 ? receiverIcon : userPhoto}
                         className="w-8 h-8 rounded-full md:w-10 md:h-10"
                         alt={
                           index % 2 === 0 ? "Receiver Icon" : "BakedBot Icon"

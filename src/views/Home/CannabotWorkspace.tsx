@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import SimpleBar from "simplebar-react";
 import ReactMarkdown from "react-markdown";
 import "simplebar-react/dist/simplebar.min.css";
+import receiverIcon from "/images/receiver.jpeg";
+import receiverIcon2 from "/images/receiver2.jpeg";
 import "../../styles/theme.css";
+import useAuth from "../../hooks/useAuth";
 
 interface CannabotWorkspaceProps {
   chatHistory: string[];
@@ -11,6 +14,7 @@ interface CannabotWorkspaceProps {
 
 function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
   const [activeTab, setActiveTab] = useState("Chat");
+  const { displayName, photoURL, user } = useAuth();
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -19,27 +23,28 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  const userPhoto = photoURL || "/images/person-image.png";
   const renderContent = () => {
     switch (activeTab) {
       case "Chat":
         return (
           <div className="text-[#110F0F] text-xl font-istok-web max-h-[55vh] overflow-y-auto">
             {chatHistory.map((message, index) => (
-              <div
-                key={`chat-message-${index}`}
-                className="chat-message"
-                style={{ paddingBottom: "10px" }}
-              >
-                <strong className="capitalize">
-                  {index % 2 === 0
-                    ? `${
-                        voiceType === "normal"
-                          ? "BakedBot"
-                          : capitalizeFirstLetter(voiceType)
-                      }:`
-                    : "You:"}
-                </strong>{" "}
-                <ReactMarkdown>{message}</ReactMarkdown>
+              <div className="flex gap-2 mb-4" key={`chat-message-${index}`}>
+                <img
+                  src={index % 2 === 0 ? receiverIcon : userPhoto}
+                  className="w-8 h-8 rounded-full md:w-10 md:h-10"
+                  alt={index % 2 === 0 ? "Receiver Icon" : "BakedBot Icon"}
+                />
+                <div
+                  className={`${
+                    index % 2 === 0 ? "bg-[#22AD89]" : "bg-[#23504A]"
+                  } rounded-md py-2 px-4`}
+                >
+                  <p className="text-white text-base md:text-lg">
+                    <ReactMarkdown>{message}</ReactMarkdown>
+                  </p>
+                </div>
               </div>
             ))}
             <div ref={chatEndRef} />
@@ -121,11 +126,8 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
             </button>
           </div>
           <SimpleBar>
-            <div className="h-full flex flex-col items-center justify-center">
-              <div className="flex items-center justify-center gap-4 px-4 py-8 ">
-                <img src="/images/image 7.png" alt="" />
-                {renderContent()}
-              </div>
+            <div className="h-full flex flex-col ">
+              <div className="flex  gap-4 px-4 py-8 ">{renderContent()}</div>
               {/* <div className="h-[1200px]" /> */}
             </div>
           </SimpleBar>
