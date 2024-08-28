@@ -181,20 +181,20 @@ export const ChatWidget: React.FC = () => {
                     }}
                   />
                   <div className="flex justify-between gap-1 text-sm text-gray-700 mt-4">
-                    <span className="text-lg text-center md:leading-[8px] tracking-tighter">
+                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
+                      😴
+                    </span>
+                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
                       🧘
                     </span>
-                    <span className="text-lg text-center md:leading-[8px] tracking-tighter">
-                      😌
+                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
+                      🤗
                     </span>
-                    <span className="text-lg text-center md:leading-[8px] tracking-tighter">
-                      ⚡
+                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
+                      💡
                     </span>
-                    <span className="text-lg text-center md:leading-[8px] tracking-tighter">
+                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
                       🚀
-                    </span>
-                    <span className="text-lg text-center md:leading-[8px] tracking-tighter">
-                      🌟
                     </span>
                   </div>
                   <style>

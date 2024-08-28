@@ -68,8 +68,14 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  max-height: "40vh";
+  max-height: 40vh;
   z-index: 1000; /* Ensure it is above other elements */
+}
+
+@media (max-width: 768px) {
+  .chat-widget {
+  visibility: hidden;
+  }
 }
 @keyframes openAnimation {
   0% {
