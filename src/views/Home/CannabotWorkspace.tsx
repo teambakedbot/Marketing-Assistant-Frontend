@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import SimpleBar from "simplebar-react";
 import ReactMarkdown from "react-markdown";
 import "simplebar-react/dist/simplebar.min.css";
-import receiverIcon from "/images/receiver.jpeg";
+import botIcon from "/images/receiver.jpeg";
 import receiverIcon2 from "/images/receiver2.jpeg";
 import "../../styles/theme.css";
 import ChatHistory from "../../components/ChatHistory";
@@ -10,7 +10,7 @@ import useAuth from "../../hooks/useAuth";
 import loadingIcon from "/images/loading-spinner-white.gif";
 
 interface CannabotWorkspaceProps {
-  chatHistory: string[];
+  chatHistory: { sender: string; message: string }[];
   voiceType: string;
   loading: boolean;
 }
@@ -40,7 +40,7 @@ function CannabotWorkspace({
               chatHistory={chatHistory}
               loading={loading}
               userPhoto={userPhoto}
-              receiverIcon={receiverIcon}
+              botIcon={botIcon}
               loadingIcon={loadingIcon}
               chatEndRef={chatEndRef}
             />

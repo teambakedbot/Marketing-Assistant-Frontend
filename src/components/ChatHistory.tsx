@@ -2,10 +2,10 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 
 interface ChatHistoryProps {
-  chatHistory: string[];
+  chatHistory: { sender: string; message: string }[];
   loading: boolean;
   userPhoto: string;
-  receiverIcon: string;
+  botIcon: string;
   loadingIcon: string;
   chatEndRef: React.RefObject<HTMLDivElement>;
 }
@@ -14,19 +14,19 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   chatHistory,
   loading,
   userPhoto,
-  receiverIcon,
+  botIcon,
   loadingIcon,
   chatEndRef,
 }) => {
   return (
     <div className="flex-1 overflow-y-auto mb-2">
-      {chatHistory.map((message, index) => {
-        const isReceiver = index % 2 === 0;
+      {chatHistory.map((chat, index) => {
+        const isReceiver = chat.sender === "bot";
         const isLoading =
           loading && isReceiver && index === chatHistory.length - 1;
-        const iconSrc = isReceiver ? receiverIcon : userPhoto;
+        const iconSrc = isReceiver ? botIcon : userPhoto;
         const bgColor = isReceiver ? "bg-[#22AD89]" : "bg-[#23504A]";
-        const altText = isReceiver ? "Receiver Icon" : "BakedBot Icon";
+        const altText = isReceiver ? "Bot Icon" : "User Icon";
 
         return (
           <div className="flex gap-2 mb-4" key={`chat-message-${index}`}>
@@ -42,7 +42,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                 </p>
               ) : (
                 <p className="text-white text-base md:text-lg">
-                  <ReactMarkdown>{message}</ReactMarkdown>
+                  <ReactMarkdown>{chat.message}</ReactMarkdown>
                 </p>
               )}
             </div>

@@ -69,12 +69,18 @@ function Home() {
   const [messages, setMessages] = useState<string[]>([
     "Hi, Brandon. Welcome Back",
   ]);
-  const [chatHistory, setChatHistory] = useState<string[]>([
-    voiceType === "normal"
-      ? "Hey, how can I help?"
-      : `Whassup, whassup! It's ${capitalizeFirstLetter(
-          voiceType
-        )}, baby! How can I help you today?`,
+  const [chatHistory, setChatHistory] = useState<
+    { sender: string; message: string }[]
+  >([
+    {
+      sender: "bot",
+      message:
+        voiceType === "normal"
+          ? "Hey, how can I help?"
+          : `Whassup, whassup! It's ${capitalizeFirstLetter(
+              voiceType
+            )}, baby! How can I help you today?`,
+    },
   ]);
 
   const setAllCustomerSelected = () => {
@@ -83,7 +89,11 @@ function Home() {
 
   function playHandler() {
     if (!prompts || loading) return;
-    setChatHistory((prevHistory) => [...prevHistory, prompts, "loading"]);
+    setChatHistory((prevHistory) => [
+      ...prevHistory,
+      { sender: "user", message: prompts },
+      { sender: "bot", message: "loading" },
+    ]);
     setPrompts("");
     setLoading(true);
     axios
@@ -94,7 +104,8 @@ function Home() {
       .then((res) => {
         setChatHistory((prevHistory) => {
           const updatedHistory = [...prevHistory];
-          updatedHistory[updatedHistory.length - 1] = res?.data?.response;
+          updatedHistory[updatedHistory.length - 1].message =
+            res?.data?.response;
           return updatedHistory;
         });
       })
@@ -178,7 +189,7 @@ function Home() {
         if (done) break;
         setChatHistory((prev) => [
           ...prev,
-          decoder.decode(value, { stream: true }),
+          { sender: "AI", message: decoder.decode(value, { stream: true }) },
         ]);
       }
     }
@@ -313,11 +324,15 @@ function Home() {
               onChange={(e) => {
                 setVoiceType(e.target.value);
                 setChatHistory([
-                  e.target.value === "normal"
-                    ? "Hey, how can i help?"
-                    : `Whassup, whassup! It's ${capitalizeFirstLetter(
-                        e.target.value
-                      )}, baby! How can I help you today?`,
+                  {
+                    sender: "bot",
+                    message:
+                      e.target.value === "normal"
+                        ? "Hey, how can I help?"
+                        : `Whassup, whassup! It's ${capitalizeFirstLetter(
+                            e.target.value
+                          )}, baby! How can I help you today?`,
+                  },
                 ]);
               }}
               className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web dark-green-background-4 white rounded-lg focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 appearance-none"

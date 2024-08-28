@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import bottom from "/images/Chatbot logo white background large-circle.png";
-import receiverIcon from "/images/receiver.jpeg";
+import botIcon from "/images/receiver.jpeg";
 import product1 from "/images/product1.png";
 import sendIcon from "/images/send.png";
 import axios from "axios";
@@ -16,9 +16,9 @@ export const ChatWidget: React.FC = () => {
   const [value, setValue] = useState(1);
   const [prompts, setPrompts] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [chatHistory, setChatHistory] = useState<string[]>([
-    `Hey, how can i help?`,
-  ]);
+  const [chatHistory, setChatHistory] = useState<
+    { sender: string; message: string }[]
+  >([{ sender: "bot", message: "Hey, how can I help?" }]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.valueAsNumber);
   };
@@ -38,7 +38,11 @@ export const ChatWidget: React.FC = () => {
     ) {
       e.preventDefault();
       if (!prompts || loading) return;
-      setChatHistory((prevHistory) => [...prevHistory, prompts, "loading"]);
+      setChatHistory((prevHistory) => [
+        ...prevHistory,
+        { sender: "user", message: prompts },
+        { sender: "bot", message: "loading" },
+      ]);
       setPrompts("");
       setLoading(true);
       axios
@@ -50,7 +54,8 @@ export const ChatWidget: React.FC = () => {
           console.log(res?.data?.response);
           setChatHistory((prevHistory) => {
             const updatedHistory = [...prevHistory];
-            updatedHistory[updatedHistory.length - 1] = res?.data?.response;
+            updatedHistory[updatedHistory.length - 1].message =
+              res?.data?.response;
             return updatedHistory;
           });
         })
@@ -95,7 +100,7 @@ export const ChatWidget: React.FC = () => {
                   chatHistory={chatHistory}
                   loading={loading}
                   userPhoto={userPhoto}
-                  receiverIcon={receiverIcon}
+                  botIcon={botIcon}
                   loadingIcon={loadingIcon}
                   chatEndRef={chatEndRef}
                 />
