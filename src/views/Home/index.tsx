@@ -187,7 +187,7 @@ function Home() {
         <Profile onFileUpload={showCustomers} />
       </div>
       <div className="bg-[#1E1E1E] min-h-screen w-full overflow-hidden">
-        <div className="xl:h-[75%] lg:grid grid-cols-1 lg:grid-cols-2 flex-grow gap-3 py-9 px-3">
+        <div className="xl:h-[75%] lg:grid grid-cols-1 lg:grid-cols-2 flex-grow gap-3 py-9 px-3 flex flex-col">
           {/* left Panel */}
           <div className="h-full mt-0 md:mt-7 flex flex-col hidden sm:flex">
             <div className="flex-grow bg-[#1C1919] border border-white rounded-lg px-5 py-5 overflow-auto">
@@ -245,14 +245,14 @@ function Home() {
             </div>
           </div>
           {/* right panel */}
-          <div className="min-h-[68vh] mt-5 md:m-0 box-border">
+          <div className="flex-grow mt-5 md:m-0 box-border">
             <CannabotWorkspace chatHistory={chatHistory} />
           </div>
         </div>
         {/* bottom panel */}
         <div
           id="bottom_panel"
-          className="flex flex-col items-center justify-center my-5 "
+          className="flex flex-col items-center justify-center my-5 min-h-[50%]"
         >
           {/* <div className="flex mb-5 [@media(min-width:600px)]:flex-row flex-col items-center justify-center gap-4">
             <div className="md:flex gap-4">

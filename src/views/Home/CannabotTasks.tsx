@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Fragment } from "react/jsx-runtime";
+import { useEffect, useState, Fragment } from "react";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 
