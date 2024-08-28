@@ -1,7 +1,7 @@
 import { IoStopOutline } from "react-icons/io5";
 import { LuPlay } from "react-icons/lu";
 import CannabotWorkspace from "./CannabotWorkspace";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Fragment } from "react";
 import Papa from "papaparse";
 import "../../styles/main.css";
 import Profile from "./Profile";
@@ -14,9 +14,9 @@ const marketingSite = [
     title: "Start",
     type: "sms",
     content: (
-      <>
+      <Fragment>
         SMS <br /> Marketing
-      </>
+      </Fragment>
     ),
   },
   {
@@ -24,9 +24,9 @@ const marketingSite = [
     title: "Start",
     type: "email",
     content: (
-      <>
+      <Fragment>
         Email <br /> Marketing
-      </>
+      </Fragment>
     ),
   },
   {
@@ -34,9 +34,9 @@ const marketingSite = [
     title: "Create",
     type: "blog",
     content: (
-      <>
+      <Fragment>
         Marketing <br /> Content
-      </>
+      </Fragment>
     ),
   },
   {
@@ -44,9 +44,9 @@ const marketingSite = [
     title: "Launch",
     type: "",
     content: (
-      <>
+      <Fragment>
         Integrated <br /> Campaign
-      </>
+      </Fragment>
     ),
     popup: "Coming Soon!",
   },
@@ -183,12 +183,13 @@ function Home() {
 
   return (
     <div className="lg:flex">
-      <div className="bg-[#383434] px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-full lg:w-[20%]">
+      <div className="bg-[#383434] px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-full lg:w-[20%] hidden sm:block">
         <Profile onFileUpload={showCustomers} />
       </div>
       <div className="bg-[#1E1E1E] min-h-screen w-full overflow-hidden">
         <div className="xl:h-[75%] lg:grid grid-cols-1 lg:grid-cols-2 flex-grow gap-3 py-9 px-3">
-          <div className="h-full mt-0 md:mt-7 flex flex-col">
+          {/* left Panel */}
+          <div className="h-full mt-0 md:mt-7 flex flex-col hidden sm:flex">
             <div className="flex-grow bg-[#1C1919] border border-white rounded-lg px-5 py-5 overflow-auto">
               <p className="mb-10 flex flex-wrap gap-2">
                 <button
@@ -243,11 +244,16 @@ function Home() {
               {loading && <p>Loading...</p>}
             </div>
           </div>
-          <div className="max-h-[68vh] mt-5 md:m-0 box-border">
+          {/* right panel */}
+          <div className="min-h-[68vh] mt-5 md:m-0 box-border">
             <CannabotWorkspace chatHistory={chatHistory} />
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center my-5">
+        {/* bottom panel */}
+        <div
+          id="bottom_panel"
+          className="flex flex-col items-center justify-center my-5 "
+        >
           {/* <div className="flex mb-5 [@media(min-width:600px)]:flex-row flex-col items-center justify-center gap-4">
             <div className="md:flex gap-4">
               <button
