@@ -6,13 +6,19 @@ import receiverIcon from "/images/receiver.jpeg";
 import receiverIcon2 from "/images/receiver2.jpeg";
 import "../../styles/theme.css";
 import useAuth from "../../hooks/useAuth";
+import loadingIcon from "/images/loading-spinner-white.gif";
 
 interface CannabotWorkspaceProps {
   chatHistory: string[];
   voiceType: string;
+  loading: boolean;
 }
 
-function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
+function CannabotWorkspace({
+  chatHistory,
+  voiceType,
+  loading,
+}: CannabotWorkspaceProps) {
   const [activeTab, setActiveTab] = useState("Chat");
   const { displayName, photoURL, user } = useAuth();
 
@@ -42,7 +48,13 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
                   } rounded-md py-2 px-4`}
                 >
                   <p className="text-white text-base md:text-lg">
-                    <ReactMarkdown>{message}</ReactMarkdown>
+                    <ReactMarkdown>
+                      {index % 2 === 0
+                        ? loading
+                          ? loadingIcon
+                          : message
+                        : message}
+                    </ReactMarkdown>
                   </p>
                 </div>
               </div>

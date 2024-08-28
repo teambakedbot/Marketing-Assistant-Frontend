@@ -1,0 +1,58 @@
+import React from "react";
+import ReactMarkdown from "react-markdown";
+
+interface ChatHistoryProps {
+  chatHistory: string[];
+  loading: boolean;
+  userPhoto: string;
+  receiverIcon: string;
+  loadingIcon: string;
+}
+
+const ChatHistory: React.FC<ChatHistoryProps> = ({
+  chatHistory,
+  loading,
+  userPhoto,
+  receiverIcon,
+  loadingIcon,
+}) => {
+  return (
+    <div className="flex-1 overflow-y-auto mb-2">
+      {chatHistory.map((message, index) => {
+        const isReceiver = index % 2 === 0;
+        const isLoading =
+          loading && isReceiver && index === chatHistory.length - 1;
+        const iconSrc = isReceiver ? receiverIcon : userPhoto;
+        const bgColor = isReceiver ? "bg-[#22AD89]" : "bg-[#23504A]";
+        const altText = isReceiver ? "Receiver Icon" : "BakedBot Icon";
+
+        return (
+          <div className="flex gap-2 mb-4" key={`chat-message-${index}`}>
+            <img
+              src={iconSrc}
+              className="w-8 h-8 rounded-full md:w-10 md:h-10"
+              alt={altText}
+            />
+            <div className={`${bgColor} rounded-md py-2 px-4`}>
+              {isLoading ? (
+                <p className="text-white text-base md:text-lg">
+                  <img
+                    src={loadingIcon}
+                    className="w-6 h-6"
+                    alt="Loading"
+                  />
+                </p>
+              ) : (
+                <p className="text-white text-base md:text-lg">
+                  <ReactMarkdown>{message}</ReactMarkdown>
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+export default ChatHistory;

@@ -257,6 +257,7 @@ function Home() {
           {/* right panel */}
           <div id="right_panel" className="max-h-[70vh] mt-5 md:m-0 box-border">
             <CannabotWorkspace
+              loading={loading}
               chatHistory={chatHistory}
               voiceType={voiceType}
             />

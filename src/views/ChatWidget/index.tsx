@@ -7,6 +7,7 @@ import sendIcon from "/images/send.png";
 import axios from "axios";
 import loadingIcon from "/images/loading-spinner-white.gif"; // Add a loading spinner icon
 import Swal from "sweetalert2";
+import ChatHistory from "../../components/ChatHistory";
 import "./main.css";
 import ReactMarkdown from "react-markdown";
 import useAuth from "../../hooks/useAuth";
@@ -39,6 +40,8 @@ export const ChatWidget: React.FC = () => {
     ) {
       e.preventDefault();
       if (!prompts || loading) return;
+      setChatHistory((prevHistory) => [...prevHistory, prompts, "loading"]);
+      setPrompts("");
       setLoading(true);
       axios
         .post(
@@ -47,12 +50,11 @@ export const ChatWidget: React.FC = () => {
         )
         .then((res) => {
           console.log(res?.data?.response);
-          setChatHistory((prevHistory) => [
-            ...prevHistory,
-            prompts,
-            res?.data?.response,
-          ]);
-          setPrompts("");
+          setChatHistory((prevHistory) => {
+            const updatedHistory = [...prevHistory];
+            updatedHistory[updatedHistory.length - 1] = res?.data?.response;
+            return updatedHistory;
+          });
         })
         .catch((err) => {
           Swal.fire({
@@ -92,32 +94,14 @@ export const ChatWidget: React.FC = () => {
                   BakedBot Chat
                 </p>
 
-                <div className="flex-1 overflow-y-auto mb-2">
-                  {chatHistory.map((message, index) => (
-                    <div
-                      className="flex gap-2 mb-4"
-                      key={`chat-message-${index}`}
-                    >
-                      <img
-                        src={index % 2 === 0 ? receiverIcon : userPhoto}
-                        className="w-8 h-8 rounded-full md:w-10 md:h-10"
-                        alt={
-                          index % 2 === 0 ? "Receiver Icon" : "BakedBot Icon"
-                        }
-                      />
-                      <div
-                        className={`${
-                          index % 2 === 0 ? "bg-[#22AD89]" : "bg-[#23504A]"
-                        } rounded-md py-2 px-4`}
-                      >
-                        <p className="text-white text-base md:text-lg">
-                          <ReactMarkdown>{message}</ReactMarkdown>
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
-                </div>
+                <ChatHistory
+                  chatHistory={chatHistory}
+                  loading={loading}
+                  userPhoto={userPhoto}
+                  receiverIcon={receiverIcon}
+                  loadingIcon={loadingIcon}
+                />
+                <div ref={chatEndRef} />
                 <div className="flex items-center gap-2 bottom-2 w-full">
                   <textarea
                     className="text-[#23504A] text-base md:text-lg border-none resize-none w-full placeholder-gray-600"
@@ -138,11 +122,15 @@ export const ChatWidget: React.FC = () => {
                     onClick={playHandler}
                     disabled={loading}
                   >
-                    <img
-                      src={loading ? loadingIcon : sendIcon}
-                      className="w-9 h-8 p-2"
-                      alt="Send"
-                    />
+                    {loading ? (
+                      <img
+                        src={loadingIcon}
+                        className="w-9 h-8 p-2"
+                        alt="Loading"
+                      />
+                    ) : (
+                      <img src={sendIcon} className="w-9 h-8 p-2" alt="Send" />
+                    )}
                   </button>
                 </div>
               </div>
