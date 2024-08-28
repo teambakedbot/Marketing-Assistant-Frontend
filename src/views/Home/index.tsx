@@ -204,25 +204,25 @@ function Home() {
               <p className="mb-10 flex flex-wrap gap-2">
                 <button
                   onClick={() => {}}
-                  className="medium-gray px-3 py-2 font-istok-web font-medium  lg:text-lg text-sm rounded-3xl "
+                  className="medium-gray px-3 py-2 font-istok-web font-medium  lg:text-lg text-sm rounded-lg "
                 >
                   Search Customer(s)
                 </button>
                 <button
                   onClick={() => typeBtnClick("sms")}
-                  className="vibrant-green px-3 py-2 font-istok-web font-medium lg:text-lg text-sm rounded-3xl "
+                  className="vibrant-green px-3 py-2 font-istok-web font-medium lg:text-lg text-sm rounded-lg "
                 >
                   Run SMS
                 </button>
                 <button
                   onClick={() => typeBtnClick("email")}
-                  className="bright-orange px-3 py-2 font-istok-web font-medium  lg:text-lg text-sm rounded-3xl "
+                  className="bright-orange px-3 py-2 font-istok-web font-medium  lg:text-lg text-sm rounded-lg "
                 >
                   Run Email
                 </button>
                 <button
                   onClick={() => typeBtnClick("blog")}
-                  className="dark-gray px-3 py-2 font-istok-web font-medium  lg:text-lg text-sm rounded-3xl "
+                  className="dark-gray px-3 py-2 font-istok-web font-medium  lg:text-lg text-sm rounded-lg "
                 >
                   Create Content
                 </button>
