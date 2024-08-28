@@ -200,29 +200,29 @@ function Home() {
         <div className="xl:h-[75%] lg:grid grid-cols-1 lg:grid-cols-2 flex-grow gap-3 py-9 px-3">
           {/* left Panel */}
           <div className="h-full mt-0 md:mt-7 flex flex-col hidden sm:flex">
-            <div className="flex-grow dark-green-background-4 border dark-gray rounded-lg px-5 py-5 overflow-auto">
+            <div className="flex-grow dark-green-background-4 border rounded-lg px-5 py-5 overflow-auto">
               <p className="mb-10 flex flex-wrap gap-2">
                 <button
                   onClick={() => {}}
-                  className="medium-gray px-3 py-2 font-istok-web font-medium text-sm rounded-3xl text-[14px]"
+                  className="medium-gray px-3 py-2 font-istok-web font-medium  lg:text-lg text-sm rounded-3xl "
                 >
                   Search Customer(s)
                 </button>
                 <button
                   onClick={() => typeBtnClick("sms")}
-                  className="vibrant-green px-3 py-2 font-istok-web font-medium text-sm rounded-3xl text-[14px]"
+                  className="vibrant-green px-3 py-2 font-istok-web font-medium lg:text-lg text-sm rounded-3xl "
                 >
                   Run SMS
                 </button>
                 <button
                   onClick={() => typeBtnClick("email")}
-                  className="bright-orange px-3 py-2 font-istok-web font-medium text-sm rounded-3xl text-[14px]"
+                  className="bright-orange px-3 py-2 font-istok-web font-medium  lg:text-lg text-sm rounded-3xl "
                 >
                   Run Email
                 </button>
                 <button
                   onClick={() => typeBtnClick("blog")}
-                  className="dark-gray px-3 py-2 font-istok-web font-medium text-sm rounded-3xl text-[14px]"
+                  className="dark-gray px-3 py-2 font-istok-web font-medium  lg:text-lg text-sm rounded-3xl "
                 >
                   Create Content
                 </button>
