@@ -94,7 +94,7 @@ function Home() {
         });
       })
       .finally(() => {
-        setMessages([...messages, prompts]);
+        // setMessages([...messages, prompts]);
         setLoading(false);
       });
   }
@@ -245,7 +245,7 @@ function Home() {
             </div>
           </div>
           {/* right panel */}
-          <div className="min-h-[68vh] mt-5 md:m-0 box-border">
+          <div id="right_panel" className="max-h-[70vh] mt-5 md:m-0 box-border">
             <CannabotWorkspace chatHistory={chatHistory} />
           </div>
         </div>
