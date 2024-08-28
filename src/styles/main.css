@@ -2,31 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* SimpleBar styles */
 .simplebar-track.simplebar-vertical,
 .simplebar-track.simplebar-horizontal {
   opacity: 1 !important;
   visibility: visible !important;
+  background-color: var(--light-gray) !important;
 }
 
 .simplebar-track.simplebar-vertical .simplebar-scrollbar,
 .simplebar-track.simplebar-horizontal .simplebar-scrollbar {
-  opacity: 1 !important;
-  visibility: visible !important;
-  background-color: #A1A6A2 !important;
-}
-
-.simplebar-track.simplebar-vertical .simplebar-scrollbar:before,
-.simplebar-track.simplebar-horizontal .simplebar-scrollbar:before {
   background-color: #d9d9d9 !important;
-}
-
-.simplebar-track.simplebar-vertical .simplebar-scrollbar,
-.simplebar-track.simplebar-horizontal .simplebar-scrollbar {
   width: 8px !important;
-}
-
-.simplebar-track.simplebar-vertical .simplebar-scrollbar,
-.simplebar-track.simplebar-horizontal .simplebar-scrollbar {
   border-radius: 10px;
 }
 
@@ -46,7 +33,7 @@
 }
 
 body {
-  @apply font-roboto text-white font-normal text-3xl;
+  @apply text-white font-normal text-3xl;
 }
 
 .li-customer-name {

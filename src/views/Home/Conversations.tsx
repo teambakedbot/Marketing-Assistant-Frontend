@@ -23,6 +23,10 @@ const message = [
     name: "Best Dispensary in lorem ip some dollar",
     url: "/",
   },
+  {
+    name: "Best Dispensary in lorem ip some dollar",
+    url: "/",
+  },
 ];
 
 function Conversations() {
@@ -40,11 +44,17 @@ function Conversations() {
         Conversations
       </h3>
       <div className="pl-1.5 mb-5">
-        <SimpleBar className="max-h-[120px] overflow-y-auto">
+        <SimpleBar
+          className="max-h-[220px] overflow-y-auto overflow-x-hidden border-0"
+          autoHide={true}
+        >
           <div className="flex flex-col gap-4 relative z-0">
             <span className="w-0.5 block absolute top-4 bottom-4 left-2 -translate-x-1/2 bg-white z-10" />
             {message.map(({ name, url }, index) => (
-              <div key={`${name}-${index}`} className="relative group py-1 ml-4">
+              <div
+                key={`${name}-${index}`}
+                className="relative group py-1 ml-4"
+              >
                 <img
                   className="absolute -left-4 top-1 w-4 h-4"
                   src="/images/Rechteck_731.svg"

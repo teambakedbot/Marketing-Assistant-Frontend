@@ -12,9 +12,9 @@ function Button(props: ButtonProps) {
    return (
       <Link
          to={path}
-         className={`py-2.5 px-9 font-bold font-istok-web ${
+         className={`py-2.5 px-9 font-bold ${
             color === "grey" ? "bg-gray-600 rounded-[20px]" : "bg-blue-400 rounded-xl"
-         }`}
+         } text-white`}
       >
          {name}
       </Link>

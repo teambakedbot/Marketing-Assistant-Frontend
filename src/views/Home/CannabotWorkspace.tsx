@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import SimpleBar from "simplebar-react";
 import ReactMarkdown from "react-markdown";
 import "simplebar-react/dist/simplebar.min.css";
+import "../../styles/theme.css";
 
 interface CannabotWorkspaceProps {
   chatHistory: string[];
@@ -46,7 +47,7 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
         );
       case "Goals":
         return (
-          <p className="font-bold text-[#110F0F] text-base font-istok-web">
+          <p className="font-bold text-[#110F0F] text-base">
             Goals content goes here.
           </p>
         );
@@ -90,31 +91,31 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
           <div id="tabs" className="rounded-xl flex w-full">
             <button
               onClick={() => handleTabClick("Chat")}
-              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#7e7b7b] rounded-tl-2xl lg:rounded-tl-xl"
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm dark-green-background-3 rounded-tl-2xl lg:rounded-tl-xl"
             >
               Chat
             </button>
             <button
               onClick={() => handleTabClick("Goals")}
-              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#3f3d3d]"
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm dark-green-background-2"
             >
               Goals
             </button>
             <button
               onClick={() => handleTabClick("SMS")}
-              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#07e81a] "
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm vibrant-green"
             >
               SMS
             </button>
             <button
               onClick={() => handleTabClick("Email")}
-              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#659422] "
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bright-orange"
             >
               Email
             </button>
             <button
               onClick={() => handleTabClick("Content")}
-              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm bg-[#304e05] md:rounded-none rounded-tr-2xl lg:rounded-tr-xl "
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm medium-gray md:rounded-none rounded-tr-2xl lg:rounded-tr-xl"
             >
               Content
             </button>

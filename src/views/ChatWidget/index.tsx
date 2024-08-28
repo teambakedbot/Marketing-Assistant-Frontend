@@ -8,6 +8,7 @@ import axios from "axios";
 import loadingIcon from "/images/loading-spinner-white.gif"; // Add a loading spinner icon
 import Swal from "sweetalert2";
 import "./main.css";
+import "../../styles/theme.css";
 import ReactMarkdown from "react-markdown";
 
 export const ChatWidget: React.FC = () => {
@@ -16,7 +17,7 @@ export const ChatWidget: React.FC = () => {
   const [prompts, setPrompts] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<string[]>([
-    `Hey, how can i help?`,
+    `Hey, how can I help?`,
   ]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.valueAsNumber);
@@ -79,11 +80,11 @@ export const ChatWidget: React.FC = () => {
       </button>
       {isModalOpen && (
         <div className="absolute right-2 bottom-14 flex justify-center items-center z-50">
-          <div className="bg-[#0D211D] p-3 md:p-5 rounded-lg shadow-lg relative">
+          <div className="dark-green-background-1 p-3 md:p-5 rounded-lg shadow-lg relative">
             <div className="md:flex md:flex-row flex-col gap-3 min-h-[250px] min-w-[180px] lg:min-h-[350px] lg:min-w-[800px]">
               {/* left box */}
-              <div className="border-2 h-[450px] bg-white w-full md:w-3/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden">
-                <p className="text-[#23504A] text-lg md:text-xl font-bold">
+              <div className="border-2 h-[450px] dark-green-background-3 w-full md:w-3/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden">
+                <p className="text-lg md:text-xl font-bold white">
                   BakedBot Chat
                 </p>
 
@@ -100,8 +101,8 @@ export const ChatWidget: React.FC = () => {
                           index % 2 === 0 ? "Receiver Icon" : "BakedBot Icon"
                         }
                       />
-                      <div className="bg-[#22AD85] rounded-md py-2 px-4">
-                        <p className="text-white text-base md:text-lg">
+                      <div className="vibrant-green rounded-md py-2 px-4">
+                        <p className="white text-base md:text-lg">
                           <ReactMarkdown>{message}</ReactMarkdown>
                         </p>
                       </div>
@@ -111,7 +112,7 @@ export const ChatWidget: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-3 bottom-2 w-11/12">
                   <textarea
-                    className="border-black h-8 md:h-12 text-[#23504A] text-base md:text-lg border-2 rounded-3xl resize-none w-full px-4 py-0 pt-1"
+                    className="border-black h-8 md:h-12 white text-base md:text-lg border-2 rounded-3xl resize-none w-full px-4 py-0 pt-1"
                     onKeyDown={playHandler}
                     disabled={loading}
                     placeholder="Type your message..."
@@ -119,7 +120,7 @@ export const ChatWidget: React.FC = () => {
                     onChange={(e) => setPrompts(e.target.value)}
                   ></textarea>
                   <button
-                    className="bg-[#22AD85] rounded-full text-white"
+                    className="vibrant-green rounded-full"
                     onClick={playHandler}
                     disabled={loading}
                   >
@@ -132,12 +133,12 @@ export const ChatWidget: React.FC = () => {
                 </div>
               </div>
               {/* right box */}
-              <div className="border-2 mt-2 md:mt-0 w-[100%] bg-white md:w-[35%] rounded-md p-2 flex flex-col justify-between gap-2 ">
-                <div className="h-full min-h-[200px] rounded-md bg-white p-2 flex flex-col justify-between border-2 border-[#00766D]">
-                  <p className="text-[#00766D] font-bold text-center md:text-lg mb-2">
+              <div className="border-2 mt-2 md:mt-0 w-[100%] white md:w-[35%] rounded-md p-2 flex flex-col justify-between gap-2 ">
+                <div className="h-full min-h-[200px] rounded-md dark-green-background-3 p-2 flex flex-col justify-between border-2 dark-gray">
+                  <p className="vibrant-green font-bold text-center md:text-lg mb-2">
                     Purple Punch I
                   </p>
-                  <p className="text-[#00766D] text-center text-sm md:text-base mb-0">
+                  <p className="vibrant-green text-center text-sm md:text-base mb-0">
                     A premium cannabis strain
                   </p>
                   <div className="flex-1 flex items-center justify-center">
@@ -148,7 +149,7 @@ export const ChatWidget: React.FC = () => {
                     />
                   </div>
                 </div>
-                <div className="h-full bg-[#22AD85] rounded-md p-2">
+                <div className="vibrant-green rounded-md p-2">
                   <label
                     htmlFor="slider"
                     className="block text-white font-bold text-base md:text-lg mb-2"

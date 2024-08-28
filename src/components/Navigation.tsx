@@ -14,6 +14,7 @@ import { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
+import "../styles/theme.css";
 import { Link } from "react-router-dom";
 import Profile from "../views/Profile";
 import { auth } from "../config/firebase-config";
@@ -73,7 +74,7 @@ function Navigation() {
 
   return (
     <div>
-      <div className="fixed top-0 left-0 bottom-0 w-[110px] bg-[#111111] text-white">
+      <div className="fixed top-0 left-0 bottom-0 w-[110px] dark-green-background-4 off-white">
         <div className="flex justify-between flex-col py-8 gap-4 h-screen overflow-y-scroll scrollbar-hidden">
           <div className="flex flex-col gap-2 items-center">
             <div
@@ -115,15 +116,15 @@ function Navigation() {
             <div className="flex flex-col items-center">
               <Link to="/profile" role="button">
                 <img
-                  width={32}
-                  height={32}
+                  width={40}
+                  height={40}
                   src={photoURL || "/images/person-image.png"}
                   className="rounded-full"
                   alt="Profile"
                 />
               </Link>
               {displayName && (
-                <p className="text-white text-center mt-2 text-md max-w-[100px] overflow-hidden whitespace-normal text-ellipsis">
+                <p className="text-white text-center mt-2 text-lg max-w-[100px] overflow-hidden whitespace-normal text-ellipsis">
                   {displayName}
                 </p>
               )}
@@ -139,7 +140,7 @@ function Navigation() {
           onClose={() => setMenuOpen(false)}
           style={{ width: 320 }}
         >
-          <div className="bg-[#383434] px-4 py-14 min-h-screen overflow-y-auto w-full">
+          <div className="dark-green-background-1 px-4 py-14 min-h-screen overflow-y-auto w-full">
             <button
               onClick={() => setMenuOpen(false)}
               className="p-3 absolute top-4 right-4"

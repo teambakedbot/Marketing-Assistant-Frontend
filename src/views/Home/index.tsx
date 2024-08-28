@@ -4,6 +4,7 @@ import CannabotWorkspace from "./CannabotWorkspace";
 import { useRef, useState, useEffect } from "react";
 import Papa from "papaparse";
 import "../../styles/main.css";
+import "../../styles/theme.css";
 import Profile from "./Profile";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -70,7 +71,7 @@ function Home() {
   ]);
   const [chatHistory, setChatHistory] = useState<string[]>([
     voiceType === "normal"
-      ? "Hey, how can i help?"
+      ? "Hey, how can I help?"
       : `Whassup, whassup! It's ${capitalizeFirstLetter(
           voiceType
         )}, baby! How can I help you today?`,
@@ -192,43 +193,43 @@ function Home() {
 
   return (
     <div className="lg:flex">
-      <div className="bg-[#383434] px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-full lg:w-[20%] hidden sm:block">
+      <div className="dark-green-background-2 px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-full lg:w-[20%] hidden sm:block">
         <Profile onFileUpload={showCustomers} />
       </div>
-      <div className="bg-[#1E1E1E] min-h-screen w-full overflow-hidden">
+      <div className="dark-green-background-3 min-h-screen w-full overflow-hidden">
         <div className="xl:h-[75%] lg:grid grid-cols-1 lg:grid-cols-2 flex-grow gap-3 py-9 px-3">
           {/* left Panel */}
           <div className="h-full mt-0 md:mt-7 flex flex-col hidden sm:flex">
-            <div className="flex-grow bg-[#1C1919] border border-white rounded-lg px-5 py-5 overflow-auto">
+            <div className="flex-grow dark-green-background-4 border dark-gray rounded-lg px-5 py-5 overflow-auto">
               <p className="mb-10 flex flex-wrap gap-2">
                 <button
                   onClick={() => {}}
-                  className="bg-[#636363] px-3 py-2 text-white font-istok-web font-medium text-sm  rounded-3xl text-[14px]"
+                  className="medium-gray px-3 py-2 font-istok-web font-medium text-sm rounded-3xl text-[14px]"
                 >
                   Search Customer(s)
                 </button>
                 <button
                   onClick={() => typeBtnClick("sms")}
-                  className="bg-[#07e81a] px-3 py-2 text-white font-istok-web font-medium text-sm rounded-3xl text-[14px]"
+                  className="vibrant-green px-3 py-2 font-istok-web font-medium text-sm rounded-3xl text-[14px]"
                 >
                   Run SMS
                 </button>
                 <button
                   onClick={() => typeBtnClick("email")}
-                  className="bg-[#659422] px-3 py-2 text-white font-istok-web font-medium text-sm rounded-3xl text-[14px]"
+                  className="bright-orange px-3 py-2 font-istok-web font-medium text-sm rounded-3xl text-[14px]"
                 >
                   Run Email
                 </button>
                 <button
                   onClick={() => typeBtnClick("blog")}
-                  className="bg-[#304e05] px-3 py-2 text-white font-istok-web font-medium text-sm rounded-3xl text-[14px]"
+                  className="dark-gray px-3 py-2 font-istok-web font-medium text-sm rounded-3xl text-[14px]"
                 >
                   Create Content
                 </button>
               </p>
               {messages.map((d: string, index: number) => (
                 <p
-                  className="text-[16px] font-rhodium-libre mb-1"
+                  className="text-[16px] font-playfair-display mb-1"
                   key={`${d}-${index}`}
                 >
                   {d}
@@ -245,7 +246,7 @@ function Home() {
                     onChange={() => handleCustomerSelect(customer)}
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  <p className="text-[16px] font-rhodium-libre mb-1">
+                  <p className="text-[16px] font-istok-web mb-1">
                     {customer["Customer Name"]}
                   </p>
                 </div>
@@ -293,7 +294,7 @@ function Home() {
                         : capitalizeFirstLetter(voiceType)
                     } or Enter your goal`
               }
-              className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder:text-white bg-neutral-800 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none"
+              className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder-white dark-green-background-4 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none"
               onChange={(e) => {
                 setPrompts(e.target.value);
                 e.target.style.height = "auto";
@@ -320,7 +321,7 @@ function Home() {
                       )}, baby! How can I help you today?`,
                 ]);
               }}
-              className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web bg-neutral-800 text-white rounded-lg focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 appearance-none"
+              className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web dark-green-background-4 white rounded-lg focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 appearance-none"
             >
               <option value="pops">Pops</option>
               <option value="smokey">Smokey</option>
@@ -328,7 +329,7 @@ function Home() {
             </select>
             <button
               onClick={playHandler}
-              className="text-[20px] font-istok-web italic bg-[#2305fb] text-white py-3 px-11 rounded-lg [@media(min-width:600px)]:w-auto w-full"
+              className="text-[20px] font-istok-web italic dark-green-background-1 white py-3 px-11 rounded-lg [@media(min-width:600px)]:w-auto w-full"
             >
               Send
             </button>

@@ -25,26 +25,26 @@ function Profile({ onFileUpload }: ProfileProps) {
           alt=""
         />
       </Link>
-      <div className="font-bold text-center my-[15px] md:mb-[50px]">
+      <div className="text-center my-[15px] md:mb-[50px] font-playfair-display font-bold">
         Cultivating Unforgettable Experiences
       </div>
 
       <Conversations />
-      {/* <p className="bg-[#636363] font-istok-web text-white text-base text-center font-semibold py-1 rounded-2xl">
+      {/* <p className="medium-gray font-istok-web text-base text-center font-semibold py-1 rounded-2xl">
         Calling Smokey to send an SMS
       </p> */}
       <div className="text-center mx-2 mb-10 mt-[20px] md:mt-[30px]">
-        <p className="text-[13px] mb-2 md:mb-3 font-rhodium-libre">
+        <p className="text-[13px] mb-2 md:mb-3 font-istok-web">
           You are using the Limited Free Version of BakedBot.
         </p>
-        <p className="text-[13px] mb-0 md:mb-3 font-rhodium-libre">
+        <p className="text-[13px] mb-0 md:mb-3 font-istok-web">
           Upgrade and Go Unlimited? Starting at $25/Month
         </p>
       </div>
       <div className="flex justify-center mx-1 mt-5">
         <button
           onClick={handleButtonClick}
-          className="bg-white mt-2 mx-10 md:m-4 flex flex-col items-center justify-center md:gap-2 text-gray-700 text-[12px] md:text-[15px] font-roboto font-bold rounded-2xl py-5 px-3 "
+          className="bg-white mt-2 mx-10 md:m-4 flex flex-col items-center justify-center md:gap-2 text-gray-700 text-[12px] md:text-[15px] font-istok-web font-bold rounded-2xl py-5 px-3 "
         >
           <svg
             width="40"

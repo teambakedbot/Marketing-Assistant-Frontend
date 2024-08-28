@@ -27,7 +27,7 @@ function ReviewRate(props: ReviewRateProps) {
          <h3 className="text-4xl md:text-7xl font-bold text-cyan-900 text-center xl:text-end mb-1 px-2">
             {value}
          </h3>
-         <p className="text-sm font-medium text-gray-950 text-center group-last:text-3xl group-last:leading-[1.0em]">
+         <p className="text-sm font-medium text-center text-gray-950 group-last:text-3xl group-last:leading-[1.0em]">
             {content}
          </p>
       </div>
