@@ -4,15 +4,18 @@ import "simplebar-react/dist/simplebar.min.css";
 
 interface CannabotWorkspaceProps {
   chatHistory: string[];
+  voiceType: string;
 }
 
-function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
+function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
   const [activeTab, setActiveTab] = useState("Chat");
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
-
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
   const renderContent = () => {
     switch (activeTab) {
       case "Chat":
@@ -24,7 +27,12 @@ function CannabotWorkspace({ chatHistory }: CannabotWorkspaceProps) {
                 className="chat-message"
                 style={{ paddingBottom: "10px" }}
               >
-                <strong>{index % 2 === 0 ? "Pops:" : "You:"}</strong> {message}
+                <strong className="capitalize">
+                  {index % 2 === 0
+                    ? `${voiceType === "normal" ? "BakedBot" : voiceType}:`
+                    : "You:"}
+                </strong>{" "}
+                {message}
               </div>
             ))}
           </div>

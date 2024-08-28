@@ -1,7 +1,7 @@
 import { IoStopOutline } from "react-icons/io5";
 import { LuPlay } from "react-icons/lu";
 import CannabotWorkspace from "./CannabotWorkspace";
-import { useRef, useState, useEffect, Fragment } from "react";
+import { useRef, useState, useEffect } from "react";
 import Papa from "papaparse";
 import "../../styles/main.css";
 import Profile from "./Profile";
@@ -14,9 +14,9 @@ const marketingSite = [
     title: "Start",
     type: "sms",
     content: (
-      <Fragment>
+      <>
         SMS <br /> Marketing
-      </Fragment>
+      </>
     ),
   },
   {
@@ -24,9 +24,9 @@ const marketingSite = [
     title: "Start",
     type: "email",
     content: (
-      <Fragment>
+      <>
         Email <br /> Marketing
-      </Fragment>
+      </>
     ),
   },
   {
@@ -34,9 +34,9 @@ const marketingSite = [
     title: "Create",
     type: "blog",
     content: (
-      <Fragment>
+      <>
         Marketing <br /> Content
-      </Fragment>
+      </>
     ),
   },
   {
@@ -44,9 +44,9 @@ const marketingSite = [
     title: "Launch",
     type: "",
     content: (
-      <Fragment>
+      <>
         Integrated <br /> Campaign
-      </Fragment>
+      </>
     ),
     popup: "Coming Soon!",
   },
@@ -60,6 +60,7 @@ interface Customer {
 function Home() {
   const [prompts, setPrompts] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [voiceType, setVoiceType] = useState<string>("pops");
   const promptsRow = prompts.split("\n").length;
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [customerSelected, setCustomerSelected] = useState<Customer[]>([]);
@@ -82,7 +83,7 @@ function Home() {
     axios
       .post(
         "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
-        { message: prompts }
+        { message: prompts, voice_type: voiceType }
       )
       .then((res) => {
         setChatHistory((prev) => [...prev, prompts, res?.data?.response]);
@@ -99,6 +100,9 @@ function Home() {
       });
   }
 
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
   const showCustomers = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
@@ -147,6 +151,7 @@ function Home() {
     const formData = new FormData();
     formData.append("file", blob);
     formData.append("content_type", contentType);
+    formData.append("voice_type", voiceType);
     const response = await fetch(`${apiUrl}/upload/`, {
       method: "POST",
       body: formData,
@@ -246,7 +251,10 @@ function Home() {
           </div>
           {/* right panel */}
           <div id="right_panel" className="max-h-[70vh] mt-5 md:m-0 box-border">
-            <CannabotWorkspace chatHistory={chatHistory} />
+            <CannabotWorkspace
+              chatHistory={chatHistory}
+              voiceType={voiceType}
+            />
           </div>
         </div>
         {/* bottom panel */}
@@ -273,7 +281,13 @@ function Home() {
             <textarea
               disabled={loading}
               placeholder={
-                loading ? "Loading..." : "Chat with Pops or Enter your goal"
+                loading
+                  ? "Loading..."
+                  : `Chat with ${
+                      voiceType === "normal"
+                        ? "BakedBot"
+                        : capitalizeFirstLetter(voiceType)
+                    } or Enter your goal`
               }
               className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder:text-white bg-neutral-800 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none"
               onChange={(e) => {
@@ -290,6 +304,15 @@ function Home() {
               value={prompts}
               rows={1}
             />
+            <select
+              value={voiceType}
+              onChange={(e) => setVoiceType(e.target.value)}
+              className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web bg-neutral-800 text-white rounded-lg focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 appearance-none"
+            >
+              <option value="pops">Pops</option>
+              <option value="smokey">Smokey</option>
+              <option value="normal">Normal</option>
+            </select>
             <button
               onClick={playHandler}
               className="text-[20px] font-istok-web italic bg-[#2305fb] text-white py-3 px-11 rounded-lg [@media(min-width:600px)]:w-auto w-full"
