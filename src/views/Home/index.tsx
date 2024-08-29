@@ -27,7 +27,7 @@ function Home() {
   const [messages, setMessages] = useState<string[]>([
     "Hi, Brandon. Welcome Back",
   ]);
-  const [chatId, setChatId] = useState<string | null>(null);
+  const [chatId, setChatId] = useState<string>("");
   const [chatName, setChatName] = useState<string>("");
   const [chats, setChats] = useState<Chats[]>([]);
   const [chatHistory, setChatHistory] = useState<ChatEntry[]>([
@@ -246,7 +246,7 @@ function Home() {
   };
 
   return (
-    <div className="lg:flex">
+    <div className="lg:flex h-screen overflow-hidden">
       <div className="dark-green-background-2 px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-full lg:w-[20%] hidden sm:block">
         <Profile
           onFileUpload={showCustomers}
@@ -326,6 +326,21 @@ function Home() {
           id="bottom_panel"
           className="flex flex-col items-center justify-center my-5 "
         >
+          {/* <div className="flex mb-5 [@media(min-width:600px)]:flex-row flex-col items-center justify-center gap-4">
+            <div className="md:flex gap-4">
+              <button
+                onClick={playHandler}
+                className="bg-emerald-500 lg:my-0 my-3 flex flex-col items-center justify-center border-none py-1.5 w-[100px] md:px-10 rounded-md border border-[#999999]"
+              >
+                <LuPlay className="text-3xl text-black" />
+                <span className="text-black">Start</span>
+              </button>
+              <button className="bg-red-400 lg:my-0 my-3 flex flex-col items-center justify-center border-none py-1.5 w-[100px] md:px-10 rounded-md border border-[#999999]">
+                <IoStopOutline className="text-3xl text-[#999999]" />
+                <span className="text-black">Stop</span>
+              </button>
+            </div>
+          </div> */}
           <div className="flex w-[100%] mt-20 lg:w-[80%] [@media(min-width:600px)]:flex-row flex-col items-center [@media(min-width:600px)]:gap-5 gap-3 px-4 [@media(min-width:1440px)]:px-11 mb-7 flex-grow">
             <textarea
               placeholder={`Chat with ${
@@ -373,7 +388,7 @@ function Home() {
             </select>
             <button
               onClick={playHandler}
-              className="text-[20px] font-istok-web italic dark-green-background-1 white py-3 px-11 rounded-lg [@media(min-width:600px)]:w-auto w-full"
+              className="text-[20px] font-istok-web italic vibrant-green-background white py-3 px-11 rounded-lg [@media(min-width:600px)]:w-auto w-full"
             >
               Send
             </button>

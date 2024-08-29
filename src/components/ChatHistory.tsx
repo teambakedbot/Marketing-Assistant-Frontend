@@ -24,7 +24,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
         const isBot = chat.role === "assistant";
         const isLoading = loading && isBot && index === chatHistory.length - 1;
         const iconSrc = isBot ? botIcon : userPhoto;
-        const bgColorClass = isBot ? "vibrant-green-background" : "medium-gray";
+        const bgColorClass = isBot ? "bg-[#23504A]" : "medium-gray";
         const altText = isBot ? "Bot Icon" : "User Icon";
 
         return (
