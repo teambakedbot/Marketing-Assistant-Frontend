@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const BASE_URL = "http://0.0.0.0:8080";
+// const BASE_URL = "http://0.0.0.0:8080";
+const BASE_URL =
+  "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com";
 
 export const getChats = async (token: string) => {
   const response = await axios.get(`${BASE_URL}/user/chats`, {

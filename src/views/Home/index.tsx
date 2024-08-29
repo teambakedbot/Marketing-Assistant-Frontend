@@ -62,7 +62,8 @@ function Home() {
         }
         console.log("Token:", token);
         const response = await axios.get(
-          `http://0.0.0.0:8080/chat/messages?chat_id=${id}`,
+          `https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat/messages?chat_id=${id}`,
+          // `http://0.0.0.0:8080/chat/messages?chat_id=${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -96,11 +97,15 @@ function Home() {
     try {
       const token = await user?.getIdToken();
       console.log("Token:", token);
-      const response = await axios.get("http://0.0.0.0:8080/user/chats", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        // "http://0.0.0.0:8080/user/chats",
+        "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/user/chats",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (response.data.chats) {
         const chats = response.data.chats;
         if (chats.length > 0) {
@@ -125,8 +130,8 @@ function Home() {
     const token = await user?.getIdToken();
     axios
       .post(
-        // "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
-        "http://0.0.0.0:8080/chat",
+        "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
+        // "http://0.0.0.0:8080/chat",
         { message: prompts, voice_type: voiceType, chat_id: chatId },
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {},

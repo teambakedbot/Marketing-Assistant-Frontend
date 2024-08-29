@@ -8,7 +8,8 @@ export const renameChat = async (
   try {
     const token = await user?.getIdToken();
     const response = await axios.put(
-      `http://0.0.0.0:8080/chat/rename?chat_id=${chatId}&new_name=${newName}`,
+      `https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat/rename?chat_id=${chatId}&new_name=${newName}`,
+      // `http://0.0.0.0:8080/chat/rename?chat_id=${chatId}&new_name=${newName}`,
       {},
       {
         headers: {
