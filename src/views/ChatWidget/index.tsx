@@ -27,7 +27,7 @@ export const ChatWidget: React.FC = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const playHandler = (
+  const playHandler = async (
     e?:
       | React.KeyboardEvent<HTMLTextAreaElement>
       | React.MouseEvent<HTMLButtonElement>
@@ -45,10 +45,14 @@ export const ChatWidget: React.FC = () => {
       ]);
       setPrompts("");
       setLoading(true);
+      const token = user?.getIdToken ? await user.getIdToken() : null; // Ensure user object contains the token
       axios
         .post(
           "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
-          { message: prompts }
+          { message: prompts },
+          {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          }
         )
         .then((res) => {
           console.log(res?.data?.response);

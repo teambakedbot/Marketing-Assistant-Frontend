@@ -8,6 +8,7 @@ import "../../styles/theme.css";
 import Profile from "./Profile";
 import axios from "axios";
 import Swal from "sweetalert2";
+import useAuth from "../../hooks/useAuth";
 
 const marketingSite = [
   {
@@ -60,6 +61,7 @@ interface Customer {
 
 function Home() {
   const [prompts, setPrompts] = useState<string>("");
+  const { displayName, photoURL, user } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [voiceType, setVoiceType] = useState<string>("pops");
   const promptsRow = prompts.split("\n").length;
@@ -87,7 +89,7 @@ function Home() {
     setCustomerSelected(customers);
   };
 
-  function playHandler() {
+  async function playHandler() {
     if (!prompts || loading) return;
     setChatHistory((prevHistory) => [
       ...prevHistory,
@@ -96,10 +98,14 @@ function Home() {
     ]);
     setPrompts("");
     setLoading(true);
+    const token = user?.getIdToken ? await user.getIdToken() : null; // Ensure user object contains the token
     axios
       .post(
         "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
-        { message: prompts, voice_type: voiceType }
+        { message: prompts, voice_type: voiceType },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
       )
       .then((res) => {
         setChatHistory((prevHistory) => {
