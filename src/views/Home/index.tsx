@@ -1,63 +1,18 @@
+import { useRef, useState, useEffect, useCallback } from "react";
 import { IoStopOutline } from "react-icons/io5";
 import { LuPlay } from "react-icons/lu";
 import CannabotWorkspace from "./CannabotWorkspace";
-import { useRef, useState, useEffect } from "react";
-import Papa from "papaparse";
-import "../../styles/main.css";
-import "../../styles/theme.css";
 import Profile from "./Profile";
-import axios from "axios";
 import Swal from "sweetalert2";
+import Papa from "papaparse";
+import axios from "axios";
 import useAuth from "../../hooks/useAuth";
-
-const marketingSite = [
-  {
-    icon: "/images/image-logo.png",
-    title: "Start",
-    type: "sms",
-    content: (
-      <>
-        SMS <br /> Marketing
-      </>
-    ),
-  },
-  {
-    icon: "/images/image-logo.png",
-    title: "Start",
-    type: "email",
-    content: (
-      <>
-        Email <br /> Marketing
-      </>
-    ),
-  },
-  {
-    icon: "/images/image-logo.png",
-    title: "Create",
-    type: "blog",
-    content: (
-      <>
-        Marketing <br /> Content
-      </>
-    ),
-  },
-  {
-    icon: "/images/image-logo.png",
-    title: "Launch",
-    type: "",
-    content: (
-      <>
-        Integrated <br /> Campaign
-      </>
-    ),
-    popup: "Coming Soon!",
-  },
-];
-
-interface Customer {
-  "Customer Name": string;
-  [key: string]: unknown;
-}
+import { Customer } from "../../models/CustomerModel";
+import { ChatEntry, Chats } from "../../models/ChatModels";
+import "../../styles/main.css";
+import { renameChat } from "../../api/renameChat";
+import "../../styles/theme.css";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
 function Home() {
   const [prompts, setPrompts] = useState<string>("");
@@ -71,12 +26,13 @@ function Home() {
   const [messages, setMessages] = useState<string[]>([
     "Hi, Brandon. Welcome Back",
   ]);
-  const [chatHistory, setChatHistory] = useState<
-    { sender: string; message: string }[]
-  >([
+  const [chatId, setChatId] = useState<string>("");
+  const [chatName, setChatName] = useState<string>("");
+
+  const [chatHistory, setChatHistory] = useState<ChatEntry[]>([
     {
-      sender: "bot",
-      message:
+      role: "assistant",
+      content:
         voiceType === "normal"
           ? "Hey, how can I help?"
           : `Whassup, whassup! It's ${capitalizeFirstLetter(
@@ -88,21 +44,64 @@ function Home() {
   const setAllCustomerSelected = () => {
     setCustomerSelected(customers);
   };
+  const loadChatHistory = useCallback(
+    async (id: string) => {
+      if (!id) return;
+      setChatHistory([
+        { role: "assistant", content: "Loading chat history..." },
+      ]);
+      try {
+        setLoading(true);
+        const token = await user?.getIdToken();
+        if (!token) {
+          console.error("Token is not available.");
+          return;
+        }
+        console.log("Token:", token);
+        const response = await axios.get(
+          `http://0.0.0.0:8080/chat/messages?chat_id=${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const sortedMessages = response.data.messages.sort((a, b) => {
+          const dateA = new Date(a.timestamp);
+          const dateB = new Date(b.timestamp);
+          return dateA.getTime() - dateB.getTime();
+        });
+        setChatHistory(sortedMessages);
+      } catch (error) {
+        console.error("Error fetching chat messages:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user]
+  );
+
+  useEffect(() => {
+    if (chatId) {
+      loadChatHistory(chatId);
+    }
+  }, [chatId, loadChatHistory, user]);
 
   async function playHandler() {
     if (!prompts || loading) return;
     setChatHistory((prevHistory) => [
       ...prevHistory,
-      { sender: "user", message: prompts },
-      { sender: "bot", message: "loading" },
+      { role: "user", content: prompts },
+      { role: "assistant", content: "loading" },
     ]);
     setPrompts("");
     setLoading(true);
-    const token = user?.getIdToken ? await user.getIdToken() : null; // Ensure user object contains the token
+    const token = await user?.getIdToken();
     axios
       .post(
-        "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
-        { message: prompts, voice_type: voiceType },
+        // "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
+        "http://0.0.0.0:8080/chat",
+        { message: prompts, voice_type: voiceType, chat_id: chatId },
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         }
@@ -110,10 +109,15 @@ function Home() {
       .then((res) => {
         setChatHistory((prevHistory) => {
           const updatedHistory = [...prevHistory];
-          updatedHistory[updatedHistory.length - 1].message =
+          updatedHistory[updatedHistory.length - 1].content =
             res?.data?.response;
           return updatedHistory;
         });
+        if (res?.data?.chat_id) {
+          if (chatId !== res?.data?.chat_id) {
+            setChatId(res?.data?.chat_id);
+          }
+        }
       })
       .catch((err) => {
         Swal.fire({
@@ -195,7 +199,7 @@ function Home() {
         if (done) break;
         setChatHistory((prev) => [
           ...prev,
-          { sender: "AI", message: decoder.decode(value, { stream: true }) },
+          { role: "AI", content: decoder.decode(value, { stream: true }) },
         ]);
       }
     }
@@ -215,7 +219,7 @@ function Home() {
   return (
     <div className="lg:flex">
       <div className="dark-green-background-2 px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-full lg:w-[20%] hidden sm:block">
-        <Profile onFileUpload={showCustomers} />
+        <Profile onFileUpload={showCustomers} setChatId={setChatId} />
       </div>
       <div className="dark-green-background-3 min-h-screen w-full overflow-hidden">
         <div className="xl:h-[75%] lg:grid grid-cols-1 lg:grid-cols-2 flex-grow gap-3 py-9 px-3">
@@ -313,8 +317,9 @@ function Home() {
               className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder-white dark-green-background-4 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none"
               onChange={(e) => {
                 setPrompts(e.target.value);
-                e.target.style.height = "auto";
-                e.target.style.height = `${e.target.scrollHeight}px`;
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = "auto";
+                target.style.height = `${target.scrollHeight}px`;
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -331,8 +336,8 @@ function Home() {
                 setVoiceType(e.target.value);
                 setChatHistory([
                   {
-                    sender: "bot",
-                    message:
+                    role: "assistant",
+                    content:
                       e.target.value === "normal"
                         ? "Hey, how can I help?"
                         : `Whassup, whassup! It's ${capitalizeFirstLetter(

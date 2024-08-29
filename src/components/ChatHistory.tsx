@@ -2,7 +2,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 
 interface ChatHistoryProps {
-  chatHistory: { sender: string; message: string }[];
+  chatHistory: { role: string; content: string }[];
   loading: boolean;
   userPhoto: string;
   botIcon: string;
@@ -20,8 +20,8 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
 }) => {
   return (
     <div className="flex-1 overflow-y-auto mb-2">
-      {chatHistory.map((chat, index) => {
-        const isBot = chat.sender === "bot";
+      {chatHistory?.map((chat, index) => {
+        const isBot = chat.role === "assistant";
         const isLoading = loading && isBot && index === chatHistory.length - 1;
         const iconSrc = isBot ? botIcon : userPhoto;
         const bgColor = isBot ? "bg-[#22AD89]" : "bg-[#23504A]";
@@ -43,13 +43,11 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
             )}
             <div className={`${bgColor} rounded-md py-2 px-4  max-w-[70%]`}>
               {isLoading ? (
-                <p className="text-white text-base md:text-lg">
-                  <img src={loadingIcon} className="w-6 h-6" alt="Loading" />
-                </p>
+                <img src={loadingIcon} className="w-6 h-6" alt="Loading" />
               ) : (
-                <p className="text-white text-base md:text-lg">
-                  <ReactMarkdown>{chat.message}</ReactMarkdown>
-                </p>
+                <ReactMarkdown className="text-white text-base md:text-lg">
+                  {chat.content}
+                </ReactMarkdown>
               )}
             </div>
           </div>

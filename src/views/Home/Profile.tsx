@@ -1,14 +1,20 @@
 import { Link } from "react-router-dom";
 import Conversations from "./Conversations";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DocumentUpload } from "iconsax-react";
+import axios from "axios";
+import useAuth from "../../hooks/useAuth";
+import { Chats } from "../../models/ChatModels";
 
 interface ProfileProps {
   onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setChatId: (chatId: string) => void;
 }
 
-function Profile({ onFileUpload }: ProfileProps) {
+function Profile({ onFileUpload, setChatId }: ProfileProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [chats, setChats] = useState<Chats[]>([]);
+  const { displayName, photoURL, user } = useAuth();
 
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -16,6 +22,33 @@ function Profile({ onFileUpload }: ProfileProps) {
 
     inputRef.current.click();
   }
+
+  const fetchUserChats = async () => {
+    try {
+      const token = await user?.getIdToken();
+      console.log("Token:", token);
+      const response = await axios.get("http://0.0.0.0:8080/user/chats", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.chats) {
+        const chats = response.data.chats;
+        if (chats.length > 0) {
+          setChats(chats);
+        }
+      }
+      console.log("User chats:", response.data.chats);
+    } catch (error) {
+      console.error("Error fetching user chats:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchUserChats();
+    }
+  }, [user]);
 
   return (
     <div className="">
@@ -30,7 +63,7 @@ function Profile({ onFileUpload }: ProfileProps) {
         Cultivating Unforgettable Experiences
       </div>
 
-      <Conversations />
+      <Conversations chats={chats} setChatId={setChatId} />
       {/* <p className="medium-gray font-istok-web text-base text-center font-semibold py-1 rounded-2xl">
         Calling Smokey to send an SMS
       </p> */}

@@ -10,7 +10,7 @@ import useAuth from "../../hooks/useAuth";
 import loadingIcon from "/images/loading-spinner-white.gif";
 
 interface CannabotWorkspaceProps {
-  chatHistory: { sender: string; message: string }[];
+  chatHistory: { role: string; content: string }[];
   voiceType: string;
   loading: boolean;
 }
@@ -35,7 +35,7 @@ function CannabotWorkspace({
     switch (activeTab) {
       case "Chat":
         return (
-          <div className="text-[#110F0F] text-xl font-istok-web max-h-[55vh] overflow-y-auto">
+          <div className="text-[#110F0F] text-xl font-istok-web max-h-[55vh] w-full overflow-y-auto">
             <ChatHistory
               chatHistory={chatHistory}
               loading={loading}

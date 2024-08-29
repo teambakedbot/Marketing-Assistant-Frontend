@@ -2,34 +2,12 @@ import { Link } from "react-router-dom";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 
-const message = [
-  {
-    name: "SMS Run",
-    url: "/",
-  },
-  {
-    name: "Content Run",
-    url: "/",
-  },
-  {
-    name: "Best Dispensary in lorem ip some dollar",
-    url: "/",
-  },
-  {
-    name: "Best Dispensary in lorem ip some dollar",
-    url: "/",
-  },
-  {
-    name: "Best Dispensary in lorem ip some dollar",
-    url: "/",
-  },
-  {
-    name: "Best Dispensary in lorem ip some dollar",
-    url: "/",
-  },
-];
+interface ConversationsProps {
+  chats: any;
+  setChatId: (chatId: string) => void;
+}
 
-function Conversations() {
+function Conversations({ chats, setChatId }: ConversationsProps) {
   return (
     <div className="px-2 mb-10">
       {/* <div className="flex items-center gap-5 mb-10">
@@ -50,9 +28,9 @@ function Conversations() {
         >
           <div className="flex flex-col gap-4 relative z-0">
             <span className="w-0.5 block absolute top-4 bottom-4 left-2 -translate-x-1/2 bg-white z-10" />
-            {message.map(({ name, url }, index) => (
+            {chats?.map(({ chat_id, name }, index) => (
               <div
-                key={`${name}-${index}`}
+                key={`${chat_id}-${index}`}
                 className="relative group py-1 ml-4"
               >
                 <img
@@ -61,9 +39,12 @@ function Conversations() {
                   alt=""
                 />
                 <div className="px-2 text-base">
-                  <Link to={url} className="line-clamp-1">
+                  <button
+                    className="line-clamp-1"
+                    onClick={() => setChatId(chat_id)}
+                  >
                     {name}
-                  </Link>
+                  </button>
                 </div>
               </div>
             ))}
