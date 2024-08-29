@@ -10,6 +10,7 @@ import ChatHistory from "../../components/ChatHistory";
 import "./main.css";
 import useAuth from "../../hooks/useAuth";
 import { Chats } from "../../models/ChatModels";
+import { getChats, getChatMessages, sendMessage } from "../../utils/api";
 
 export const ChatWidget: React.FC = () => {
   const { displayName, photoURL, user } = useAuth();
@@ -22,19 +23,13 @@ export const ChatWidget: React.FC = () => {
     { role: string; content: string }[]
   >([{ role: "assistant", content: "Hey, how can I help?" }]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+
   const fetchChatMessages = useCallback(async () => {
     if (!currentChatId || chatHistory.length > 0) return;
-    const token = await user?.getIdToken();
     try {
-      const response = await axios.get(
-        `http://0.0.0.0:8080/chat/messages?chat_id=${currentChatId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setChatHistory(response.data.messages);
+      const token = await user!.getIdToken();
+      const messages = await getChatMessages(token, currentChatId);
+      setChatHistory(messages);
     } catch (error) {
       console.error("Error fetching chat messages:", error);
     }
@@ -42,24 +37,15 @@ export const ChatWidget: React.FC = () => {
 
   const fetchUserChats = useCallback(async () => {
     try {
-      const token = await user?.getIdToken();
-      const response = await axios.get("http://0.0.0.0:8080/user/chats", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.data.chats) {
-        const chats = response.data.chats;
-        if (chats.length > 0) {
-          setChats(chats);
-        }
+      const token = await user!.getIdToken();
+      const fetchedChats = await getChats(token);
+      if (fetchedChats.length > 0) {
+        setChats(fetchedChats);
       }
-      console.log("User chats:", response.data.chats);
     } catch (error) {
       console.error("Error fetching user chats:", error);
     }
   }, [user]);
-
   useEffect(() => {
     if (user) {
       fetchUserChats();
@@ -73,54 +59,39 @@ export const ChatWidget: React.FC = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const playHandler = async (
-    e?:
-      | React.KeyboardEvent<HTMLTextAreaElement>
-      | React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (
-      (e && "key" in e && e.key === "Enter" && !e.shiftKey) ||
-      e?.type === "click"
-    ) {
-      e.preventDefault();
-      if (!prompts || loading) return;
-      setChatHistory((prevHistory) => [
-        ...prevHistory,
-        { role: "user", content: prompts },
-        { role: "assistant", content: "loading" },
-      ]);
-      setPrompts("");
-      setLoading(true);
-      const token = user?.getIdToken ? await user.getIdToken() : null;
-      axios
-        .post(
-          "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
-          { message: prompts, chat_id: currentChatId },
-          {
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
-          }
-        )
-        .then((res) => {
-          const { response, chat_id } = res.data;
-          if (chat_id) {
-            setCurrentChatId(chat_id);
-          }
-          setChatHistory((prevHistory) => {
-            const updatedHistory = [...prevHistory];
-            updatedHistory[updatedHistory.length - 1].content =
-              res?.data?.response;
-            return updatedHistory;
-          });
-        })
-        .catch((err) => {
-          Swal.fire({
-            title: "Fetching Chat Answer",
-            text: err.message,
-          });
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+  const playHandler = async () => {
+    if (!prompts || loading) return;
+    setChatHistory((prevHistory) => [
+      ...prevHistory,
+      { role: "user", content: prompts },
+      { role: "assistant", content: "loading" },
+    ]);
+    setPrompts("");
+    setLoading(true);
+    try {
+      const token = await user!.getIdToken();
+      const response = await sendMessage(
+        token,
+        prompts,
+        "voiceType",
+        currentChatId
+      );
+      setChatHistory((prevHistory) => {
+        const updatedHistory = [...prevHistory];
+        updatedHistory[updatedHistory.length - 1].content = response.response;
+        return updatedHistory;
+      });
+      if (response.chat_id) {
+        setCurrentChatId(response.chat_id);
+        fetchUserChats();
+      }
+    } catch (error: any) {
+      Swal.fire({
+        title: "Fetching Chat Answer",
+        text: error.message,
+      });
+    } finally {
+      setLoading(false);
     }
   };
   const chatEndRef = useRef<HTMLDivElement | null>(null);
@@ -129,7 +100,7 @@ export const ChatWidget: React.FC = () => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     fetchChatMessages();
-  }, [chatHistory, loading, fetchChatMessages, currentChatId]);
+  }, [chatHistory, loading, fetchChatMessages]);
 
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);

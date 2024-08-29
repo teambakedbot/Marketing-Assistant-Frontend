@@ -28,7 +28,7 @@ function Home() {
   ]);
   const [chatId, setChatId] = useState<string>("");
   const [chatName, setChatName] = useState<string>("");
-
+  const [chats, setChats] = useState<Chats[]>([]);
   const [chatHistory, setChatHistory] = useState<ChatEntry[]>([
     {
       role: "assistant",
@@ -87,6 +87,33 @@ function Home() {
     }
   }, [chatId, loadChatHistory, user]);
 
+  useEffect(() => {
+    if (user) {
+      fetchUserChats();
+    }
+  }, [user]);
+
+  const fetchUserChats = useCallback(async () => {
+    try {
+      const token = await user?.getIdToken();
+      console.log("Token:", token);
+      const response = await axios.get("http://0.0.0.0:8080/user/chats", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.chats) {
+        const chats = response.data.chats;
+        if (chats.length > 0) {
+          setChats(chats);
+        }
+      }
+      console.log("User chats:", response.data.chats);
+    } catch (error) {
+      console.error("Error fetching user chats:", error);
+    }
+  }, [user]);
+
   async function playHandler() {
     if (!prompts || loading) return;
     setChatHistory((prevHistory) => [
@@ -114,7 +141,10 @@ function Home() {
           return updatedHistory;
         });
         if (res?.data?.chat_id) {
-          if (chatId !== res?.data?.chat_id) {
+          if (!chatId) {
+            setChatId(res?.data?.chat_id);
+            fetchUserChats();
+          } else if (chatId !== res?.data?.chat_id) {
             setChatId(res?.data?.chat_id);
           }
         }
@@ -219,7 +249,11 @@ function Home() {
   return (
     <div className="lg:flex">
       <div className="dark-green-background-2 px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-full lg:w-[20%] hidden sm:block">
-        <Profile onFileUpload={showCustomers} setChatId={setChatId} />
+        <Profile
+          onFileUpload={showCustomers}
+          setChatId={setChatId}
+          chats={chats}
+        />
       </div>
       <div className="dark-green-background-3 min-h-screen w-full overflow-hidden">
         <div className="xl:h-[75%] lg:grid grid-cols-1 lg:grid-cols-2 flex-grow gap-3 py-9 px-3">

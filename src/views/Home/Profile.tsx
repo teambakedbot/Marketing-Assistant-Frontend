@@ -1,19 +1,18 @@
 import { Link } from "react-router-dom";
 import Conversations from "./Conversations";
-import { useEffect, useRef, useState } from "react";
-import { DocumentUpload } from "iconsax-react";
-import axios from "axios";
+import { useRef } from "react";
 import useAuth from "../../hooks/useAuth";
+import { DocumentUpload } from "iconsax-react";
 import { Chats } from "../../models/ChatModels";
 
 interface ProfileProps {
   onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  chats: any[];
   setChatId: (chatId: string) => void;
 }
 
-function Profile({ onFileUpload, setChatId }: ProfileProps) {
+function Profile({ onFileUpload, chats, setChatId }: ProfileProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [chats, setChats] = useState<Chats[]>([]);
   const { displayName, photoURL, user } = useAuth();
 
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
@@ -23,40 +22,13 @@ function Profile({ onFileUpload, setChatId }: ProfileProps) {
     inputRef.current.click();
   }
 
-  const fetchUserChats = async () => {
-    try {
-      const token = await user?.getIdToken();
-      console.log("Token:", token);
-      const response = await axios.get("http://0.0.0.0:8080/user/chats", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.data.chats) {
-        const chats = response.data.chats;
-        if (chats.length > 0) {
-          setChats(chats);
-        }
-      }
-      console.log("User chats:", response.data.chats);
-    } catch (error) {
-      console.error("Error fetching user chats:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchUserChats();
-    }
-  }, [user]);
-
   return (
     <div className="">
       <Link to="/" className="flex justify-center mb-5">
         <img
           className="w-[120px] md:w-[150px]"
           src="/images/bakedBot_logo.png"
-          alt=""
+          alt="BakedBot Logo"
         />
       </Link>
       <div className="text-center my-[15px] md:mb-[50px] font-playfair-display font-bold">
