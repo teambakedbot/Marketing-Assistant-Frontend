@@ -114,7 +114,7 @@ export const ChatWidget: React.FC = () => {
         <div
           className={`absolute right-2 bottom-14 flex justify-center items-center z-50 animate-open`}
         >
-          <div className="dark-green-background p-3 pb-0 md:p-5 rounded-lg shadow-lg relative">
+          <div className="dark-green-background p-3 pb-0 md:p-3 rounded-lg shadow-lg relative">
             <div className="md:flex md:flex-row flex-col gap-3 min-h-[250px] min-w-[180px] lg:min-h-[350px] lg:min-w-[800px]">
               {/* left box */}
               <div className="border-2 h-[450px] white-background off-white w-full md:w-3/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden">
