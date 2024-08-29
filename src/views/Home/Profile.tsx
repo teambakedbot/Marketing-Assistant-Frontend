@@ -8,10 +8,16 @@ import { Chats } from "../../models/ChatModels";
 interface ProfileProps {
   onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   chats: any[];
-  setChatId: (chatId: string) => void;
+  loadChatHistory: (chatId: string) => void;
+  activeChatId: string | null;
 }
 
-function Profile({ onFileUpload, chats, setChatId }: ProfileProps) {
+function Profile({
+  onFileUpload,
+  chats,
+  loadChatHistory,
+  activeChatId,
+}: ProfileProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { displayName, photoURL, user } = useAuth();
 
@@ -35,7 +41,11 @@ function Profile({ onFileUpload, chats, setChatId }: ProfileProps) {
         Cultivating Unforgettable Experiences
       </div>
 
-      <Conversations chats={chats} setChatId={setChatId} />
+      <Conversations
+        chats={chats}
+        loadChatHistory={loadChatHistory}
+        activeChatId={activeChatId}
+      />
       {/* <p className="medium-gray font-istok-web text-base text-center font-semibold py-1 rounded-2xl">
         Calling Smokey to send an SMS
       </p> */}

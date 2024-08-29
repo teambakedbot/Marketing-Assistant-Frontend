@@ -104,7 +104,7 @@ function CannabotWorkspace({
             </button>
             <button
               onClick={() => handleTabClick("SMS")}
-              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm vibrant-green"
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm vibrant-green-background"
             >
               SMS
             </button>

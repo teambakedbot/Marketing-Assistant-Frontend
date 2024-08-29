@@ -1,9 +1,10 @@
 :root {
-  --dark-green-background-1: #045932;
+  --dark-green-background: #0D211D;
+  --dark-green-background-1: #057540;
   --dark-green-background-2: #383434;
   --dark-green-background-3: #1E1E1E;
   --dark-green-background-4: #111111;
-  --vibrant-green: #22AD85;
+  --vibrant-green: #239776;
   --medium-gray: #636363;
   --bright-orange: #b87c20;
   --dark-gray: #383838;
@@ -11,7 +12,12 @@
   --white: #FFFFFF;
   --light-gray: #A1A6A2;
 }
-
+.white-background {
+  background-color: var(--white);
+}
+.dark-green-background {
+  background-color: var(--dark-green-background);
+}
 .dark-green-background-1 {
   background-color: var(--dark-green-background-1);
 }
@@ -23,14 +29,26 @@
 .dark-green-background-3 {
   background-color: var(--dark-green-background-3);
 }
-
+.border-dark-green {
+  border-color: var(--dark-green-background);
+}
+.border-dark-green-1 {
+  border-color: var(--dark-green-background-1);
+}
 .dark-green-background-4 {
   background-color: var(--dark-green-background-4);
 }
 
-.vibrant-green {
+.vibrant-green-background {
   background-color: var(--vibrant-green);
   color: var(--white);
+}
+.vibrant-green {
+  color: var(--vibrant-green);
+}
+
+.dark-green {
+  color: var(--dark-green-background);
 }
 
 .medium-gray {

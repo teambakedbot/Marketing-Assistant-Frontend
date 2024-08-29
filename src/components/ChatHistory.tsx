@@ -24,7 +24,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
         const isBot = chat.role === "assistant";
         const isLoading = loading && isBot && index === chatHistory.length - 1;
         const iconSrc = isBot ? botIcon : userPhoto;
-        const bgColor = isBot ? "bg-[#22AD89]" : "bg-[#23504A]";
+        const bgColorClass = isBot ? "vibrant-green-background" : "medium-gray";
         const altText = isBot ? "Bot Icon" : "User Icon";
 
         return (
@@ -41,11 +41,13 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                 alt={altText}
               />
             )}
-            <div className={`${bgColor} rounded-md py-2 px-4  max-w-[70%]`}>
+            <div
+              className={`${bgColorClass} rounded-md py-2 px-4 max-w-[70%] shadow-md`}
+            >
               {isLoading ? (
                 <img src={loadingIcon} className="w-6 h-6" alt="Loading" />
               ) : (
-                <ReactMarkdown className="text-white text-base md:text-lg">
+                <ReactMarkdown className="text-white text-base md:text-lg prose prose-invert">
                   {chat.content}
                 </ReactMarkdown>
               )}

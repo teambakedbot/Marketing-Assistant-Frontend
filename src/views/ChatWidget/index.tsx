@@ -114,11 +114,11 @@ export const ChatWidget: React.FC = () => {
         <div
           className={`absolute right-2 bottom-14 flex justify-center items-center z-50 animate-open`}
         >
-          <div className="bg-[#0D211D] p-3 pb-0md:p-5 rounded-lg shadow-lg relative">
+          <div className="dark-green-background p-3 pb-0 md:p-5 rounded-lg shadow-lg relative">
             <div className="md:flex md:flex-row flex-col gap-3 min-h-[250px] min-w-[180px] lg:min-h-[350px] lg:min-w-[800px]">
               {/* left box */}
-              <div className="border-2 h-[450px] bg-white w-full md:w-3/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden">
-                <p className="text-[#23504A] text-lg md:text-xl font-bold">
+              <div className="border-2 h-[450px] white-background off-white w-full md:w-3/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden">
+                <p className="text-lg md:text-xl font-bold dark-green">
                   BakedBot Chat
                 </p>
                 <ChatHistory
@@ -131,8 +131,13 @@ export const ChatWidget: React.FC = () => {
                 />
                 <div className="flex items-center gap-2 bottom-2 w-full">
                   <textarea
-                    className="text-[#23504A] text-base md:text-lg border-none resize-none w-full placeholder-gray-600"
-                    onKeyDown={playHandler}
+                    className="dark-green text-base md:text-lg border-none resize-none w-full placeholder-gray-600 "
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        playHandler();
+                      }
+                    }}
                     placeholder="Type your message..."
                     value={prompts}
                     onChange={(e) => {
@@ -149,7 +154,7 @@ export const ChatWidget: React.FC = () => {
                     }}
                   />
                   <button
-                    className="bg-[#22AD85] rounded-full text-white"
+                    className="vibrant-green-background -background rounded-full text-white"
                     onClick={playHandler}
                     disabled={loading}
                   >
@@ -166,12 +171,12 @@ export const ChatWidget: React.FC = () => {
                 </div>
               </div>
               {/* right box */}
-              <div className="border-2 mt-2 md:mt-0 w-[100%] bg-white md:w-[35%] rounded-md p-2 flex flex-col justify-between gap-2 ">
-                <div className="h-full min-h-[200px] rounded-md bg-white p-2 flex flex-col justify-between border-2 border-[#00766D]">
-                  <p className="text-[#00766D] font-bold text-center md:text-lg mb-0">
+              <div className="border-2 mt-2 md:mt-0 w-[100%] white-background md:w-[35%] rounded-md p-2 flex flex-col justify-between gap-2 ">
+                <div className="h-full min-h-[200px] rounded-md white-background  p-2 flex flex-col justify-between border-2 border-dark-green-1">
+                  <p className="dark-green font-bold text-center md:text-lg mb-0">
                     Purple Punch I
                   </p>
-                  <p className="text-[#00766D] text-center text-sm md:text-base mb-0">
+                  <p className="dark-green text-center text-sm md:text-base mb-0">
                     A premium cannabis strain
                   </p>
                   <div className="flex-1 flex items-center justify-center">
@@ -182,7 +187,7 @@ export const ChatWidget: React.FC = () => {
                     />
                   </div>
                 </div>
-                <div className="h-full bg-[#22AD85] rounded-md p-2">
+                <div className="h-full vibrant-green-background rounded-md p-2">
                   <label
                     htmlFor="slider"
                     className="block text-white font-bold text-base md:text-lg mb-2"
@@ -196,13 +201,13 @@ export const ChatWidget: React.FC = () => {
                     max="4"
                     value={value}
                     onChange={handleChange}
-                    className="w-full h-1 bg-[#00766D] rounded-lg appearance-none border-0 outline-0 cursor-pointer accent-[#23504A]"
+                    className="w-full h-1 bg-dark-green-background-1 rounded-lg appearance-none border-0 outline-0 cursor-pointer accent-dark-green-background-3"
                     style={{
                       WebkitAppearance: "none",
                       appearance: "none",
                     }}
                   />
-                  <div className="flex justify-between gap-1 text-sm text-gray-700 mt-4">
+                  <div className="flex justify-between gap-1 text-sm text-gray-300 mt-4">
                     <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
                       😴
                     </span>
@@ -219,26 +224,14 @@ export const ChatWidget: React.FC = () => {
                       🚀
                     </span>
                   </div>
-                  <style>
-                    {`
-                      input[type=range]::-webkit-slider-thumb {
-                        -webkit-appearance: none;
-                        appearance: none;
-                        width: 14px;
-                        height: 14px;
-                        background: #23504A;
-                        border-radius: 50%;
-                        cursor: pointer;
-                      }
-                      input[type=range]::-moz-range-thumb {
-                        width: 14px;
-                        height: 14px;
-                        background: #23504A;
-                        border-radius: 50%;
-                        cursor: pointer;
-                      }
-                    `}
-                  </style>
+                </div>
+                <div className="h-full vibrant-green-background rounded-md p-2">
+                  <p className="text-white font-bold text-base md:text-lg mb-2">
+                    Community Reviews
+                  </p>
+                  <p className="text-white font-normal text-sm md:text-base">
+                    See what others are saying
+                  </p>
                 </div>
                 {/* <div className="h-full rounded-md bg-[#00766D] p-2">
                   <p className="text-white font-bold text-base md:text-lg mb-2">
@@ -248,17 +241,9 @@ export const ChatWidget: React.FC = () => {
                     Learn about strains, effects, and more
                   </p>
                 </div> */}
-                <div className="h-full rounded-md bg-[#22AD85] p-2">
-                  <p className="text-white font-bold text-base md:text-lg mb-2">
-                    Community Reviews
-                  </p>
-                  <p className="text-white font-normal text-sm md:text-base">
-                    See what others are saying
-                  </p>
-                </div>
               </div>
             </div>
-            <p className="text-white mt-4  text-md">Powered by BakedBot AI</p>
+            <p className="text-white mt-4 text-md">Powered by BakedBot AI</p>
           </div>
         </div>
       )}
