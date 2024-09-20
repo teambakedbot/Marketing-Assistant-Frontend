@@ -15,6 +15,9 @@ import "../../styles/theme.css";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import Conversations from "./Conversations";
 
+const BASE_URLx = "http://0.0.0.0:8000/api/v1";
+const BASE_URL =
+  "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/api/v1";
 function Home() {
   const [prompts, setPrompts] = useState<string>("");
   const { displayName, photoURL, user } = useAuth();
@@ -62,8 +65,7 @@ function Home() {
         }
         console.log("Token:", token);
         const response = await axios.get(
-          `https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat/messages?chat_id=${id}`,
-          // `http://0.0.0.0:8080/chat/messages?chat_id=${id}`,
+          `${BASE_URL}/chat/messages?chat_id=${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -97,15 +99,11 @@ function Home() {
     try {
       const token = await user?.getIdToken();
       console.log("Token:", token);
-      const response = await axios.get(
-        // "http://0.0.0.0:8080/user/chats",
-        "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/user/chats",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/user/chats`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.data.chats) {
         const chats = response.data.chats;
         if (chats.length > 0) {
@@ -130,8 +128,7 @@ function Home() {
     const token = await user?.getIdToken();
     axios
       .post(
-        "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
-        // "http://0.0.0.0:8080/chat",
+        `${BASE_URL}/chat`,
         { message: prompts, voice_type: voiceType, chat_id: chatId },
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
