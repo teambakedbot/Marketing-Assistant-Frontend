@@ -210,6 +210,10 @@ body {
   transform-origin: 1px;
 }
 
+.hamburger-menu:hover div {
+  background: #00A67D; /* Change color on hover */
+}
+
 .hamburger-menu.open div:first-child {
   transform: rotate(45deg) translate(5px, 5px);
 }
@@ -221,15 +225,6 @@ body {
 .hamburger-menu.open div:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
-
-.hamburger-menu:not(.open):hover div {
-  background: #00A67D; /* Color for closed menu hover */
-}
-
-.hamburger-menu.open:hover div {
-  background: #00C38E; /* Different color for open menu hover */
-}
-
 
 /* Side Menu Styles */
 .side-menu {
@@ -462,7 +457,7 @@ body {
 }
 
 /* Adjust the height of the main container */
-.chat-widget .animate-open > div > div {
+.chat-widget .animate-open > div > div:first-child {
   height: calc(100vh - 100px);
   max-height: 600px;
 }
@@ -670,4 +665,30 @@ padding-bottom: 0px;
 .close-button:hover::before,
 .close-button:hover::after {
   background: #00A67D; /* Change color on hover */
+}
+
+.chat-footer {
+  color: #AAAAAA;
+
+}
+
+.view-store-button {
+  display: flex;
+  align-items: center;
+  background-color: #00A67D;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.view-store-button:hover {
+  background-color: #008C6A;
+}
+
+.view-store-button svg {
+  margin-right: 4px;
+  font-size: 14px;
 }

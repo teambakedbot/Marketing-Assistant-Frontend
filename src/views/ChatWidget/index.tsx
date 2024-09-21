@@ -17,6 +17,7 @@ import notLoggedInIcon from "/images/security.png"; // Import the not logged in 
 import bluntSmokey from "/images/blunt-smokey.png";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../config/firebase-config";
+import { FaStore } from "react-icons/fa"; // Import the store icon
 
 export const ChatWidget: React.FC = () => {
   const { displayName, photoURL, user } = useAuth();
@@ -249,6 +250,11 @@ export const ChatWidget: React.FC = () => {
     };
   }, [handleOutsideClick]);
 
+  const handleViewStore = () => {
+    // Add logic to open the store page
+    window.open("https://your-store-url.com", "_blank");
+  };
+
   return (
     <div className="chat-widget">
       <button className="border-none outline-0" onClick={handleModalBox}>
@@ -270,10 +276,9 @@ export const ChatWidget: React.FC = () => {
                     <div></div>
                   </button>
                   <p className="text-lg md:text-xl font-bold">Chat</p>
-                  <button
-                    className="close-button"
-                    onClick={handleModalBox}
-                  ></button>
+                  <button className="close-button" onClick={handleModalBox}>
+                    {/* The X is created by CSS */}
+                  </button>
                 </div>
                 {isNewChat ? (
                   <div className="new-chat-view flex-grow overflow-y-auto">
@@ -511,7 +516,9 @@ export const ChatWidget: React.FC = () => {
                 </div>
               </div>
             </div>
-            <p className="text-white mt-4 text-md">Powered by BakedBot AI</p>
+            <p className="chat-footer mb-2 h-0 p-0 text-sm text-center">
+              Powered by BakedBot AI
+            </p>
           </div>
         </div>
       )}
