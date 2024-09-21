@@ -371,7 +371,7 @@ body {
 /* Right Panel Styles */
 .right-panel {
   background-color: #1E2A38; /* Maintain overall background color */
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: space-between;
   padding: 8px;
