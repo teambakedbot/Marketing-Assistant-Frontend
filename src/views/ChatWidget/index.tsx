@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import bottom from "/images/Chatbot logo white background large-circle.png";
 import botIcon from "/images/receiver.jpeg";
 import product1 from "/images/product1.png";
+import product2 from "/images/product2.png";
 import sendIcon from "/images/send.png";
 import axios from "axios";
 import loadingIcon from "/images/loading-spinner-white.gif";
@@ -214,7 +215,7 @@ export const ChatWidget: React.FC = () => {
                       <button
                         key={`${chat_id}-${index}`}
                         onClick={() => loadChatHistory(chat_id)}
-                        className={`menu-item ${
+                        className={`menu-item text-md ${
                           activeChatId === chat_id ? "active" : ""
                         }`}
                       >
@@ -230,7 +231,13 @@ export const ChatWidget: React.FC = () => {
                 <div className="side-menu-footer">
                   <h3>Featured products</h3>
                   <div className="featured-product">
-                    {/* Add your featured product image here */}
+                    <img
+                      src={
+                        "https://images.weedmaps.com/pictures/listings/159/608/069/425693376_180730_StrainReview_EnjoyableXJ13_08.jpg"
+                      }
+                      alt="Product Viewer"
+                      className="w-full object-contain h-[100px] md:h-[150px]"
+                    />
                   </div>
                   <button className="settings-button">Settings</button>
                 </div>
@@ -244,10 +251,12 @@ export const ChatWidget: React.FC = () => {
                     A premium cannabis strain
                   </p>
                   <img
-                    src={product1}
+                    src={
+                      "https://images.weedmaps.com/pictures/listings/159/608/069/425191536_nug0454.jpg"
+                    }
                     alt="Product Viewer"
                     className="w-full object-contain h-[100px] md:h-[150px]"
-                  />{" "}
+                  />
                 </div>
                 <div className="panel-container desired-effects">
                   <h4>Desired Effect:</h4>
