@@ -52,15 +52,23 @@ export const ChatWidget: React.FC = () => {
   }, [user]);
 
   const loadChatHistory = useCallback(
-    async (chatId: string) => {
-      setActiveChatId(chatId);
-      setCurrentChatId(chatId);
-      try {
-        const token = await user!.getIdToken();
-        const messages = await getChatMessages(token, chatId);
-        setChatHistory(messages);
-      } catch (error) {
-        console.error("Error loading chat history:", error);
+    async (chatId: string | null) => {
+      if (chatId === null) {
+        setActiveChatId(null);
+        setCurrentChatId(null);
+        setChatHistory([
+          { role: "assistant", content: "Hey, how can I help?" },
+        ]);
+      } else {
+        setActiveChatId(chatId);
+        setCurrentChatId(chatId);
+        try {
+          const token = await user!.getIdToken();
+          const messages = await getChatMessages(token, chatId);
+          setChatHistory(messages);
+        } catch (error) {
+          console.error("Error loading chat history:", error);
+        }
       }
     },
     [user]
@@ -209,6 +217,13 @@ export const ChatWidget: React.FC = () => {
                   <img src={robotIcon} alt="Chat Bot" className="robot-icon" />
                 </div>
                 <h2 className="chat-history-title">Chat history</h2>
+                <button
+                  className="settingss-button"
+                  onClick={() => loadChatHistory(null)}
+                >
+                  New Chat
+                </button>
+
                 <div className="side-menu-content">
                   {chats.length > 0 ? (
                     chats.map(({ chat_id, name }: any, index) => (

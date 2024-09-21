@@ -230,6 +230,7 @@ body {
   flex-direction: column;
   padding: 16px;
   z-index: 15;
+  overflow-y: auto;
 }
 
 .side-menu.open {
@@ -346,6 +347,21 @@ body {
   font-size: 16px;
   transition: background-color 0.2s ease;
   margin-top: 16px;
+}
+
+
+.settingss-button {
+  background-color: #00C49A;
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 60%;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+  display: block; /* Add this line */
+  margin: 0 auto; /* Add this line */
 }
 
 .settings-button:hover {
