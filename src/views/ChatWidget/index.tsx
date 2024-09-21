@@ -38,6 +38,8 @@ export const ChatWidget: React.FC = () => {
     "chat"
   );
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [products, setProducts] = useState<any[]>([]); // Add state for products
+  const [searchQuery, setSearchQuery] = useState(""); // Add state for search query
 
   const handleProductClick = (product) => {
     setCurrentView("product");
@@ -251,12 +253,6 @@ export const ChatWidget: React.FC = () => {
     );
   };
 
-  const handleNewChatButtonClick = (message: string) => {
-    setPrompts(message);
-    //use callback to make sure prompts is set before calling playHandler
-    playHandler();
-  };
-
   const handleOutsideClick = useCallback(
     (e: MouseEvent) => {
       const mainArea = document.querySelector(".main-area");
@@ -286,74 +282,43 @@ export const ChatWidget: React.FC = () => {
     setCurrentView("store");
   };
 
-  const mockProducts = [
-    {
-      cann_sku_id: "4Law1sHoxODTcpTb4P7aRko3",
-      brand_name: "Ooze",
-      product_name: "Twist Slim Ice Pink",
-      image_url:
-        "https://images.weedmaps.com/categories/000/000/004/placeholder/1613661827-1613605721-vape-pens_image_missing.jpg",
-      latest_price: 15.0,
-      category: "Vape",
-      description: "A sleek and stylish vape pen for on-the-go use.",
-      thc: "10%",
-      cbd: "5%",
-      potency: "1000mg",
-      effects: ["Relaxed", "Happy", "Euphoric"],
-    },
-    {
-      cann_sku_id: "2Law1sHoxODTcpTb4P7aRko4",
-      brand_name: "Gummy Bears",
-      product_name: "Fruity Gummy Bears",
-      image_url: "https://example.com/gummy-bears.jpg",
-      latest_price: 10.0,
-      category: "Edibles",
-      thc: "10%",
-      cbd: "5%",
-      potency: "1000mg",
-      effects: ["Relaxed", "Happy", "Euphoric"],
-      description: "Delicious gummy bears infused with THC.",
-    },
-    {
-      cann_sku_id: "3Law1sHoxODTcpTb4P7aRko5",
-      brand_name: "Green Crack",
-      product_name: "Green Crack Flower",
-      image_url: "https://example.com/green-crack.jpg",
-      latest_price: 25.0,
-      category: "Flower",
-      description: "A sativa strain known for its energizing effects.",
-      thc: "10%",
-      cbd: "5%",
-      potency: "1000mg",
-      effects: ["Relaxed", "Happy", "Euphoric"],
-    },
-    {
-      cann_sku_id: "5Law1sHoxODTcpTb4P7aRko6",
-      brand_name: "Chill",
-      product_name: "Relaxing CBD Oil",
-      image_url: "https://example.com/cbd-oil.jpg",
-      latest_price: 30.0,
-      category: "Oils",
-      description: "A calming CBD oil for relaxation.",
-      thc: "10%",
-      cbd: "5%",
-      potency: "1000mg",
-      effects: ["Relaxed", "Happy", "Euphoric"],
-    },
-    {
-      cann_sku_id: "6Law1sHoxODTcpTb4P7aRko7",
-      brand_name: "Cookies",
-      product_name: "Chocolate Chip Cookies",
-      image_url: "https://example.com/cookies.jpg",
-      latest_price: 12.0,
-      category: "Edibles",
-      description: "Delicious cookies infused with THC.",
-      thc: "10%",
-      cbd: "5%",
-      potency: "1000mg",
-      effects: ["Relaxed", "Happy", "Euphoric"],
-    },
-  ];
+  const fetchProducts = useCallback(async (page = 1) => {
+    try {
+      const response = await axios.get(
+        `http://0.0.0.0:8000/api/v1/products?retailers=8266&page=${page}&states=michigan`,
+        {
+          headers: {
+            "X-Token": `Bearer ${"821d72c3bad50640e8c09dd49346a73b"}`,
+          },
+        }
+      );
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProducts(); // Fetch products on component mount
+  }, [fetchProducts]);
+
+  const handleSearch = async () => {
+    if (!searchQuery) return;
+    try {
+      const response = await axios.get(
+        `http://0.0.0.0:8000/api/v1/products/search?query=${searchQuery}&states=michigan&retailers=8266`,
+        {
+          headers: {
+            "X-Token": `Bearer ${"821d72c3bad50640e8c09dd49346a73b"}`,
+          },
+        }
+      );
+      setProducts(response.data); // Update products based on search
+    } catch (error) {
+      console.error("Error searching products:", error);
+    }
+  };
+
   const StoreView = () => (
     <div className="store-view">
       <div className="filters pt-2 pb-2 color-black">
@@ -362,11 +327,11 @@ export const ChatWidget: React.FC = () => {
         <button className="text-sm">All types</button>
       </div>
       <div className="results-header">
-        <h2>Showing results "{mockProducts.length}"</h2>
+        <h2>Showing results "{products?.length}"</h2>
         <button>See all</button>
       </div>
       <div className="product-grid">
-        {mockProducts.map((product) => (
+        {products?.map((product) => (
           <div className="product-item" key={product.cann_sku_id}>
             <img
               src={product.image_url}
@@ -380,7 +345,7 @@ export const ChatWidget: React.FC = () => {
             >
               {product.product_name}
             </h3>
-            <p className="text-sm">${product.latest_price.toFixed(2)}</p>
+            <p className="text-sm">${product.price?.toFixed(2)}</p>
             <p className="text-sm mt-2">{product.description}</p>
             <button className="text-md add-to-cart-button p-1 mt-2">
               Add to cart
@@ -561,8 +526,14 @@ export const ChatWidget: React.FC = () => {
                       className="resize-none w-full placeholder-gray-400 bg-transparent text-white p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          playHandler();
+                          if (currentView === "chat") {
+                            e.preventDefault();
+                            playHandler();
+                          }
+                          if (currentView === "store") {
+                            e.preventDefault();
+                            handleSearch();
+                          }
                         }
                       }}
                       placeholder={
@@ -570,21 +541,26 @@ export const ChatWidget: React.FC = () => {
                           ? "Ask me anything..."
                           : "Search here..."
                       }
-                      value={prompts}
+                      value={currentView === "chat" ? prompts : searchQuery}
                       onChange={(e) => {
-                        setPrompts(e.target.value);
-                        const target = e.target as HTMLTextAreaElement;
-                        target.style.height = "40px";
-                        const newHeight = Math.min(
-                          Math.max(target.scrollHeight, 40),
-                          120
-                        );
-                        target.style.height = `${newHeight}px`;
-                        const chatInput = target.closest(
-                          ".chat-input"
-                        ) as HTMLElement;
-                        if (chatInput) {
-                          chatInput.style.minHeight = `${newHeight + 24}px`; // 24px for padding
+                        if (currentView === "chat") {
+                          setPrompts(e.target.value);
+                          const target = e.target as HTMLTextAreaElement;
+                          target.style.height = "40px";
+                          const newHeight = Math.min(
+                            Math.max(target.scrollHeight, 40),
+                            120
+                          );
+                          target.style.height = `${newHeight}px`;
+                          const chatInput = target.closest(
+                            ".chat-input"
+                          ) as HTMLElement;
+                          if (chatInput) {
+                            chatInput.style.minHeight = `${newHeight + 24}px`; // 24px for padding
+                          }
+                        }
+                        if (currentView === "store") {
+                          setSearchQuery(e.target.value);
                         }
                       }}
                       rows={1}
