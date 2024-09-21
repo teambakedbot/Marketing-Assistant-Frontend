@@ -11,6 +11,7 @@ import "./main.css";
 import useAuth from "../../hooks/useAuth";
 import { Chats } from "../../models/ChatModels";
 import { getChats, getChatMessages, sendMessage } from "../../utils/api";
+import robotIcon from "/images/pointing.png"; // Import the robot icon
 
 export const ChatWidget: React.FC = () => {
   const { displayName, photoURL, user } = useAuth();
@@ -23,6 +24,7 @@ export const ChatWidget: React.FC = () => {
     { role: string; content: string }[]
   >([{ role: "assistant", content: "Hey, how can I help?" }]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const fetchChatMessages = useCallback(async () => {
     if (!currentChatId || chatHistory.length > 0) return;
@@ -57,6 +59,10 @@ export const ChatWidget: React.FC = () => {
 
   const handleModalBox = () => {
     setIsModalOpen(!isModalOpen);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   const playHandler = async () => {
@@ -111,27 +117,33 @@ export const ChatWidget: React.FC = () => {
         <img src={bottom} className="w-10" alt="Open Chatbot" />
       </button>
       {isModalOpen && (
-        <div
-          className={`absolute right-2 bottom-14 flex justify-center items-center z-50 animate-open`}
-        >
-          <div className="dark-green-background p-3 pb-0 md:p-3 rounded-lg shadow-lg relative">
-            <div className="md:flex md:flex-row flex-col gap-3 min-h-[250px] min-w-[180px] lg:min-h-[350px] lg:min-w-[800px]">
-              {/* left box */}
-              <div className="border-2 h-[450px] white-background off-white w-full md:w-3/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden">
-                <p className="text-lg md:text-xl font-bold dark-green">
-                  BakedBot Chat
-                </p>
-                <ChatHistory
-                  chatHistory={chatHistory}
-                  loading={loading}
-                  userPhoto={userPhoto}
-                  botIcon={botIcon}
-                  loadingIcon={loadingIcon}
-                  chatEndRef={chatEndRef}
-                />
-                <div className="flex items-center gap-2 bottom-2 w-full">
+        <div className="absolute right-2 bottom-14 flex justify-center items-center z-50 animate-open">
+          <div className="chat-container p-3 pb-0 md:p-3 rounded-lg shadow-lg relative">
+            <div className="md:flex md:flex-row flex-col gap-3 min-h-[450px] lg:min-h-[550px] lg:min-w-[800px]">
+              {/* Chat area */}
+              <div className="h-full w-full md:w-3/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden">
+                <div className="chat-header">
+                  <button
+                    className={`hamburger-menu ${isMenuOpen ? "open" : ""}`}
+                    onClick={toggleMenu}
+                  >
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </button>
+                  <p className="text-lg md:text-xl font-bold">Chat</p>
+                  <div className="w-6"></div> {/* Placeholder for balance */}
+                </div>
+                <div className="chat-messages flex-grow overflow-y-auto">
+                  <ChatHistory
+                    chatHistory={chatHistory}
+                    loading={loading}
+                    chatEndRef={chatEndRef}
+                  />
+                </div>
+                <div className="chat-input">
                   <textarea
-                    className="dark-green text-base md:text-lg border-none resize-none w-full placeholder-gray-600 "
+                    className="resize-none w-full placeholder-gray-400"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
@@ -153,94 +165,115 @@ export const ChatWidget: React.FC = () => {
                       maxHeight: "4.5em",
                     }}
                   />
-                  <button
-                    className="vibrant-green-background -background rounded-full text-white"
-                    onClick={playHandler}
-                    disabled={loading}
-                  >
+
+                  <button onClick={playHandler} disabled={loading}>
                     {loading ? (
                       <img
                         src={loadingIcon}
-                        className="w-9 h-8 p-2"
+                        className="w-5 h-5"
                         alt="Loading"
                       />
                     ) : (
-                      <img src={sendIcon} className="w-9 h-8 p-2" alt="Send" />
+                      <img src={sendIcon} className="w-5 h-5" alt="Send" />
                     )}
                   </button>
                 </div>
               </div>
-              {/* right box */}
-              <div className="border-2 mt-2 md:mt-0 w-[100%] white-background md:w-[35%] rounded-md p-2 flex flex-col justify-between gap-2 ">
-                <div className="h-full min-h-[200px] rounded-md white-background  p-2 flex flex-col justify-between border-2 border-dark-green-1">
-                  <p className="dark-green font-bold text-center md:text-lg mb-0">
-                    Purple Punch I
-                  </p>
-                  <p className="dark-green text-center text-sm md:text-base mb-0">
-                    A premium cannabis strain
-                  </p>
-                  <div className="flex-1 flex items-center justify-center">
-                    <img
-                      src={product1}
-                      alt="Product Viewer"
-                      className="w-full object-contain h-[100px] md:h-[150px]"
+
+              {/* Side menu */}
+              <div className={`side-menu ${isMenuOpen ? "open" : ""}`}>
+                <div className="side-menu-header">
+                  <button className="back-button">
+                    <svg /* Add your back arrow SVG here */ />
+                  </button>
+                  <img src={robotIcon} alt="Chat Bot" className="robot-icon" />
+                  <button className="edit-button">
+                    <svg /* Add your edit/pencil SVG here */ />
+                  </button>
+                </div>
+                <h2 className="chat-history-title">Chat history</h2>
+                <div className="side-menu-content">
+                  <button className="menu-item active">
+                    Demo: Image/Video/Audio
+                  </button>
+                  <button className="menu-item">
+                    Demo: polls/Quizzes/Actions
+                  </button>
+                  <button className="menu-item">Demo: Purchase Flow</button>
+                  <button className="menu-item">Demo: Advice Flow</button>
+                </div>
+                <div className="side-menu-footer">
+                  <h3>Featured products</h3>
+                  <div className="featured-product">
+                    {/* Add your featured product image here */}
+                  </div>
+                  <button className="settings-button">Settings</button>
+                </div>
+              </div>
+
+              {/* Right panel */}
+              <div className="h-full w-full md:w-1/4 rounded-md p-2 flex flex-col justify-between gap-2 right-panel">
+                <div className="panel-container product-info">
+                  <h3>Purple Punch I</h3>
+                  <p>A premium cannabis strain</p>
+                  <img
+                    src={product1}
+                    alt="Product Viewer"
+                    className="w-full object-contain h-[100px] md:h-[150px]"
+                  />{" "}
+                </div>
+                <div className="panel-container desired-effects">
+                  <h4>Desired Effect:</h4>
+                  <div className="effects-icons">
+                    <label
+                      htmlFor="slider"
+                      className="block text-white font-bold text-base md:text-lg mb-2"
+                    >
+                      Desired Effect:
+                    </label>
+                    <input
+                      type="range"
+                      id="slider"
+                      min="0"
+                      max="4"
+                      value={value}
+                      onChange={handleChange}
+                      className="w-full h-1 bg-dark-green-background-1 rounded-lg appearance-none border-0 outline-0 cursor-pointer accent-dark-green-background-3"
+                      style={{
+                        WebkitAppearance: "none",
+                        appearance: "none",
+                      }}
                     />
+                    <div className="flex justify-between gap-1 text-sm text-gray-300 mt-4">
+                      <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
+                        😴
+                      </span>
+                      <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
+                        🧘
+                      </span>
+                      <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
+                        🤗
+                      </span>
+                      <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
+                        💡
+                      </span>
+                      <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
+                        🚀
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="h-full vibrant-green-background rounded-md p-2">
-                  <label
-                    htmlFor="slider"
-                    className="block text-white font-bold text-base md:text-lg mb-2"
-                  >
-                    Desired Effect:
-                  </label>
-                  <input
-                    type="range"
-                    id="slider"
-                    min="0"
-                    max="4"
-                    value={value}
-                    onChange={handleChange}
-                    className="w-full h-1 bg-dark-green-background-1 rounded-lg appearance-none border-0 outline-0 cursor-pointer accent-dark-green-background-3"
-                    style={{
-                      WebkitAppearance: "none",
-                      appearance: "none",
-                    }}
-                  />
-                  <div className="flex justify-between gap-1 text-sm text-gray-300 mt-4">
-                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
-                      😴
-                    </span>
-                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
-                      🧘
-                    </span>
-                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
-                      🤗
-                    </span>
-                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
-                      💡
-                    </span>
-                    <span className="text-2xl text-center md:leading-[8px] tracking-tighter">
-                      🚀
-                    </span>
+                <div className="panel-container community-reviews">
+                  <h4>Community Reviews</h4>
+                  <p>See what others are saying</p>
+                  <div className="reviews-list">
+                    {/* Add sample reviews here */}
+                    <div className="review">Sample review 1</div>
+                    <div className="review">Sample review 2</div>
+                    <div className="review">Sample review 3</div>
+                    {/* Add more sample reviews as needed */}
                   </div>
                 </div>
-                <div className="h-full vibrant-green-background rounded-md p-2">
-                  <p className="text-white font-bold text-base md:text-lg mb-2">
-                    Community Reviews
-                  </p>
-                  <p className="text-white font-normal text-sm md:text-base">
-                    See what others are saying
-                  </p>
-                </div>
-                {/* <div className="h-full rounded-md bg-[#00766D] p-2">
-                  <p className="text-white font-bold text-base md:text-lg mb-2">
-                    Cannabis 101
-                  </p>
-                  <p className="text-white font-normal text-sm md:text-base">
-                    Learn about strains, effects, and more
-                  </p>
-                </div> */}
               </div>
             </div>
             <p className="text-white mt-4 text-md">Powered by BakedBot AI</p>

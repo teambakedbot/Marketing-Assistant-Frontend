@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const BASE_URL_x = "http://0.0.0.0:8000/api/v1";
-const BASE_URL =
+const BASE_URL = "http://0.0.0.0:8000/api/v1";
+const BASE_URL_x =
   "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/api/v1";
 
 export const renameChat = async (
