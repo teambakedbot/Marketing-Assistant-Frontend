@@ -222,6 +222,15 @@ body {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
+.hamburger-menu:not(.open):hover div {
+  background: #00A67D; /* Color for closed menu hover */
+}
+
+.hamburger-menu.open:hover div {
+  background: #00C38E; /* Different color for open menu hover */
+}
+
+
 /* Side Menu Styles */
 .side-menu {
   position: absolute;
@@ -622,4 +631,43 @@ padding-bottom: 0px;
   .bot-message ol > li > p:first-child {
     font-size: 16px;
   }
+}
+
+/* Close button styles */
+.close-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 20;
+  position: relative;
+}
+
+.close-button::before,
+.close-button::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background: white;
+  border-radius: 10px;
+  transition: all 0.3s linear;
+}
+
+.close-button::before {
+  transform: rotate(45deg);
+}
+
+.close-button::after {
+  transform: rotate(-45deg);
+}
+
+.close-button:hover::before,
+.close-button:hover::after {
+  background: #00A67D; /* Change color on hover */
 }

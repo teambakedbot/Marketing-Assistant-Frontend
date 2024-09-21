@@ -221,8 +221,33 @@ export const ChatWidget: React.FC = () => {
 
   const handleNewChatButtonClick = (message: string) => {
     setPrompts(message);
+    //use callback to make sure prompts is set before calling playHandler
     playHandler();
   };
+
+  const handleOutsideClick = useCallback(
+    (e: MouseEvent) => {
+      const mainArea = document.querySelector(".main-area");
+      const header = document.querySelector(".chat-header");
+      if (
+        mainArea &&
+        mainArea.contains(e.target as Node) &&
+        header &&
+        !header.contains(e.target as Node) &&
+        isMenuOpen
+      ) {
+        setIsMenuOpen(false);
+      }
+    },
+    [isMenuOpen]
+  );
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [handleOutsideClick]);
 
   return (
     <div className="chat-widget">
@@ -234,7 +259,7 @@ export const ChatWidget: React.FC = () => {
           <div className="chat-container p-3 pb-0 md:p-3 rounded-lg shadow-lg relative">
             <div className="md:flex md:flex-row flex-col gap-3 min-h-[450px] lg:min-h-[550px] lg:min-w-[500px]">
               {/* Chat area */}
-              <div className="h-full w-full md:w-4/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden">
+              <div className="h-full w-full md:w-4/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden main-area">
                 <div className="chat-header">
                   <button
                     className={`hamburger-menu ${isMenuOpen ? "open" : ""}`}
@@ -245,7 +270,10 @@ export const ChatWidget: React.FC = () => {
                     <div></div>
                   </button>
                   <p className="text-lg md:text-xl font-bold">Chat</p>
-                  <div className="w-6"></div> {/* Placeholder for balance */}
+                  <button
+                    className="close-button"
+                    onClick={handleModalBox}
+                  ></button>
                 </div>
                 {isNewChat ? (
                   <div className="new-chat-view flex-grow overflow-y-auto">
@@ -262,38 +290,34 @@ export const ChatWidget: React.FC = () => {
                     <div className="new-chat-buttons">
                       <button
                         className="new-chat-button"
-                        onClick={() =>
-                          handleNewChatButtonClick("Show me new products")
-                        }
+                        onMouseDown={() => setPrompts("Show me new products")}
+                        onClick={() => playHandler()}
                       >
                         <span className="new-chat-button-icon">📦</span>
                         See new products
                       </button>
                       <button
                         className="new-chat-button"
-                        onClick={() =>
-                          handleNewChatButtonClick("Find a new location")
-                        }
+                        onMouseDown={() => setPrompts("Find a new location")}
+                        onClick={() => playHandler()}
                       >
                         <span className="new-chat-button-icon">📍</span>
                         Find new location
                       </button>
                       <button
                         className="new-chat-button"
-                        onClick={() =>
-                          handleNewChatButtonClick(
-                            "Recommend a relaxing strain"
-                          )
+                        onMouseDown={() =>
+                          setPrompts("Recommend a relaxing strain")
                         }
+                        onClick={() => playHandler()}
                       >
                         <span className="new-chat-button-icon">🧘</span>
                         Relaxing strain
                       </button>
                       <button
                         className="new-chat-button"
-                        onClick={() =>
-                          handleNewChatButtonClick("Tell me about CBD")
-                        }
+                        onMouseDown={() => setPrompts("Tell me about CBD")}
+                        onClick={() => playHandler()}
                       >
                         <span className="new-chat-button-icon">🌿</span>
                         Learn about CBD
