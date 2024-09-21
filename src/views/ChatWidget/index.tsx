@@ -17,7 +17,7 @@ import notLoggedInIcon from "/images/security.png"; // Import the not logged in 
 import bluntSmokey from "/images/blunt-smokey.png";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../config/firebase-config";
-import { FaStore } from "react-icons/fa"; // Import the store icon
+import { FaStore, FaArrowLeft, FaCartPlus } from "react-icons/fa"; // Import the store icon and back arrow icon
 
 export const ChatWidget: React.FC = () => {
   const { displayName, photoURL, user } = useAuth();
@@ -34,6 +34,20 @@ export const ChatWidget: React.FC = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isNewChat, setIsNewChat] = useState(true);
+  const [currentView, setCurrentView] = useState<"chat" | "store" | "product">(
+    "chat"
+  );
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const handleProductClick = (product) => {
+    setCurrentView("product");
+    setSelectedProduct(product);
+  };
+
+  const handleBack = () => {
+    setCurrentView("chat");
+    setSelectedProduct(null);
+  };
 
   const fetchChatMessages = useCallback(async () => {
     if (!currentChatId || chatHistory.length > 0) return;
@@ -60,6 +74,9 @@ export const ChatWidget: React.FC = () => {
 
   const loadChatHistory = useCallback(
     async (chatId: string | null) => {
+      setLoading(true);
+      setCurrentView("chat");
+      setIsMenuOpen(false);
       if (chatId === null) {
         setIsNewChat(true);
         setActiveChatId(null);
@@ -79,6 +96,7 @@ export const ChatWidget: React.FC = () => {
           console.error("Error loading chat history:", error);
         }
       }
+      setLoading(false);
     },
     [user]
   );
@@ -101,7 +119,20 @@ export const ChatWidget: React.FC = () => {
   };
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    switch (currentView) {
+      case "store":
+        setCurrentView("chat");
+        break;
+      case "chat":
+        setIsMenuOpen(!isMenuOpen);
+        break;
+      case "product":
+        setCurrentView("store");
+        break;
+      default:
+        setIsMenuOpen(!isMenuOpen);
+        break;
+    }
   };
 
   const playHandler = async () => {
@@ -251,10 +282,165 @@ export const ChatWidget: React.FC = () => {
   }, [handleOutsideClick]);
 
   const handleViewStore = () => {
-    // Add logic to open the store page
-    window.open("https://your-store-url.com", "_blank");
+    setIsMenuOpen(false);
+    setCurrentView("store");
   };
 
+  const mockProducts = [
+    {
+      cann_sku_id: "4Law1sHoxODTcpTb4P7aRko3",
+      brand_name: "Ooze",
+      product_name: "Twist Slim Ice Pink",
+      image_url:
+        "https://images.weedmaps.com/categories/000/000/004/placeholder/1613661827-1613605721-vape-pens_image_missing.jpg",
+      latest_price: 15.0,
+      category: "Vape",
+      description: "A sleek and stylish vape pen for on-the-go use.",
+      thc: "10%",
+      cbd: "5%",
+      potency: "1000mg",
+      effects: ["Relaxed", "Happy", "Euphoric"],
+    },
+    {
+      cann_sku_id: "2Law1sHoxODTcpTb4P7aRko4",
+      brand_name: "Gummy Bears",
+      product_name: "Fruity Gummy Bears",
+      image_url: "https://example.com/gummy-bears.jpg",
+      latest_price: 10.0,
+      category: "Edibles",
+      thc: "10%",
+      cbd: "5%",
+      potency: "1000mg",
+      effects: ["Relaxed", "Happy", "Euphoric"],
+      description: "Delicious gummy bears infused with THC.",
+    },
+    {
+      cann_sku_id: "3Law1sHoxODTcpTb4P7aRko5",
+      brand_name: "Green Crack",
+      product_name: "Green Crack Flower",
+      image_url: "https://example.com/green-crack.jpg",
+      latest_price: 25.0,
+      category: "Flower",
+      description: "A sativa strain known for its energizing effects.",
+      thc: "10%",
+      cbd: "5%",
+      potency: "1000mg",
+      effects: ["Relaxed", "Happy", "Euphoric"],
+    },
+    {
+      cann_sku_id: "5Law1sHoxODTcpTb4P7aRko6",
+      brand_name: "Chill",
+      product_name: "Relaxing CBD Oil",
+      image_url: "https://example.com/cbd-oil.jpg",
+      latest_price: 30.0,
+      category: "Oils",
+      description: "A calming CBD oil for relaxation.",
+      thc: "10%",
+      cbd: "5%",
+      potency: "1000mg",
+      effects: ["Relaxed", "Happy", "Euphoric"],
+    },
+    {
+      cann_sku_id: "6Law1sHoxODTcpTb4P7aRko7",
+      brand_name: "Cookies",
+      product_name: "Chocolate Chip Cookies",
+      image_url: "https://example.com/cookies.jpg",
+      latest_price: 12.0,
+      category: "Edibles",
+      description: "Delicious cookies infused with THC.",
+      thc: "10%",
+      cbd: "5%",
+      potency: "1000mg",
+      effects: ["Relaxed", "Happy", "Euphoric"],
+    },
+  ];
+  const StoreView = () => (
+    <div className="store-view">
+      <div className="filters pt-2 pb-2 color-black">
+        <button className="text-sm">Happy</button>
+        <button className="text-sm">$100-$500</button>
+        <button className="text-sm">All types</button>
+      </div>
+      <div className="results-header">
+        <h2>Showing results "{mockProducts.length}"</h2>
+        <button>See all</button>
+      </div>
+      <div className="product-grid">
+        {mockProducts.map((product) => (
+          <div className="product-item" key={product.cann_sku_id}>
+            <img
+              src={product.image_url}
+              alt={product.product_name}
+              className="pb-1 cursor-pointer"
+              onClick={() => handleProductClick(product)}
+            />
+            <h3
+              className="text-md font-semibold cursor-pointer mt-2"
+              onClick={() => handleProductClick(product)}
+            >
+              {product.product_name}
+            </h3>
+            <p className="text-sm">${product.latest_price.toFixed(2)}</p>
+            <p className="text-sm mt-2">{product.description}</p>
+            <button className="text-md add-to-cart-button p-1 mt-2">
+              Add to cart
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+  interface ProductDetailProps {
+    product?: {
+      product_name: string;
+      image_url: string;
+      latest_price: number;
+      description: string;
+      thc: string;
+      cbd: string;
+      potency: string;
+      effects: string[];
+    } | null;
+  }
+
+  const ProductDetailView: React.FC<ProductDetailProps> = ({ product }) => {
+    if (!product) {
+      return null;
+    }
+    return (
+      <div className="product-detail-view p-2">
+        <div className="flex justify-center items-center pb-2 w-full rounded-md border-2 border-white mb-5">
+          <img
+            className="product-detail-image"
+            src={product.image_url}
+            alt={product.product_name}
+          />
+        </div>
+        <div className="flex flex-row justify-between gap-2 pb-2">
+          <h3 className="font-bold">{product.product_name}</h3>
+          <p className="price">${product.latest_price.toFixed(2)}</p>
+        </div>
+        <p className="pb-2">{product.description}</p>
+
+        <div className="flex flex-row justify-around gap-2 pb-2 data-container">
+          <div className="flex flex-col justify-between gap-2 pb-2 text-center">
+            <span className="font-bold">THC</span>
+            <span className="text-md">{product.thc}</span>
+          </div>
+          <div className="flex flex-col justify-between gap-2 pb-2 text-center">
+            <span className="font-bold">CBD</span>
+            <span className="text-md">{product.cbd}</span>
+          </div>
+          <div className="flex flex-col justify-between gap-2 pb-2 text-center">
+            <span className="font-bold">Potency</span>
+            <span className="text-md">{product.potency}</span>
+          </div>
+        </div>
+
+        <button className="add-to-cart-button p-2 mt-10">Add To Cart</button>
+      </div>
+    );
+  };
   return (
     <div className="chat-widget">
       <button className="border-none outline-0" onClick={handleModalBox}>
@@ -267,118 +453,155 @@ export const ChatWidget: React.FC = () => {
               {/* Chat area */}
               <div className="h-full w-full md:w-4/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden main-area">
                 <div className="chat-header">
-                  <button
-                    className={`hamburger-menu ${isMenuOpen ? "open" : ""}`}
-                    onClick={toggleMenu}
-                  >
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                  </button>
-                  <p className="text-lg md:text-xl font-bold">Chat</p>
-                  <button className="close-button" onClick={handleModalBox}>
-                    {/* The X is created by CSS */}
-                  </button>
-                </div>
-                {isNewChat ? (
-                  <div className="new-chat-view flex-grow overflow-y-auto">
-                    <img
-                      src={bluntSmokey}
-                      alt="Smokey Robot"
-                      className="w-32 h-auto mb-4"
-                    />
-                    <h2 className="new-chat-title">What's up, bud?</h2>
-                    <p className="new-chat-description">
-                      I'm Smokey, your AI budtender. I'm here to help you find
-                      the right strain for you.
-                    </p>
-                    <div className="new-chat-buttons">
-                      <button
-                        className="new-chat-button"
-                        onMouseDown={() => setPrompts("Show me new products")}
-                        onClick={() => playHandler()}
-                      >
-                        <span className="new-chat-button-icon">📦</span>
-                        See new products
-                      </button>
-                      <button
-                        className="new-chat-button"
-                        onMouseDown={() => setPrompts("Find a new location")}
-                        onClick={() => playHandler()}
-                      >
-                        <span className="new-chat-button-icon">📍</span>
-                        Find new location
-                      </button>
-                      <button
-                        className="new-chat-button"
-                        onMouseDown={() =>
-                          setPrompts("Recommend a relaxing strain")
-                        }
-                        onClick={() => playHandler()}
-                      >
-                        <span className="new-chat-button-icon">🧘</span>
-                        Relaxing strain
-                      </button>
-                      <button
-                        className="new-chat-button"
-                        onMouseDown={() => setPrompts("Tell me about CBD")}
-                        onClick={() => playHandler()}
-                      >
-                        <span className="new-chat-button-icon">🌿</span>
-                        Learn about CBD
-                      </button>
-                    </div>
+                  <div className="flex flex-row gap-5 w-15">
+                    <button
+                      className={`${"hamburger-menu"} ${
+                        isMenuOpen || currentView != "chat" ? "open" : ""
+                      }`}
+                      onClick={toggleMenu}
+                    >
+                      <>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                      </>
+                    </button>
+                    <div className="w-5"> </div>
                   </div>
-                ) : (
-                  <div className="chat-messages flex-grow overflow-y-auto">
-                    <ChatHistory
-                      chatHistory={chatHistory}
-                      loading={loading}
-                      chatEndRef={chatEndRef}
+                  <p className="text-lg md:text-xl font-bold text-center">
+                    {currentView === "store" ? "Store" : "Chat"}
+                  </p>
+                  <div className="flex flex-row gap-5 w-15 justify-end">
+                    <button className="" onClick={handleViewStore}>
+                      <FaStore size={20} />
+                    </button>
+
+                    <button
+                      className="close-button"
+                      onClick={handleModalBox}
+                    ></button>
+                  </div>
+                </div>
+                {currentView === "store" && <StoreView />}
+                {currentView === "product" && (
+                  <ProductDetailView product={selectedProduct} />
+                )}
+
+                {currentView === "chat" && (
+                  <>
+                    {isNewChat && (
+                      <div className="new-chat-view flex-grow overflow-y-auto">
+                        <img
+                          src={bluntSmokey}
+                          alt="Smokey Robot"
+                          className="w-32 h-auto mb-4"
+                        />
+                        <h2 className="new-chat-title">What's up, bud?</h2>
+                        <p className="new-chat-description">
+                          I'm Smokey, your AI budtender. I'm here to help you
+                          find the right strain for you.
+                        </p>
+                        <div className="new-chat-buttons">
+                          <button
+                            className="new-chat-button"
+                            onMouseDown={() =>
+                              setPrompts("Show me new products")
+                            }
+                            onClick={() => playHandler()}
+                          >
+                            <span className="new-chat-button-icon">📦</span>
+                            See new products
+                          </button>
+                          <button
+                            className="new-chat-button"
+                            onMouseDown={() =>
+                              setPrompts("Find a new location")
+                            }
+                            onClick={() => playHandler()}
+                          >
+                            <span className="new-chat-button-icon">📍</span>
+                            Find new location
+                          </button>
+                          <button
+                            className="new-chat-button"
+                            onMouseDown={() =>
+                              setPrompts("Recommend a relaxing strain")
+                            }
+                            onClick={() => playHandler()}
+                          >
+                            <span className="new-chat-button-icon">🧘</span>
+                            Relaxing strain
+                          </button>
+                          <button
+                            className="new-chat-button"
+                            onMouseDown={() => setPrompts("Tell me about CBD")}
+                            onClick={() => playHandler()}
+                          >
+                            <span className="new-chat-button-icon">🌿</span>
+                            Learn about CBD
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    {!isNewChat && (
+                      <div className="chat-messages flex-grow overflow-y-auto">
+                        <ChatHistory
+                          chatHistory={chatHistory}
+                          loading={loading}
+                          chatEndRef={chatEndRef}
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {currentView !== "product" && (
+                  <div className="chat-input">
+                    <textarea
+                      className="resize-none w-full placeholder-gray-400 bg-transparent text-white p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          playHandler();
+                        }
+                      }}
+                      placeholder={
+                        currentView === "chat"
+                          ? "Ask me anything..."
+                          : "Search here..."
+                      }
+                      value={prompts}
+                      onChange={(e) => {
+                        setPrompts(e.target.value);
+                        const target = e.target as HTMLTextAreaElement;
+                        target.style.height = "40px";
+                        const newHeight = Math.min(
+                          Math.max(target.scrollHeight, 40),
+                          120
+                        );
+                        target.style.height = `${newHeight}px`;
+                        const chatInput = target.closest(
+                          ".chat-input"
+                        ) as HTMLElement;
+                        if (chatInput) {
+                          chatInput.style.minHeight = `${newHeight + 24}px`; // 24px for padding
+                        }
+                      }}
+                      rows={1}
                     />
+                    <button onClick={playHandler} disabled={loading}>
+                      {loading ? (
+                        <img
+                          src={loadingIcon}
+                          className="w-5 h-5"
+                          alt="Loading"
+                        />
+                      ) : (
+                        <img src={sendIcon} className="w-5 h-5" alt="Send" />
+                      )}
+                    </button>
                   </div>
                 )}
-                <div className="chat-input">
-                  <textarea
-                    className="resize-none w-full placeholder-gray-400 bg-transparent text-white p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        playHandler();
-                      }
-                    }}
-                    placeholder="Type your message..."
-                    value={prompts}
-                    onChange={(e) => {
-                      setPrompts(e.target.value);
-                      const target = e.target as HTMLTextAreaElement;
-                      target.style.height = "40px";
-                      const newHeight = Math.min(
-                        Math.max(target.scrollHeight, 40),
-                        120
-                      );
-                      target.style.height = `${newHeight}px`;
-                      const chatInput = target.closest(
-                        ".chat-input"
-                      ) as HTMLElement;
-                      if (chatInput) {
-                        chatInput.style.minHeight = `${newHeight + 24}px`; // 24px for padding
-                      }
-                    }}
-                    rows={1}
-                  />
-                  <button onClick={playHandler} disabled={loading}>
-                    {loading ? (
-                      <img
-                        src={loadingIcon}
-                        className="w-5 h-5"
-                        alt="Loading"
-                      />
-                    ) : (
-                      <img src={sendIcon} className="w-5 h-5" alt="Send" />
-                    )}
-                  </button>
-                </div>
               </div>
 
               {/* Side menu */}
@@ -434,8 +657,14 @@ export const ChatWidget: React.FC = () => {
                 </div>
 
                 {isLoggedIn && (
-                  <div className="side-menu-footer">
+                  <div className="side-menu-footer flex flex-row gap-2">
                     <button className="settings-button">Settings</button>
+                    <button
+                      className="settings-button"
+                      onClick={handleViewStore}
+                    >
+                      Shop
+                    </button>
                   </div>
                 )}
               </div>
