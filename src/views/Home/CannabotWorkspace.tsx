@@ -39,9 +39,6 @@ function CannabotWorkspace({
             <ChatHistory
               chatHistory={chatHistory}
               loading={loading}
-              userPhoto={userPhoto}
-              botIcon={botIcon}
-              loadingIcon={loadingIcon}
               chatEndRef={chatEndRef}
             />
           </div>
