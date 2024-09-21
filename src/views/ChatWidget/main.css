@@ -155,7 +155,8 @@ body {
   background-color: #2C3E50;
   padding: 12px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  min-height: 80px;
 }
 
 .chat-input textarea {
@@ -163,8 +164,12 @@ body {
   background-color: #1E2A38;
   border: none;
   color: white;
-  padding: 8px 12px;
-  border-radius: 20px;
+  padding: 12px;
+  border-radius: 12px;
+  resize: none;
+  min-height: 60px;
+  max-height: 120px;
+  overflow-y: auto;
 }
 
 .chat-input button {
@@ -174,10 +179,11 @@ body {
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  margin-left: 8px;
+  margin-left: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: flex-end;
 }
 
 /* Hamburger menu styles */
@@ -228,9 +234,8 @@ body {
   transition: left 0.3s ease;
   display: flex;
   flex-direction: column;
-  padding: 16px;
   z-index: 15;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .side-menu.open {
@@ -245,9 +250,8 @@ body {
 }
 
 .side-menu-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
+  padding: 16px;
+  background-color: #1E2A38;
 }
 
 .robot-icon-container {
@@ -293,7 +297,12 @@ body {
 
 .side-menu-content {
   flex-grow: 1;
-  margin-top: 16px;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.chat-history-scroll {
+  overflow-y: auto;
 }
 
 .menu-item {
@@ -319,7 +328,8 @@ body {
 }
 
 .side-menu-footer {
-  margin-top: 16px;
+  padding: 16px;
+  background-color: #1E2A38;
 }
 
 .side-menu-footer h3 {
@@ -469,4 +479,33 @@ padding-bottom: 0px;
   overflow-y: auto;
   margin-bottom: 0px;
   flex-grow: 1;
+}
+
+/* Login Form Styles */
+.login-form {
+  padding: 2rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.login-input {
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.login-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #00C49A;
+}
+
+.login-button,
+.google-login-button {
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover,
+.google-login-button:hover {
+  background-color: #00C49A;
+  border-color: #00C49A;
 }

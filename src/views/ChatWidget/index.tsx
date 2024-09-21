@@ -13,6 +13,9 @@ import useAuth from "../../hooks/useAuth";
 import { Chats } from "../../models/ChatModels";
 import { getChats, getChatMessages, sendMessage } from "../../utils/api";
 import robotIcon from "/images/pointing.png"; // Import the robot icon
+import notLoggedInIcon from "/images/security.png"; // Import the not logged in icon
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../../config/firebase-config";
 
 export const ChatWidget: React.FC = () => {
   const { displayName, photoURL, user } = useAuth();
@@ -27,6 +30,7 @@ export const ChatWidget: React.FC = () => {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const fetchChatMessages = useCallback(async () => {
     if (!currentChatId || chatHistory.length > 0) return;
@@ -76,7 +80,10 @@ export const ChatWidget: React.FC = () => {
 
   useEffect(() => {
     if (user) {
+      setIsLoggedIn(true);
       fetchUserChats();
+    } else {
+      setIsLoggedIn(false);
     }
   }, [user, fetchUserChats]);
 
@@ -140,6 +147,72 @@ export const ChatWidget: React.FC = () => {
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+
+  const LoginForm: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        // Implement your email/password login logic here
+        onLogin();
+      } catch (error) {
+        console.error("Error signing in:", error);
+      }
+    };
+
+    const handleGoogleSignIn = async () => {
+      try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+        onLogin();
+      } catch (error) {
+        console.error("Error signing in with Google:", error);
+      }
+    };
+
+    return (
+      <form
+        onSubmit={handleSubmit}
+        className="login-form flex flex-col gap-6 w-full max-w-md"
+      >
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          className="login-input p-3 rounded bg-gray-700 text-white text-lg"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          className="login-input p-3 rounded bg-gray-700 text-white text-lg"
+        />
+        <button
+          type="submit"
+          className="login-button border-2 border-white rounded-md text-white p-3 text-lg hover:bg-white hover:text-gray-800 transition-colors"
+        >
+          Login
+        </button>
+        <div className="text-center text-white my-4 text-lg">or</div>
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          className="google-login-button border-2 border-white rounded-md text-white p-3 text-lg flex items-center justify-center hover:bg-white hover:text-gray-800 transition-colors"
+        >
+          <img
+            src="/images/google-icon.png"
+            alt="Google"
+            className="w-6 h-6 mr-2"
+          />
+          Login with Google
+        </button>
+      </form>
+    );
+  };
 
   return (
     <div className="chat-widget">
@@ -212,50 +285,61 @@ export const ChatWidget: React.FC = () => {
 
               {/* Side menu */}
               <div className={`side-menu ${isMenuOpen ? "open" : ""}`}>
-                <div className="side-menu-header"></div>
-                <div className="robot-icon-container">
-                  <img src={robotIcon} alt="Chat Bot" className="robot-icon" />
-                </div>
-                <h2 className="chat-history-title">Chat history</h2>
-                <button
-                  className="settings-button"
-                  onClick={() => loadChatHistory(null)}
-                >
-                  New Chat
-                </button>
-
-                <div className="side-menu-content">
-                  {chats.length > 0 ? (
-                    chats.map(({ chat_id, name }: any, index) => (
-                      <button
-                        key={`${chat_id}-${index}`}
-                        onClick={() => loadChatHistory(chat_id)}
-                        className={`menu-item text-md ${
-                          activeChatId === chat_id ? "active" : ""
-                        }`}
-                      >
-                        {name}
-                      </button>
-                    ))
-                  ) : (
-                    <p className="text-center text-gray-500 py-4">
-                      No conversations yet.
-                    </p>
-                  )}
-                </div>
-                <div className="side-menu-footer">
-                  <h3>Featured products</h3>
-                  <div className="featured-product">
+                <div className="side-menu-header">
+                  <div className="robot-icon-container">
                     <img
-                      src={
-                        "https://images.weedmaps.com/pictures/listings/159/608/069/425693376_180730_StrainReview_EnjoyableXJ13_08.jpg"
-                      }
-                      alt="Product Viewer"
-                      className="w-full object-contain h-[100px] md:h-[150px]"
+                      src={isLoggedIn ? robotIcon : notLoggedInIcon}
+                      alt={isLoggedIn ? "Chat Bot" : "Not Logged In"}
+                      className="robot-icon"
                     />
                   </div>
-                  <button className="settings-button">Settings</button>
+                  {isLoggedIn && (
+                    <h2 className="chat-history-title">Chat history</h2>
+                  )}
+                  <button
+                    className="settings-button"
+                    onClick={() => loadChatHistory(null)}
+                  >
+                    New Chat
+                  </button>
                 </div>
+
+                <div className="side-menu-content">
+                  {isLoggedIn ? (
+                    <div className="chat-history-scroll">
+                      {chats.length > 0 ? (
+                        chats.map(({ chat_id, name }: any, index) => (
+                          <button
+                            key={`${chat_id}-${index}`}
+                            onClick={() => loadChatHistory(chat_id)}
+                            className={`menu-item text-md ${
+                              activeChatId === chat_id ? "active" : ""
+                            }`}
+                          >
+                            {name}
+                          </button>
+                        ))
+                      ) : (
+                        <p className="text-center text-gray-500 py-4">
+                          No conversations yet.
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full w-full p-4">
+                      <h2 className="text-2xl font-bold mb-6 text-white">
+                        Login to Chat
+                      </h2>
+                      <LoginForm onLogin={() => setIsLoggedIn(true)} />
+                    </div>
+                  )}
+                </div>
+
+                {/* {isLoggedIn && (
+                  <div className="side-menu-footer">
+                    <button className="settings-button">Settings</button>
+                  </div>
+                )} */}
               </div>
 
               {/* Right panel */}
