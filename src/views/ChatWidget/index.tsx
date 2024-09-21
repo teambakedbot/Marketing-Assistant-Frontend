@@ -182,14 +182,9 @@ export const ChatWidget: React.FC = () => {
 
               {/* Side menu */}
               <div className={`side-menu ${isMenuOpen ? "open" : ""}`}>
-                <div className="side-menu-header">
-                  <button className="back-button">
-                    <svg /* Add your back arrow SVG here */ />
-                  </button>
+                <div className="side-menu-header"></div>
+                <div className="robot-icon-container">
                   <img src={robotIcon} alt="Chat Bot" className="robot-icon" />
-                  <button className="edit-button">
-                    <svg /* Add your edit/pencil SVG here */ />
-                  </button>
                 </div>
                 <h2 className="chat-history-title">Chat history</h2>
                 <div className="side-menu-content">
@@ -212,10 +207,12 @@ export const ChatWidget: React.FC = () => {
               </div>
 
               {/* Right panel */}
-              <div className="h-full w-full md:w-1/4 rounded-md p-2 flex flex-col justify-between gap-2 right-panel">
+              <div className="h-full w-full md:w-1/3 rounded-md p-2 flex flex-col justify-between gap-1 right-panel">
                 <div className="panel-container product-info">
-                  <h3>Purple Punch I</h3>
-                  <p>A premium cannabis strain</p>
+                  <h3 className="text-center">Purple Punch I</h3>
+                  <p className="text-center text-sm">
+                    A premium cannabis strain
+                  </p>
                   <img
                     src={product1}
                     alt="Product Viewer"
@@ -225,12 +222,6 @@ export const ChatWidget: React.FC = () => {
                 <div className="panel-container desired-effects">
                   <h4>Desired Effect:</h4>
                   <div className="effects-icons">
-                    <label
-                      htmlFor="slider"
-                      className="block text-white font-bold text-base md:text-lg mb-2"
-                    >
-                      Desired Effect:
-                    </label>
                     <input
                       type="range"
                       id="slider"
@@ -264,13 +255,26 @@ export const ChatWidget: React.FC = () => {
                   </div>
                 </div>
                 <div className="panel-container community-reviews">
-                  <h4>Community Reviews</h4>
-                  <p>See what others are saying</p>
+                  <h4 className="text-center">Community Reviews</h4>
+
                   <div className="reviews-list">
                     {/* Add sample reviews here */}
-                    <div className="review">Sample review 1</div>
-                    <div className="review">Sample review 2</div>
-                    <div className="review">Sample review 3</div>
+                    <div className="review text-md">
+                      <b>Awesome</b>
+                      <br /> Smell is 10/10 Taste is 10/10 High is 20/10 Smell
+                      is 10/10 Taste is 10/10 High is 20/10 fireeeeee
+                    </div>
+                    <div className="review text-md">
+                      <b>Lives up to the hype</b>
+                      <br />
+                      I've been using BakedBot for a while now and it's been a
+                      game changer for me. I HIGHLY 🚀🪂✈
+                    </div>
+                    <div className="review text-md">
+                      <b>Really Strong</b>
+                      <br /> Its actually 32.21% total cannabinoids It's not
+                      36.37% or whatever it says on the description.
+                    </div>
                     {/* Add more sample reviews as needed */}
                   </div>
                 </div>

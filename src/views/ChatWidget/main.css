@@ -245,8 +245,28 @@ body {
 
 .side-menu-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  padding: 10px;
+}
+
+.robot-icon-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px; /* Reduced margin */
+}
+
+.robot-icon {
+  width: 100px; /* Adjust size as needed */
+  height: 100px; /* Adjust size as needed */
+  object-fit: contain;
+}
+
+.chat-history-title {
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
 }
 
 .back-button,
@@ -259,9 +279,9 @@ body {
 }
 
 .robot-icon {
-  width: 40px;
-  height: 40px;
   border-radius: 50%;
+  max-width: 200px;
+  height: auto;
 }
 
 .chat-history-title {
@@ -279,17 +299,23 @@ body {
   background: none;
   border: none;
   color: white;
-  padding: 10px 0;
+  padding: 12px 16px; /* Added horizontal padding */
   text-align: left;
   width: 100%;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.2s ease;
+  border-radius: 4px; /* Optional: adds rounded corners */
 }
 
 .menu-item.active,
 .menu-item:hover {
   background-color: #1E2A38;
+}
+
+.menu-item:hover,
+.menu-item:focus {
+  background-color: rgba(255, 255, 255, 0.1); /* Slight highlight on hover/focus */
 }
 
 .side-menu-footer {
@@ -306,20 +332,25 @@ body {
   margin-bottom: 16px;
 }
 
+.featured-products {
+  margin-top: 16px;
+}
+
 .settings-button {
   background-color: #00C49A;
   color: white;
   border: none;
-  padding: 8px 12px;
+  padding: 12px;
   border-radius: 4px;
   cursor: pointer;
   width: 100%;
   font-size: 16px;
   transition: background-color 0.2s ease;
+  margin-top: 16px;
 }
 
 .settings-button:hover {
-  background-color: #009e83;
+  background-color: #00A67D;
 }
 
 /* Right Panel Styles */
@@ -329,6 +360,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   padding: 8px;
+  padding-top: 0px;
   height: 100%;
 }
 
@@ -361,8 +393,8 @@ body {
   background-color: #00C49A; /* Green background */
   border-radius: 8px;
   padding: 12px;
+  
 }
-
 .right-panel h4 {
   color: white;
   margin-bottom: 8px;
@@ -414,3 +446,12 @@ body {
   height: 100%;
 }
 
+.right-panel{
+padding-bottom: 0px;
+}
+
+.community-reviews {
+  overflow-y: auto;
+  margin-bottom: 0px;
+  flex-grow: 1;
+}
