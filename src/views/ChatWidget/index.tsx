@@ -349,7 +349,7 @@ export const ChatWidget: React.FC = () => {
             >
               {product.product_name}
             </h3>
-            <p className="text-sm">${product.price?.toFixed(2)}</p>
+            <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
             <p className="text-sm mt-2">{product.description}</p>
             <button className="text-md add-to-cart-button p-1 mt-2">
               Add to cart
@@ -387,7 +387,7 @@ export const ChatWidget: React.FC = () => {
         </div>
         <div className="flex flex-row justify-between gap-2 pb-2">
           <h3 className="font-bold">{product.product_name}</h3>
-          <p className="price">${product.latest_price.toFixed(2)}</p>
+          <p className="price">${product.latest_price?.toFixed(2)}</p>
         </div>
         <p className="pb-2">{product.description}</p>
 

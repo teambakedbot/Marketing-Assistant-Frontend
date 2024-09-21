@@ -615,6 +615,17 @@ padding-bottom: 0px;
   border-radius: 8px;
   margin-top: 10px;
 }
+
+
+.bot-message p img:not(.loading-icon) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
 .bot-message strong {
   color: #00A67D;
 }
