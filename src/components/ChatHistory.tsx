@@ -28,7 +28,11 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
             <div className={`message ${messageClass}`}>
               {isLoading ? (
                 <div className="loading-dots">
-                  <img src={loadingIcon} className="w-5 h-5" alt="Loading" />
+                  <img
+                    src={loadingIcon}
+                    className="w-5 h-5 loading-icon"
+                    alt="Loading"
+                  />
                 </div>
               ) : (
                 <ReactMarkdown className="text-white text-sm md:text-base prose prose-invert">

@@ -527,12 +527,6 @@ padding-bottom: 0px;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
 }
-.message img {
-  max-width: 200px;
-  height: auto;
-  padding: 10px;
-  padding-bottom: 20px;
-}
 
 .chat-input {
   background-color: #1E1E1E;
@@ -585,22 +579,6 @@ padding-bottom: 0px;
   position: relative;
 }
 
-.bot-message ol > li::before {
-  content: counter(product-counter);
-  position: absolute;
-  left: -30px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-}
 
 .bot-message ol > li > p:first-child {
   font-size: 18px;
@@ -618,13 +596,12 @@ padding-bottom: 0px;
   margin-bottom: 5px;
 }
 
-.bot-message img {
+.bot-message ul img:not(.loading-icon) {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
   margin-top: 10px;
 }
-
 .bot-message strong {
   color: #00A67D;
 }
