@@ -25,6 +25,7 @@ export const ChatWidget: React.FC = () => {
   >([{ role: "assistant", content: "Hey, how can I help?" }]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
 
   const fetchChatMessages = useCallback(async () => {
     if (!currentChatId || chatHistory.length > 0) return;
@@ -48,11 +49,28 @@ export const ChatWidget: React.FC = () => {
       console.error("Error fetching user chats:", error);
     }
   }, [user]);
+
+  const loadChatHistory = useCallback(
+    async (chatId: string) => {
+      setActiveChatId(chatId);
+      setCurrentChatId(chatId);
+      try {
+        const token = await user!.getIdToken();
+        const messages = await getChatMessages(token, chatId);
+        setChatHistory(messages);
+      } catch (error) {
+        console.error("Error loading chat history:", error);
+      }
+    },
+    [user]
+  );
+
   useEffect(() => {
     if (user) {
       fetchUserChats();
     }
-  }, [user]);
+  }, [user, fetchUserChats]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.valueAsNumber);
   };
@@ -89,6 +107,7 @@ export const ChatWidget: React.FC = () => {
       });
       if (response.chat_id) {
         setCurrentChatId(response.chat_id);
+        setActiveChatId(response.chat_id);
         fetchUserChats();
       }
     } catch (error: any) {
@@ -100,6 +119,7 @@ export const ChatWidget: React.FC = () => {
       setLoading(false);
     }
   };
+
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const userPhoto = photoURL || "/images/person-image.png";
 
@@ -111,6 +131,7 @@ export const ChatWidget: React.FC = () => {
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+
   return (
     <div className="chat-widget">
       <button className="border-none outline-0" onClick={handleModalBox}>
@@ -188,14 +209,23 @@ export const ChatWidget: React.FC = () => {
                 </div>
                 <h2 className="chat-history-title">Chat history</h2>
                 <div className="side-menu-content">
-                  <button className="menu-item active">
-                    Demo: Image/Video/Audio
-                  </button>
-                  <button className="menu-item">
-                    Demo: polls/Quizzes/Actions
-                  </button>
-                  <button className="menu-item">Demo: Purchase Flow</button>
-                  <button className="menu-item">Demo: Advice Flow</button>
+                  {chats.length > 0 ? (
+                    chats.map(({ chat_id, name }: any, index) => (
+                      <button
+                        key={`${chat_id}-${index}`}
+                        onClick={() => loadChatHistory(chat_id)}
+                        className={`menu-item ${
+                          activeChatId === chat_id ? "active" : ""
+                        }`}
+                      >
+                        {name}
+                      </button>
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-500 py-4">
+                      No conversations yet.
+                    </p>
+                  )}
                 </div>
                 <div className="side-menu-footer">
                   <h3>Featured products</h3>

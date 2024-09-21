@@ -15,8 +15,8 @@ import "../../styles/theme.css";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import Conversations from "./Conversations";
 
-const BASE_URL = "http://0.0.0.0:8000/api/v1";
-const BASE_URLx =
+const BASE_URLx = "http://0.0.0.0:8000/api/v1";
+const BASE_URL =
   "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/api/v1";
 function Home() {
   const [prompts, setPrompts] = useState<string>("");
