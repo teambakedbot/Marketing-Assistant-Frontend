@@ -1,5 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import loadingIcon from "/images/loading-spinner-white.gif";
 
 interface ChatHistoryProps {
   chatHistory: { role: string; content: string }[];
@@ -27,9 +28,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
             <div className={`message ${messageClass}`}>
               {isLoading ? (
                 <div className="loading-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+                  <img src={loadingIcon} className="w-5 h-5" alt="Loading" />
                 </div>
               ) : (
                 <ReactMarkdown className="text-white text-sm md:text-base prose prose-invert">

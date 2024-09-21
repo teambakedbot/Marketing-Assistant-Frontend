@@ -116,20 +116,20 @@ body {
 }
 
 .user-message {
-  background-color: #00C49A; /* Updated color */
+  background-color: #00766D; /* Pine Green */
   color: white;
   align-self: flex-end;
 }
 
 .bot-message {
-  background-color: #2C3E50; /* Updated color */
+  background-color: #0D211D; /* Dark Jungle Green */
   color: white;
   align-self: flex-start;
 }
 
 /* New styles for the chat interface */
 .chat-container {
-  background-color: #1E2A38;
+  background-color: #1E1E1E;
   border-radius: 12px;
   overflow: hidden;
   height: 100%;
@@ -138,7 +138,7 @@ body {
 }
 
 .chat-header {
-  background-color: #2C3E50;
+  background-color: #2C2C2C;
   padding: 12px;
   display: flex;
   align-items: center;
@@ -152,28 +152,28 @@ body {
 }
 
 .chat-input {
-  background-color: #2C3E50;
+  background-color: #2C2C2C;
   padding: 12px;
   display: flex;
-  align-items: flex-end;
-  min-height: 80px;
+  align-items: center;
+  min-height: 64px;
 }
 
 .chat-input textarea {
   flex-grow: 1;
-  background-color: #1E2A38;
+  background-color: #3A3A3A;
   border: none;
   color: white;
   padding: 12px;
   border-radius: 12px;
   resize: none;
-  min-height: 60px;
+  min-height: 40px;
   max-height: 120px;
   overflow-y: auto;
 }
 
 .chat-input button {
-  background-color: #00C49A;
+  background-color: #00A67D;
   color: white;
   border: none;
   border-radius: 50%;
@@ -183,7 +183,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: flex-end;
 }
 
 /* Hamburger menu styles */
@@ -230,7 +229,7 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background-color: #2C3E50;
+  background-color: #2C2C2C;
   transition: left 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -251,7 +250,7 @@ body {
 
 .side-menu-header {
   padding: 16px;
-  background-color: #1E2A38;
+  background-color: #3A3A3A;
 }
 
 .robot-icon-container {
@@ -319,7 +318,7 @@ body {
 
 .menu-item.active,
 .menu-item:hover {
-  background-color: #1E2A38;
+  background-color: #23504A; /* Brunswick Green */
 }
 
 .menu-item:hover,
@@ -329,7 +328,7 @@ body {
 
 .side-menu-footer {
   padding: 16px;
-  background-color: #1E2A38;
+  background-color: #23504A; /* Brunswick Green */
 }
 
 .side-menu-footer h3 {
@@ -347,7 +346,7 @@ body {
 }
 
 .settings-button {
-  background-color: #00C49A;
+  background-color: #00766D; /* Pine Green */
   color: white;
   border: none;
   padding: 12px;
@@ -359,9 +358,8 @@ body {
   margin-top: 16px;
 }
 
-
 .settingss-button {
-  background-color: #00C49A;
+  background-color: #00766D; /* Pine Green */
   color: white;
   border: none;
   padding: 5px;
@@ -375,12 +373,12 @@ body {
 }
 
 .settings-button:hover {
-  background-color: #00A67D;
+  background-color: #00A67D; /* Emerald Green */
 }
 
 /* Right Panel Styles */
 .right-panel {
-  background-color: #1E2A38; /* Maintain overall background color */
+  background-color: #23504A; /* Brunswick Green */
   display: none;
   flex-direction: column;
   justify-content: space-between;
@@ -390,15 +388,15 @@ body {
 }
 
 .right-panel .panel-container {
-  background-color: #00C49A; /* Green background for containers */
+  background-color: #00766D; /* Pine Green */
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
 }
 
 .right-panel .product-info {
-  background-color: white; /* White background for product image panel */
-  color: #1E2A38; /* Dark text color for contrast */
+  background-color: white;
+  color: #0D211D; /* Dark Jungle Green */
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
@@ -406,7 +404,7 @@ body {
 
 .right-panel .product-info h3,
 .right-panel .product-info p {
-  color: #1E2A38; /* Ensure text is readable on white background */
+  color: #0D211D; /* Dark Jungle Green */
 }
 
 .right-panel .product-info img {
@@ -415,7 +413,7 @@ body {
 
 .right-panel .desired-effects,
 .right-panel .community-reviews {
-  background-color: #00C49A; /* Green background */
+  background-color: #00766D; /* Pine Green */
   border-radius: 8px;
   padding: 12px;
   
@@ -434,7 +432,7 @@ body {
 }
 
 .right-panel .effects-icons input[type="range"] {
-  accent-color: #1E2A38;
+  accent-color: #23504A; /* Brunswick Green */
 }
 
 .right-panel .effects-icons .flex span {
@@ -442,7 +440,7 @@ body {
 }
 
 .right-panel .reviews-list .review {
-  background-color: #1E2A38;
+  background-color: #23504A; /* Brunswick Green */
   color: white;
   padding: 8px;
   border-radius: 4px;
@@ -475,37 +473,176 @@ body {
 padding-bottom: 0px;
 }
 
-.community-reviews {
-  overflow-y: auto;
-  margin-bottom: 0px;
-  flex-grow: 1;
-}
-
-/* Login Form Styles */
-.login-form {
+.new-chat-view {
+  background-color: #1E1E1E;
   padding: 2rem;
-  background-color: rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.new-chat-title {
+  color: #FFFFFF;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.new-chat-description {
+  color: #AAAAAA;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.new-chat-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.new-chat-button {
+  background-color: #3A3A3A;
+  color: #FFFFFF;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.login-input {
-  width: 100%;
-  transition: all 0.3s ease;
+.new-chat-button:hover {
+  background-color: #4A4A4A;
 }
 
-.login-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px #00C49A;
+.new-chat-button-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.message img {
+  max-width: 200px;
+  height: auto;
+  padding: 10px;
+  padding-bottom: 20px;
 }
 
-.login-button,
-.google-login-button {
-  width: 100%;
-  transition: all 0.3s ease;
+.chat-input {
+  background-color: #1E1E1E;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  min-height: 64px;
 }
 
-.login-button:hover,
-.google-login-button:hover {
-  background-color: #00C49A;
-  border-color: #00C49A;
+.chat-input textarea {
+  flex-grow: 1;
+  background-color: #2C2C2C;
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+  resize: none;
+  min-height: 40px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.chat-input button {
+  background-color: #00A67D;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Styling for product list */
+.bot-message ol {
+  margin-top: 20px;
+  list-style-type: none;
+  padding: 0;
+  counter-reset: product-counter;
+}
+
+.bot-message ol > li {
+  counter-increment: product-counter;
+  margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+  position: relative;
+}
+
+.bot-message ol > li::before {
+  content: counter(product-counter);
+  position: absolute;
+  left: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.bot-message ol > li > p:first-child {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #00A67D;
+}
+
+.bot-message ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.bot-message ul li {
+  margin-bottom: 5px;
+}
+
+.bot-message img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.bot-message strong {
+  color: #00A67D;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .bot-message ol > li {
+    padding: 10px;
+  }
+
+  .bot-message ol > li::before {
+    left: -25px;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+  }
+
+  .bot-message ol > li > p:first-child {
+    font-size: 16px;
+  }
 }

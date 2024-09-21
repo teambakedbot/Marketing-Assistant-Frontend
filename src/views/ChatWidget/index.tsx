@@ -14,6 +14,7 @@ import { Chats } from "../../models/ChatModels";
 import { getChats, getChatMessages, sendMessage } from "../../utils/api";
 import robotIcon from "/images/pointing.png"; // Import the robot icon
 import notLoggedInIcon from "/images/security.png"; // Import the not logged in icon
+import bluntSmokey from "/images/blunt-smokey.png";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../config/firebase-config";
 
@@ -31,6 +32,7 @@ export const ChatWidget: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isNewChat, setIsNewChat] = useState(true);
 
   const fetchChatMessages = useCallback(async () => {
     if (!currentChatId || chatHistory.length > 0) return;
@@ -58,12 +60,14 @@ export const ChatWidget: React.FC = () => {
   const loadChatHistory = useCallback(
     async (chatId: string | null) => {
       if (chatId === null) {
+        setIsNewChat(true);
         setActiveChatId(null);
         setCurrentChatId(null);
         setChatHistory([
           { role: "assistant", content: "Hey, how can I help?" },
         ]);
       } else {
+        setIsNewChat(false);
         setActiveChatId(chatId);
         setCurrentChatId(chatId);
         try {
@@ -101,6 +105,7 @@ export const ChatWidget: React.FC = () => {
 
   const playHandler = async () => {
     if (!prompts || loading) return;
+    setIsNewChat(false);
     setChatHistory((prevHistory) => [
       ...prevHistory,
       { role: "user", content: prompts },
@@ -214,6 +219,11 @@ export const ChatWidget: React.FC = () => {
     );
   };
 
+  const handleNewChatButtonClick = (message: string) => {
+    setPrompts(message);
+    playHandler();
+  };
+
   return (
     <div className="chat-widget">
       <button className="border-none outline-0" onClick={handleModalBox}>
@@ -237,16 +247,71 @@ export const ChatWidget: React.FC = () => {
                   <p className="text-lg md:text-xl font-bold">Chat</p>
                   <div className="w-6"></div> {/* Placeholder for balance */}
                 </div>
-                <div className="chat-messages flex-grow overflow-y-auto">
-                  <ChatHistory
-                    chatHistory={chatHistory}
-                    loading={loading}
-                    chatEndRef={chatEndRef}
-                  />
-                </div>
+                {isNewChat ? (
+                  <div className="new-chat-view flex-grow overflow-y-auto">
+                    <img
+                      src={bluntSmokey}
+                      alt="Smokey Robot"
+                      className="w-32 h-auto mb-4"
+                    />
+                    <h2 className="new-chat-title">What's up, bud?</h2>
+                    <p className="new-chat-description">
+                      I'm Smokey, your AI budtender. I'm here to help you find
+                      the right strain for you.
+                    </p>
+                    <div className="new-chat-buttons">
+                      <button
+                        className="new-chat-button"
+                        onClick={() =>
+                          handleNewChatButtonClick("Show me new products")
+                        }
+                      >
+                        <span className="new-chat-button-icon">📦</span>
+                        See new products
+                      </button>
+                      <button
+                        className="new-chat-button"
+                        onClick={() =>
+                          handleNewChatButtonClick("Find a new location")
+                        }
+                      >
+                        <span className="new-chat-button-icon">📍</span>
+                        Find new location
+                      </button>
+                      <button
+                        className="new-chat-button"
+                        onClick={() =>
+                          handleNewChatButtonClick(
+                            "Recommend a relaxing strain"
+                          )
+                        }
+                      >
+                        <span className="new-chat-button-icon">🧘</span>
+                        Relaxing strain
+                      </button>
+                      <button
+                        className="new-chat-button"
+                        onClick={() =>
+                          handleNewChatButtonClick("Tell me about CBD")
+                        }
+                      >
+                        <span className="new-chat-button-icon">🌿</span>
+                        Learn about CBD
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="chat-messages flex-grow overflow-y-auto">
+                    <ChatHistory
+                      chatHistory={chatHistory}
+                      loading={loading}
+                      chatEndRef={chatEndRef}
+                    />
+                  </div>
+                )}
                 <div className="chat-input">
                   <textarea
-                    className="resize-none w-full placeholder-gray-400"
+                    className="resize-none w-full placeholder-gray-400 bg-transparent text-white p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
@@ -258,17 +323,21 @@ export const ChatWidget: React.FC = () => {
                     onChange={(e) => {
                       setPrompts(e.target.value);
                       const target = e.target as HTMLTextAreaElement;
-                      target.style.height = "auto";
-                      target.style.height = `${target.scrollHeight}px`;
+                      target.style.height = "40px";
+                      const newHeight = Math.min(
+                        Math.max(target.scrollHeight, 40),
+                        120
+                      );
+                      target.style.height = `${newHeight}px`;
+                      const chatInput = target.closest(
+                        ".chat-input"
+                      ) as HTMLElement;
+                      if (chatInput) {
+                        chatInput.style.minHeight = `${newHeight + 24}px`; // 24px for padding
+                      }
                     }}
                     rows={1}
-                    style={{
-                      overflowY: "auto",
-                      padding: "8px",
-                      maxHeight: "4.5em",
-                    }}
                   />
-
                   <button onClick={playHandler} disabled={loading}>
                     {loading ? (
                       <img
@@ -335,11 +404,11 @@ export const ChatWidget: React.FC = () => {
                   )}
                 </div>
 
-                {/* {isLoggedIn && (
+                {isLoggedIn && (
                   <div className="side-menu-footer">
                     <button className="settings-button">Settings</button>
                   </div>
-                )} */}
+                )}
               </div>
 
               {/* Right panel */}
