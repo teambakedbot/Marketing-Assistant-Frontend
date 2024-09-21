@@ -19,6 +19,10 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../config/firebase-config";
 import { FaStore, FaArrowLeft, FaCartPlus } from "react-icons/fa"; // Import the store icon and back arrow icon
 
+const BASE_URLx = "http://0.0.0.0:8000/api/v1";
+const BASE_URL =
+  "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/api/v1";
+
 export const ChatWidget: React.FC = () => {
   const { displayName, photoURL, user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -285,7 +289,7 @@ export const ChatWidget: React.FC = () => {
   const fetchProducts = useCallback(async (page = 1) => {
     try {
       const response = await axios.get(
-        `http://0.0.0.0:8000/api/v1/products?retailers=8266&page=${page}&states=michigan`,
+        `${BASE_URL}/products?retailers=8266&page=${page}&states=michigan`,
         {
           headers: {
             "X-Token": `Bearer ${"821d72c3bad50640e8c09dd49346a73b"}`,
@@ -306,7 +310,7 @@ export const ChatWidget: React.FC = () => {
     if (!searchQuery) return;
     try {
       const response = await axios.get(
-        `http://0.0.0.0:8000/api/v1/products/search?query=${searchQuery}&states=michigan&retailers=8266`,
+        `${BASE_URL}/products/search?query=${searchQuery}&states=michigan&retailers=8266`,
         {
           headers: {
             "X-Token": `Bearer ${"821d72c3bad50640e8c09dd49346a73b"}`,
