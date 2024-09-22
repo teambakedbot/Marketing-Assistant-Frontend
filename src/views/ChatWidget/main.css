@@ -153,6 +153,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-left: -12px;
+  margin-right: -12px;
+  border-radius: 12px;
+  margin-top: -5px;
 }
 
 .chat-messages {

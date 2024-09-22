@@ -394,8 +394,8 @@ export const ChatWidget: React.FC = () => {
         <button>See all</button>
       </div>
       <div className="product-grid">
-        {products?.map((product) => (
-          <div className="product-item" key={product.cann_sku_id}>
+        {products?.map((product, index) => (
+          <div className="product-item" key={index}>
             <img
               src={product.image_url}
               alt={product.product_name}
@@ -481,8 +481,8 @@ export const ChatWidget: React.FC = () => {
         <img src={bottom} className="w-10" alt="Open Chatbot" />
       </button>
       {isModalOpen && (
-        <div className="absolute right-2 bottom-14 flex justify-center items-center z-50 animate-open">
-          <div className="chat-container p-3 pb-0 md:p-3 rounded-lg shadow-lg relative">
+        <div className="absolute right-2 bottom-14 flex justify-center items-center z-50 animate-open ">
+          <div className="chat-container p-0 pb-2  rounded-lg shadow-lg relative">
             <div className="md:flex md:flex-row flex-col gap-3 min-h-[450px] lg:min-h-[550px] lg:min-w-[500px]">
               {/* Chat area */}
               <div className="h-full w-full md:w-4/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden main-area">
@@ -832,10 +832,16 @@ export const ChatWidget: React.FC = () => {
           className="context-menu"
           style={{ top: contextMenu.y, left: contextMenu.x }}
         >
-          <button onClick={() => handleRenameChat(contextMenu.chatId)}>
+          <button
+            className="text-md"
+            onClick={() => handleRenameChat(contextMenu.chatId)}
+          >
             Rename
           </button>
-          <button onClick={() => handleDeleteChat(contextMenu.chatId)}>
+          <button
+            className="text-md"
+            onClick={() => handleDeleteChat(contextMenu.chatId)}
+          >
             Delete
           </button>
         </div>
