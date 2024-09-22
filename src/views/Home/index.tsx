@@ -63,7 +63,6 @@ function Home() {
           console.error("Token is not available.");
           return;
         }
-        console.log("Token:", token);
         const response = await axios.get(
           `${BASE_URL}/chat/messages?chat_id=${id}`,
           {
@@ -98,7 +97,6 @@ function Home() {
   const fetchUserChats = useCallback(async () => {
     try {
       const token = await user?.getIdToken();
-      console.log("Token:", token);
       const response = await axios.get(`${BASE_URL}/user/chats`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -110,7 +108,6 @@ function Home() {
           setChats(chats);
         }
       }
-      console.log("User chats:", response.data.chats);
     } catch (error) {
       console.error("Error fetching user chats:", error);
     }
