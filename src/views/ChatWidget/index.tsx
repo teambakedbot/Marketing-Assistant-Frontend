@@ -23,11 +23,26 @@ import notLoggedInIcon from "/images/security.png"; // Import the not logged in 
 import bluntSmokey from "/images/blunt-smokey.png";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../config/firebase-config";
-import { FaStore, FaArrowLeft, FaCartPlus, FaEllipsisV } from "react-icons/fa"; // Import the store icon and back arrow icon
-
 const BASE_URLx = "http://0.0.0.0:8000/api/v1";
 const BASE_URL =
+import {
+  FaStore,
+  FaArrowLeft,
+  FaCartPlus,
+  FaEllipsisV,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa"; // Import the store icon and back arrow icon
+
   "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/api/v1";
+
+const Spinner: React.FC = () => (
+  <div className="spinner">
+    <div className="bounce1"></div>
+    <div className="bounce2"></div>
+    <div className="bounce3"></div>
+  </div>
+);
 
 export const ChatWidget: React.FC = () => {
   const { displayName, photoURL, user } = useAuth();
@@ -58,6 +73,11 @@ export const ChatWidget: React.FC = () => {
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [newChatName, setNewChatName] = useState("");
   const renameInputRef = useRef<HTMLInputElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleProductClick = (product) => {
     setCurrentView("product");
@@ -310,13 +330,21 @@ export const ChatWidget: React.FC = () => {
   };
 
   const fetchProducts = useCallback(async (page = 1) => {
+    setIsLoading(true);
+    setError(null);
     try {
       const response = await axios.get(
         `${BASE_URL}/products?retailers=8266&page=${page}&states=michigan`
       );
-      setProducts(response.data);
+      setProducts(response.data.products);
+      setTotalPages(response.data.pagination.total_pages);
+      setTotalProducts(response.data.pagination.total);
+      setCurrentPage(page);
     } catch (error) {
       console.error("Error fetching products:", error);
+      setError("Failed to load products. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -324,15 +352,23 @@ export const ChatWidget: React.FC = () => {
     fetchProducts(); // Fetch products on component mount
   }, [fetchProducts]);
 
-  const handleSearch = async () => {
+  const handleSearch = async (page = 1) => {
+    setIsLoading(true);
+    setError(null);
     if (!searchQuery) return;
     try {
       const response = await axios.get(
         `${BASE_URL}/products/search?query=${searchQuery}&states=michigan`
       );
-      setProducts(response.data); // Update products based on search
+      setProducts(response.data.products);
+      setTotalPages(response.data.pagination.total_pages);
+      setTotalProducts(response.data.pagination.total);
+      setCurrentPage(page);
     } catch (error) {
       console.error("Error searching products:", error);
+      setError("Failed to search products. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -382,40 +418,95 @@ export const ChatWidget: React.FC = () => {
     }
   };
 
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages && !isLoading) {
+      if (searchQuery) {
+        handleSearch(newPage);
+      } else {
+        fetchProducts(newPage);
+      }
+    }
+  };
+
   const StoreView = () => (
     <div className="store-view">
-      <div className="filters pt-2 pb-2 color-black">
+      {/* <div className="filters pt-2 pb-2 color-black">
         <button className="text-sm">Happy</button>
         <button className="text-sm">$100-$500</button>
         <button className="text-sm">All types</button>
+      </div> */}
+      <div className="results-header p-2">
+        <h2>Showing results "{totalProducts}"</h2>
+        <button
+          onClick={() => {
+            setSearchQuery("");
+            fetchProducts();
+          }}
+        >
+          See all
+        </button>
       </div>
-      <div className="results-header">
-        <h2>Showing results "{products?.length}"</h2>
-        <button>See all</button>
-      </div>
-      <div className="product-grid">
-        {products?.map((product, index) => (
-          <div className="product-item" key={index}>
-            <img
-              src={product.image_url}
-              alt={product.product_name}
-              className="pb-1 cursor-pointer"
-              onClick={() => handleProductClick(product)}
-            />
-            <h3
-              className="text-md font-semibold cursor-pointer mt-2"
-              onClick={() => handleProductClick(product)}
+      {error && (
+        <div
+          className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+          role="alert"
+        >
+          <strong className="font-bold">Error:</strong>
+          <span className="block sm:inline"> {error}</span>
+        </div>
+      )}
+      {isLoading ? (
+        <div className="loading-container flex justify-center items-center h-64">
+          <Spinner />
+        </div>
+      ) : (
+        <>
+          <div className="product-grid">
+            {products?.map((product, index) => (
+              <div className="product-item" key={index}>
+                <img
+                  src={product.image_url}
+                  alt={product.product_name}
+                  className="pb-1 cursor-pointer"
+                  onClick={() => handleProductClick(product)}
+                />
+                <h3
+                  className="text-md font-semibold cursor-pointer mt-2"
+                  onClick={() => handleProductClick(product)}
+                >
+                  {product.product_name}
+                </h3>
+                <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
+                <p className="text-sm mt-2">{product.description}</p>
+                <button className="text-md add-to-cart-button p-1 mt-2 align-end">
+                  Add to cart
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="pagination flex justify-center items-center mt-4">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1 || isLoading}
+              className="pagination-button"
+              aria-label="Previous page"
             >
-              {product.product_name}
-            </h3>
-            <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
-            <p className="text-sm mt-2">{product.description}</p>
-            <button className="text-md add-to-cart-button p-1 mt-2">
-              Add to cart
+              <FaChevronLeft />
+            </button>
+            <span className="mx-4">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages || isLoading}
+              className="pagination-button"
+              aria-label="Next page"
+            >
+              <FaChevronRight />
             </button>
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
   interface ProductDetailProps {

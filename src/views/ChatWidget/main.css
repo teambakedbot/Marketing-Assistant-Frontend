@@ -200,11 +200,11 @@ body {
 
 /* Hamburger menu styles */
 .hamburger-menu {
+  width: 20px;
+  height: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 24px;
-  height: 24px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -214,7 +214,7 @@ body {
 }
 
 .hamburger-menu div {
-  width: 24px;
+  width: 20px;
   height: 2px;
   background: white;
   border-radius: 10px;
@@ -227,8 +227,14 @@ body {
   background: #00A67D; /* Change color on hover */
 }
 
+.hamburger-menu.open div {
+  width: 16px;
+  transition: width 0.3s ease, height 0.3s ease; 
+}
+
+
 .hamburger-menu.open div:first-child {
-  transform: rotate(45deg) translate(5px, 5px);
+  transform: rotate(45deg) translate(4px, 4px);
 }
 
 .hamburger-menu.open div:nth-child(2) {
@@ -236,7 +242,7 @@ body {
 }
 
 .hamburger-menu.open div:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
+  transform: rotate(-45deg) translate(6px, -6px);
 }
 
 /* Side Menu Styles */
@@ -345,6 +351,7 @@ body {
 
 .side-menu-footer {
   padding: 16px;
+  padding-top: 0px;
 }
 
 .side-menu-footer h3 {
@@ -668,8 +675,8 @@ padding-bottom: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -682,7 +689,7 @@ padding-bottom: 0px;
 .close-button::after {
   content: '';
   position: absolute;
-  width: 24px;
+  width: 20px;
   height: 2px;
   background: white;
   border-radius: 10px;
@@ -793,6 +800,128 @@ padding-bottom: 0px;
   border: none;
   font-size: 20px;
   cursor: pointer;
+}
+
+.pagination-button {
+  background-color: #4a5568;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #2d3748;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-message {
+  margin-bottom: 1rem;
+}
+
+.loading-container {
+  height: 16rem;
+}
+
+.spinner {
+  width: 70px;
+  text-align: center;
+}
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: #333;
+  border-radius: 100%;
+  display: inline-block;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  animation-delay: -0.16s;
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% { 
+    transform: scale(0);
+  } 40% { 
+    transform: scale(1.0);
+  }
+}
+
+.pagination-button {
+  background-color: #4a5568;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #2d3748;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 70px;
+  text-align: center;
+}
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: #333;
+  border-radius: 100%;
+  display: inline-block;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  animation-delay: -0.16s;
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% { 
+    transform: scale(0);
+  } 40% { 
+    transform: scale(1.0);
+  }
+}
+
+.error-message {
+  margin-bottom: 1rem;
+}
+
+.loading-container {
+  height: 16rem;
 }
 
 .product-detail-image {
