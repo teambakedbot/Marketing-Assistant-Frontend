@@ -312,9 +312,9 @@ export const ChatWidget: React.FC = () => {
   const fetchProducts = useCallback(async (page = 1) => {
     try {
       const response = await axios.get(
-        `https://api.cannmenus.com/v1/products?retailers=8266&page=${page}&states=michigan`
+        `${BASE_URL}/products?retailers=8266&page=${page}&states=michigan`
       );
-      setProducts(response.data.products);
+      setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -328,9 +328,9 @@ export const ChatWidget: React.FC = () => {
     if (!searchQuery) return;
     try {
       const response = await axios.get(
-        `https://api.cannmenus.com/v1/products?retailers=8266&search=${searchQuery}&states=michigan`
+        `${BASE_URL}/products/search?query=${searchQuery}&states=michigan`
       );
-      setProducts(response.data.products); // Update products based on search
+      setProducts(response.data); // Update products based on search
     } catch (error) {
       console.error("Error searching products:", error);
     }
