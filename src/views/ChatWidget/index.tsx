@@ -23,8 +23,6 @@ import notLoggedInIcon from "/images/security.png"; // Import the not logged in 
 import bluntSmokey from "/images/blunt-smokey.png";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../config/firebase-config";
-const BASE_URLx = "http://0.0.0.0:8000/api/v1";
-const BASE_URL =
 import {
   FaStore,
   FaArrowLeft,
@@ -33,7 +31,8 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa"; // Import the store icon and back arrow icon
-
+const BASE_URLx = "http://0.0.0.0:8000/api/v1";
+const BASE_URL =
   "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/api/v1";
 
 const Spinner: React.FC = () => (
