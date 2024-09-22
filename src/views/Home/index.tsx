@@ -1,6 +1,4 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { IoStopOutline } from "react-icons/io5";
-import { LuPlay } from "react-icons/lu";
 import CannabotWorkspace from "./CannabotWorkspace";
 import Profile from "./Profile";
 import Swal from "sweetalert2";
@@ -10,14 +8,9 @@ import useAuth from "../../hooks/useAuth";
 import { Customer } from "../../models/CustomerModel";
 import { ChatEntry, Chats } from "../../models/ChatModels";
 import "../../styles/main.css";
-import { renameChat } from "../../api/renameChat";
 import "../../styles/theme.css";
-import { doc, getDoc, getFirestore } from "firebase/firestore";
-import Conversations from "./Conversations";
+import { BASE_URL } from "../../utils/api";
 
-const BASE_URLx = "http://0.0.0.0:8000/api/v1";
-const BASE_URL =
-  "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/api/v1";
 function Home() {
   const [prompts, setPrompts] = useState<string>("");
   const { displayName, photoURL, user } = useAuth();

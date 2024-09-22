@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const BASE_URLx = "http://0.0.0.0:8000/api/v1";
-const BASE_URL =
-  "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/api/v1";
+export const BASE_URL = import.meta.env.VITE_BASE_URL as string;
 
 export const getChats = async (token: string) => {
   const response = await axios.get(`${BASE_URL}/user/chats`, {
