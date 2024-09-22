@@ -11,13 +11,19 @@ import ChatHistory from "../../components/ChatHistory";
 import "./main.css";
 import useAuth from "../../hooks/useAuth";
 import { Chats } from "../../models/ChatModels";
-import { getChats, getChatMessages, sendMessage } from "../../utils/api";
+import {
+  getChats,
+  getChatMessages,
+  sendMessage,
+  renameChat,
+  deleteChat,
+} from "../../utils/api";
 import robotIcon from "/images/pointing.png"; // Import the robot icon
 import notLoggedInIcon from "/images/security.png"; // Import the not logged in icon
 import bluntSmokey from "/images/blunt-smokey.png";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../config/firebase-config";
-import { FaStore, FaArrowLeft, FaCartPlus } from "react-icons/fa"; // Import the store icon and back arrow icon
+import { FaStore, FaArrowLeft, FaCartPlus, FaEllipsisV } from "react-icons/fa"; // Import the store icon and back arrow icon
 
 const BASE_URLx = "http://0.0.0.0:8000/api/v1";
 const BASE_URL =
@@ -28,7 +34,7 @@ export const ChatWidget: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [value, setValue] = useState(1);
   const [prompts, setPrompts] = useState<string>("");
-  const [chats, setChats] = useState<Chats[]>([]);
+  const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<
     { role: string; content: string }[]
@@ -44,6 +50,14 @@ export const ChatWidget: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState<any[]>([]); // Add state for products
   const [searchQuery, setSearchQuery] = useState(""); // Add state for search query
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    chatId: string;
+  } | null>(null);
+  const [editingChatId, setEditingChatId] = useState<string | null>(null);
+  const [newChatName, setNewChatName] = useState("");
+  const renameInputRef = useRef<HTMLInputElement>(null);
 
   const handleProductClick = (product) => {
     setCurrentView("product");
@@ -261,6 +275,8 @@ export const ChatWidget: React.FC = () => {
     (e: MouseEvent) => {
       const mainArea = document.querySelector(".main-area");
       const header = document.querySelector(".chat-header");
+      const contextMenu = document.querySelector(".context-menu");
+      const chatRenameInput = document.querySelector(".chat-rename-input");
       if (
         mainArea &&
         mainArea.contains(e.target as Node) &&
@@ -269,6 +285,13 @@ export const ChatWidget: React.FC = () => {
         isMenuOpen
       ) {
         setIsMenuOpen(false);
+      }
+      if (contextMenu && !contextMenu.contains(e.target as Node)) {
+        setContextMenu(null);
+        setEditingChatId(null);
+      }
+      if (chatRenameInput && !chatRenameInput.contains(e.target as Node)) {
+        setEditingChatId(null);
       }
     },
     [isMenuOpen]
@@ -289,14 +312,9 @@ export const ChatWidget: React.FC = () => {
   const fetchProducts = useCallback(async (page = 1) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/products?retailers=8266&page=${page}&states=michigan`,
-        {
-          headers: {
-            "X-Token": `Bearer ${"821d72c3bad50640e8c09dd49346a73b"}`,
-          },
-        }
+        `https://api.cannmenus.com/v1/products?retailers=8266&page=${page}&states=michigan`
       );
-      setProducts(response.data);
+      setProducts(response.data.products);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -310,16 +328,57 @@ export const ChatWidget: React.FC = () => {
     if (!searchQuery) return;
     try {
       const response = await axios.get(
-        `${BASE_URL}/products/search?query=${searchQuery}&states=michigan&retailers=8266`,
-        {
-          headers: {
-            "X-Token": `Bearer ${"821d72c3bad50640e8c09dd49346a73b"}`,
-          },
-        }
+        `https://api.cannmenus.com/v1/products?retailers=8266&search=${searchQuery}&states=michigan`
       );
-      setProducts(response.data); // Update products based on search
+      setProducts(response.data.products); // Update products based on search
     } catch (error) {
       console.error("Error searching products:", error);
+    }
+  };
+
+  const handleContextMenu = (e: React.MouseEvent, chatId: string) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, chatId });
+  };
+
+  const handleRenameChat = (chatId: string) => {
+    setEditingChatId(chatId);
+    setNewChatName(
+      chats.find((chat: any) => chat.chat_id === chatId)?.name || ""
+    );
+    setContextMenu(null);
+  };
+
+  useEffect(() => {
+    if (editingChatId && renameInputRef.current) {
+      renameInputRef.current.focus();
+    }
+  }, [editingChatId]);
+
+  const handleDeleteChat = async (chatId: string) => {
+    try {
+      const token = await user!.getIdToken();
+      deleteChat(token, chatId);
+      setChats(chats.filter((chat: any) => chat.chat_id !== chatId));
+      setContextMenu(null);
+    } catch (error) {
+      console.error("Error deleting chat:", error);
+    }
+  };
+
+  const handleSaveRename = async () => {
+    if (!editingChatId || !newChatName.trim()) return;
+    try {
+      const token = await user!.getIdToken();
+      renameChat(token, editingChatId, newChatName);
+      setChats(
+        chats.map((chat: any) =>
+          chat.chat_id === editingChatId ? { ...chat, name: newChatName } : chat
+        )
+      );
+      setEditingChatId(null);
+    } catch (error) {
+      console.error("Error renaming chat:", error);
     }
   };
 
@@ -392,18 +451,24 @@ export const ChatWidget: React.FC = () => {
         <p className="pb-2">{product.description}</p>
 
         <div className="flex flex-row justify-around gap-2 pb-2 data-container">
-          <div className="flex flex-col justify-between gap-2 pb-2 text-center">
-            <span className="font-bold">THC</span>
-            <span className="text-md">{product.thc}</span>
-          </div>
-          <div className="flex flex-col justify-between gap-2 pb-2 text-center">
-            <span className="font-bold">CBD</span>
-            <span className="text-md">{product.cbd}</span>
-          </div>
-          <div className="flex flex-col justify-between gap-2 pb-2 text-center">
-            <span className="font-bold">Potency</span>
-            <span className="text-md">{product.potency}</span>
-          </div>
+          {product.thc && (
+            <div className="flex flex-col justify-between gap-2 pb-2 text-center">
+              <span className="font-bold">THC</span>
+              <span className="text-md">{product.thc}</span>
+            </div>
+          )}
+          {product.cbd && (
+            <div className="flex flex-col justify-between gap-2 pb-2 text-center">
+              <span className="font-bold">CBD</span>
+              <span className="text-md">{product.cbd}</span>
+            </div>
+          )}
+          {product.potency && (
+            <div className="flex flex-col justify-between gap-2 pb-2 text-center">
+              <span className="font-bold">Potency</span>
+              <span className="text-md">{product.potency}</span>
+            </div>
+          )}
         </div>
 
         <button className="add-to-cart-button p-2 mt-10">Add To Cart</button>
@@ -610,15 +675,46 @@ export const ChatWidget: React.FC = () => {
                     <div className="chat-history-scroll">
                       {chats.length > 0 ? (
                         chats.map(({ chat_id, name }: any, index) => (
-                          <button
+                          <div
                             key={`${chat_id}-${index}`}
-                            onClick={() => loadChatHistory(chat_id)}
-                            className={`menu-item text-md ${
-                              activeChatId === chat_id ? "active" : ""
-                            }`}
+                            className="chat-item-container"
                           >
-                            {name}
-                          </button>
+                            {editingChatId === chat_id ? (
+                              <div className="chat-rename-input">
+                                <input
+                                  ref={renameInputRef}
+                                  type="text"
+                                  className="text-sm h-10"
+                                  value={newChatName}
+                                  onChange={(e) =>
+                                    setNewChatName(e.target.value)
+                                  }
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") handleSaveRename();
+                                    if (e.key === "Escape")
+                                      setEditingChatId(null);
+                                  }}
+                                />
+                              </div>
+                            ) : (
+                              <div className="chat-item-wrapper">
+                                <button
+                                  onClick={() => loadChatHistory(chat_id)}
+                                  className={`menu-item text-md ${
+                                    activeChatId === chat_id ? "active" : ""
+                                  }`}
+                                >
+                                  {name}
+                                </button>
+                                <button
+                                  className="chat-options-button"
+                                  onClick={(e) => handleContextMenu(e, chat_id)}
+                                >
+                                  <FaEllipsisV />
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         ))
                       ) : (
                         <p className="text-center text-gray-500 py-4">
@@ -729,6 +825,19 @@ export const ChatWidget: React.FC = () => {
               Powered by BakedBot AI
             </p>
           </div>
+        </div>
+      )}
+      {contextMenu && (
+        <div
+          className="context-menu"
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+        >
+          <button onClick={() => handleRenameChat(contextMenu.chatId)}>
+            Rename
+          </button>
+          <button onClick={() => handleDeleteChat(contextMenu.chatId)}>
+            Delete
+          </button>
         </div>
       )}
     </div>

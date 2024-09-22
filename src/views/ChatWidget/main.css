@@ -729,7 +729,7 @@ padding-bottom: 0px;
   flex-grow: 1;
   padding: 8px;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid #554d4d;
 }
 
 .filters {
@@ -759,7 +759,7 @@ padding-bottom: 0px;
 }
 
 .product-item {
-  border: 1px solid #ccc;
+  border: 1px solid #554d4d;
   border-radius: 8px;
   padding: 10px;
   display: flex;
@@ -793,4 +793,75 @@ padding-bottom: 0px;
  padding: 5px;
  border-radius: 5px;
  min-width: 25%;
+}
+
+.chat-item-container {
+  position: relative;
+}
+
+.chat-item-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.menu-item {
+  width: 100%;
+  text-align: left;
+  padding-right: 30px; /* Make space for the ellipsis button */
+}
+
+.chat-options-button {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chat-item-wrapper:hover .chat-options-button {
+  opacity: 1;
+}
+
+.context-menu {
+  position: fixed;
+  background-color: #2C2C2C;
+  border: 1px solid #3A3A3A;
+  border-radius: 4px;
+  padding: 5px 0;
+  z-index: 1000;
+}
+
+.context-menu button {
+  display: block;
+  width: 100%;
+  padding: 5px 10px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.context-menu button:hover {
+  background-color: #3A3A3A;
+}
+
+.chat-rename-input {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.chat-rename-input input {
+  flex-grow: 1;
+  margin-right: 5px;
+  padding-left: 5px;
+  background-color: #3A3A3A;
 }

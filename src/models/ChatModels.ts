@@ -5,4 +5,6 @@ export type ChatEntry = {
 
 export type Chats = {
   context: ChatEntry[];
+  chat_id: string;
+  name: string;
 }[];
