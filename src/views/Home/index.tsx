@@ -81,12 +81,6 @@ function Home() {
     [user]
   );
 
-  useEffect(() => {
-    if (user) {
-      fetchUserChats();
-    }
-  }, [user]);
-
   const fetchUserChats = useCallback(async () => {
     try {
       const token = await user?.getIdToken();
@@ -106,6 +100,11 @@ function Home() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user) {
+      fetchUserChats();
+    }
+  }, [user, fetchUserChats]);
   async function playHandler() {
     if (!prompts || loading) return;
     setChatHistory((prevHistory) => [

@@ -52,7 +52,7 @@ const pages = [
     path: "/folder-add",
   },
   {
-    id: 9834,
+    id: 98344,
     icon: Message,
     name: "Message",
     path: "/message",
