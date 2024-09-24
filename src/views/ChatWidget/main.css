@@ -178,16 +178,16 @@
   align-items: center;
   min-height: 64px;
 }
-input {
-  background-color: var(--background-color);
-  color: var(--text-color);
+input, textarea {
+  outline: none;
 }
 
 .bb-sm-chat-input textarea {
   flex-grow: 1;
+  color: var(--text-color);
   background-color: var(--input-background);
-  border: none;
-  color: var(--input-text-color);
+  border: var(--border-color);
+  border: 1px solid;
   padding: 12px;
   border-radius: 12px;
   resize: none;
@@ -195,6 +195,14 @@ input {
   max-height: 120px;
   overflow-y: auto;
 }
+
+.bb-sm-input-color{
+  
+  color: var(--text-color);
+  background-color: var(--input-background);
+  border: var(--border-color);
+}
+
 
 .bb-sm-chat-input button {
   background-color: var(--button-color);

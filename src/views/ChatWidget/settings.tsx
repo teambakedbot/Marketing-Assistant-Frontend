@@ -70,7 +70,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     const token = await user!.getIdToken();
     saveThemeSettings(token, themeSettings);
     onSave(themeSettings);
-    onClose();
   };
 
   useEffect(() => {
@@ -123,7 +122,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 value={themeSettings[key]}
                 onChange={handleChange}
                 name={key}
-                className="flex-grow --footer-text-color border border-gray-600 rounded-r px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-grow --footer-text-color border border-gray-600 rounded-r px-3 py-2  bb-sm-input-color"
               />
             </div>
           </div>

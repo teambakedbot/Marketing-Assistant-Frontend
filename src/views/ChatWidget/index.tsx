@@ -72,9 +72,9 @@ export const ChatWidget: React.FC = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isNewChat, setIsNewChat] = useState(true);
-  const [currentView, setCurrentView] = useState<
-    "chat" | "store" | "product" | "settings" | "cart" | "checkOut"
-  >("chat");
+  // const [currentView, setCurrentView] = useState<
+  //   "chat" | "store" | "product" | "settings" | "cart" | "checkOut"
+  // >("chat");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState<any[]>([]); // Add state for products
   const [searchQuery, setSearchQuery] = useState(""); // Add state for search query
@@ -95,6 +95,13 @@ export const ChatWidget: React.FC = () => {
     [key: string]: { product: any; quantity: number };
   }>({});
   const [customerEmail, setCustomerEmail] = useState("");
+  type Windows =
+    | "chat"
+    | "store"
+    | "product"
+    | "settings"
+    | "cart"
+    | "checkOut";
 
   const [settings, setSettings] = useState<ThemeSettings>({
     primaryColor: "#00A67D",
@@ -131,12 +138,12 @@ export const ChatWidget: React.FC = () => {
   }, [settings]);
 
   const handleViewSettings = () => {
-    setCurrentView("settings");
+    navigateTo("settings");
     setIsMenuOpen(false);
   };
 
   const handleSettingsClose = () => {
-    setCurrentView("chat");
+    navigateTo("chat");
   };
 
   const handleSettingsSave = (newSettings: ThemeSettings) => {
@@ -144,12 +151,12 @@ export const ChatWidget: React.FC = () => {
   };
 
   const handleProductClick = (product) => {
-    setCurrentView("product");
+    navigateTo("product");
     setSelectedProduct(product);
   };
 
   const handleBack = () => {
-    setCurrentView("chat");
+    navigateTo("chat");
     setSelectedProduct(null);
   };
   const fetchChatMessages = useCallback(async () => {
@@ -181,7 +188,7 @@ export const ChatWidget: React.FC = () => {
   const loadChatHistory = useCallback(
     async (chatId: string | null) => {
       setLoading(true);
-      setCurrentView("chat");
+      navigateTo("chat");
       setIsMenuOpen(false);
       if (chatId === null) {
         setIsNewChat(true);
@@ -225,31 +232,44 @@ export const ChatWidget: React.FC = () => {
     setIsModalOpen(!isModalOpen);
   };
 
+  // Add a navigation stack to keep track of previous views
+  const [navigationStack, setNavigationStack] = useState<Windows[]>([]);
+
+  // Modify the toggleMenu function to act as a back button
   const toggleMenu = () => {
-    switch (currentView) {
-      case "store":
-        setCurrentView("chat");
-        break;
-      case "chat":
-        setIsMenuOpen(!isMenuOpen);
-        break;
-      case "product":
-        setCurrentView("store");
-        break;
-      case "cart":
-        setCurrentView("store");
-        break;
-      case "checkOut":
-        setCurrentView("cart");
-        break;
-      default:
-        setIsMenuOpen(!isMenuOpen);
-        break;
+    if (isMenuOpen) {
+      console.log("CLOSE MENU");
+      // If the menu is open, close it
+      setIsMenuOpen(false);
+    } else {
+      console.log({ navigationStack });
+      if (navigationStack.length > 0) {
+        console.log("GO BACK");
+        // If there is a previous view, navigate back
+        // const previousView: any = navigationStack[navigationStack.length - 1];
+        setNavigationStack((prevStack) => prevStack.slice(0, -1));
+      } else {
+        console.log("OPEN MENU");
+        // If no previous view, you can decide what to do (e.g., open the menu)
+        setIsMenuOpen(true);
+      }
     }
+  };
+
+  // Update functions that change the currentView to push the current view onto the stack
+  const navigateTo = (newView: Windows) => {
+    console.log("goto", newView);
+    setNavigationStack((prevStack) => [...prevStack, newView]);
+  };
+
+  const handleViewStore = () => {
+    navigateTo("store");
+    setIsMenuOpen(false);
   };
 
   useEffect(() => {
     const fetchThemeSettings = async () => {
+      if (!user) return;
       const token = await user!.getIdToken();
       const settings = await getThemeSettings(token);
       if (settings) {
@@ -410,11 +430,6 @@ export const ChatWidget: React.FC = () => {
     };
   }, [handleOutsideClick]);
 
-  const handleViewStore = () => {
-    setIsMenuOpen(false);
-    setCurrentView("store");
-  };
-
   const fetchProducts = useCallback(async (page = 1) => {
     setIsLoading(true);
     setError(null);
@@ -558,7 +573,7 @@ export const ChatWidget: React.FC = () => {
     console.log("Order placed:", { customerEmail, cart });
     // Reset cart and close checkout
     setCart({});
-    setCurrentView("cart");
+    navigateTo("cart");
     // Show confirmation message
     alert("Order placed successfully! We will contact you for pickup details.");
   };
@@ -612,7 +627,7 @@ export const ChatWidget: React.FC = () => {
             </strong>
           </div>
           <button
-            onClick={() => setCurrentView("checkOut")}
+            onClick={() => navigateTo("checkOut")}
             className="bb-sm-checkout-button mt-4"
           >
             Proceed to Checkout
@@ -847,6 +862,8 @@ export const ChatWidget: React.FC = () => {
       </div>
     );
   };
+
+  const currentView = navigationStack[navigationStack.length - 1] || "chat";
   return (
     <div className="bb-sm-chat-widget">
       <button className="border-none outline-0" onClick={handleModalBox}>
@@ -875,7 +892,7 @@ export const ChatWidget: React.FC = () => {
                     <div className="w-5"> </div>
                   </div>
                   <p className="text-lg md:text-xl font-bold text-center">
-                    {capitalizeFirstLetter(currentView)}
+                    {capitalizeFirstLetter(currentView || "")}
                   </p>
                   <div className="flex flex-row gap-5 w-15 justify-end items-center">
                     <button
@@ -885,15 +902,12 @@ export const ChatWidget: React.FC = () => {
                       <FaStore size={20} />
                     </button>
                     <div className="bb-sm-cart-icon-container bb-sm-header-icon">
-                      <button
-                        className=""
-                        onClick={() => setCurrentView("cart")}
-                      >
+                      <button className="" onClick={() => navigateTo("cart")}>
                         <FaShoppingCart size={20} />
                         {Object.keys(cart).length > 0 && (
                           <span className="bb-sm-cart-count">
                             {Object.values(cart).reduce(
-                              (sum, { product, quantity }) => sum * quantity,
+                              (sum, { product, quantity }) => sum + quantity,
                               0
                             )}
                           </span>
@@ -1000,7 +1014,7 @@ export const ChatWidget: React.FC = () => {
                 {(currentView == "store" || currentView == "chat") && (
                   <div className="bb-sm-chat-input">
                     <textarea
-                      className="resize-none w-full placeholder-gray-400 bg-transparent text-white p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
+                      className="resize-none w-full placeholder-gray-200 bg-transparent p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           if (currentView === "chat") {
