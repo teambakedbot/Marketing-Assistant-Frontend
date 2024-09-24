@@ -32,6 +32,9 @@ import {
   FaEllipsisV,
   FaChevronLeft,
   FaChevronRight,
+  FaShoppingCart,
+  FaMinus,
+  FaPlus,
 } from "react-icons/fa"; // Import the store icon and back arrow icon
 import { BASE_URL } from "../../utils/api";
 import SettingsPage from "./settings";
@@ -70,7 +73,7 @@ export const ChatWidget: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isNewChat, setIsNewChat] = useState(true);
   const [currentView, setCurrentView] = useState<
-    "chat" | "store" | "product" | "settings"
+    "chat" | "store" | "product" | "settings" | "cart" | "checkOut"
   >("chat");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState<any[]>([]); // Add state for products
@@ -88,6 +91,10 @@ export const ChatWidget: React.FC = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cart, setCart] = useState<{
+    [key: string]: { product: any; quantity: number };
+  }>({});
+  const [customerEmail, setCustomerEmail] = useState("");
 
   const [settings, setSettings] = useState<ThemeSettings>({
     primaryColor: "#00A67D",
@@ -228,6 +235,12 @@ export const ChatWidget: React.FC = () => {
         break;
       case "product":
         setCurrentView("store");
+        break;
+      case "cart":
+        setCurrentView("store");
+        break;
+      case "checkOut":
+        setCurrentView("cart");
         break;
       default:
         setIsMenuOpen(!isMenuOpen);
@@ -501,6 +514,156 @@ export const ChatWidget: React.FC = () => {
     }
   };
 
+  const addToCart = (product: any) => {
+    setCart((prevCart) => {
+      const newCart = { ...prevCart };
+      if (newCart[product.id]) {
+        newCart[product.id].quantity += 1;
+      } else {
+        newCart[product.id] = { product, quantity: 1 };
+      }
+      return newCart;
+    });
+  };
+
+  const removeFromCart = (productId: string) => {
+    setCart((prevCart) => {
+      const newCart = { ...prevCart };
+      delete newCart[productId];
+      return newCart;
+    });
+  };
+
+  const updateQuantity = (productId: string, delta: number) => {
+    setCart((prevCart) => {
+      const newCart = { ...prevCart };
+      if (newCart[productId]) {
+        // Use a callback to ensure we're working with the latest state
+        newCart[productId] = {
+          ...newCart[productId],
+          quantity: Math.max(0, newCart[productId].quantity + delta),
+        };
+        if (newCart[productId].quantity === 0) {
+          delete newCart[productId];
+        }
+      }
+      return newCart;
+    });
+  };
+
+  const handleCheckout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would typically send the order to your backend
+    // For this example, we'll just log the order details
+    console.log("Order placed:", { customerEmail, cart });
+    // Reset cart and close checkout
+    setCart({});
+    setCurrentView("cart");
+    // Show confirmation message
+    alert("Order placed successfully! We will contact you for pickup details.");
+  };
+  const CartView = () => (
+    <div className="bb-sm-cart-view">
+      <h2 className="text-xl font-bold mb-4">Your Cart</h2>
+      {Object.keys(cart).length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        <>
+          {Object.entries(cart).map(([productId, { product, quantity }]) => (
+            <div
+              key={productId}
+              className="bb-sm-cart-item flex justify-between items-center mb-2"
+            >
+              <span>{product.product_name}</span>
+              <div className="flex items-center">
+                <button
+                  onClick={() => updateQuantity(productId, -1)}
+                  className="bb-sm-quantity-button"
+                >
+                  <FaMinus size={12} />
+                </button>
+                <span className="mx-2">{quantity}</span>
+                <button
+                  onClick={() => updateQuantity(productId, 1)}
+                  className="bb-sm-quantity-button"
+                >
+                  <FaPlus size={12} />
+                </button>
+              </div>
+              <span>${(product.latest_price * quantity).toFixed(2)}</span>
+              <button
+                onClick={() => removeFromCart(productId)}
+                className="bb-sm-remove-from-cart-button"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          <div className="bb-sm-cart-total mt-4">
+            <strong>
+              Total: $
+              {Object.values(cart)
+                .reduce(
+                  (sum, { product, quantity }) =>
+                    sum + product.latest_price * quantity,
+                  0
+                )
+                .toFixed(2)}
+            </strong>
+          </div>
+          <button
+            onClick={() => setCurrentView("checkOut")}
+            className="bb-sm-checkout-button mt-4"
+          >
+            Proceed to Checkout
+          </button>
+        </>
+      )}
+    </div>
+  );
+
+  const CheckoutView = () => (
+    <div className="bb-sm-checkout-view p-4">
+      <form onSubmit={handleCheckout}>
+        <div className="mb-4">
+          <label htmlFor="email" className="block mb-2">
+            Email:
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={customerEmail}
+            onChange={(e) => setCustomerEmail(e.target.value)}
+            required
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <div className="mb-4">
+          <h3 className="font-bold">Order Summary:</h3>
+          {Object.entries(cart).map(([productId, { product, quantity }]) => (
+            <div key={productId} className="flex justify-between">
+              <span>{product.product_name}</span>
+              <span>${(product.latest_price * quantity).toFixed(2)}</span>
+            </div>
+          ))}
+          <div className="font-bold mt-2">
+            Total: $
+            {Object.values(cart)
+              .reduce(
+                (sum, { product, quantity }) =>
+                  sum + product.latest_price * quantity,
+                0
+              )
+              .toFixed(2)}
+          </div>
+        </div>
+        <button type="submit" className="bb-sm-place-order-button">
+          Place Order
+        </button>
+      </form>
+    </div>
+  );
+
   const StoreView = () => (
     <div className="bb-sm-store-view">
       {/* <div className="bb-sm-filters pt-2 pb-2 color-black">
@@ -535,8 +698,8 @@ export const ChatWidget: React.FC = () => {
       ) : (
         <>
           <div className="bb-sm-product-grid">
-            {products?.map((product, index) => (
-              <div className="bb-sm-product-item" key={index}>
+            {products?.map((product) => (
+              <div className="bb-sm-product-item" key={product.id}>
                 <img
                   src={product.image_url}
                   alt={product.product_name}
@@ -551,9 +714,30 @@ export const ChatWidget: React.FC = () => {
                 </h3>
                 <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
                 <p className="text-sm mt-2">{product.description}</p>
-                <button className="text-md bb-sm-add-to-cart-button p-1 mt-2 align-end">
-                  Add to cart
-                </button>
+                {cart[product.id] ? (
+                  <div className="bb-sm-quantity-selector">
+                    <button
+                      onClick={() => updateQuantity(product.id, -1)}
+                      className="bb-sm-quantity-button"
+                    >
+                      <FaMinus size={12} />
+                    </button>
+                    <span className="mx-2">{cart[product.id].quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(product.id, 1)}
+                      className="bb-sm-quantity-button"
+                    >
+                      <FaPlus size={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="text-md bb-sm-add-to-cart-button p-1 mt-2 align-end"
+                    onClick={() => addToCart(product)}
+                  >
+                    Add to cart
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -585,6 +769,7 @@ export const ChatWidget: React.FC = () => {
   interface ProductDetailProps {
     product?: {
       product_name: string;
+      id: string;
       image_url: string;
       latest_price: number;
       description: string;
@@ -635,9 +820,30 @@ export const ChatWidget: React.FC = () => {
           )}
         </div>
 
-        <button className="bb-sm-add-to-cart-button p-2 mt-10">
-          Add To Cart
-        </button>
+        {cart[product.id] ? (
+          <div className="bb-sm-quantity-selector mt-10">
+            <button
+              onClick={() => updateQuantity(product.id, -1)}
+              className="bb-sm-quantity-button"
+            >
+              <FaMinus size={12} />
+            </button>
+            <span className="mx-2">{cart[product.id].quantity}</span>
+            <button
+              onClick={() => updateQuantity(product.id, 1)}
+              className="bb-sm-quantity-button"
+            >
+              <FaPlus size={12} />
+            </button>
+          </div>
+        ) : (
+          <button
+            className="bb-sm-add-to-cart-button p-2 mt-10"
+            onClick={() => addToCart(product)}
+          >
+            Add To Cart
+          </button>
+        )}
       </div>
     );
   };
@@ -669,15 +875,33 @@ export const ChatWidget: React.FC = () => {
                     <div className="w-5"> </div>
                   </div>
                   <p className="text-lg md:text-xl font-bold text-center">
-                    {currentView === "store" ? "Store" : "Chat"}
+                    {capitalizeFirstLetter(currentView)}
                   </p>
-                  <div className="flex flex-row gap-5 w-15 justify-end">
-                    <button className="" onClick={handleViewStore}>
+                  <div className="flex flex-row gap-5 w-15 justify-end items-center">
+                    <button
+                      className="bb-sm-header-icon"
+                      onClick={handleViewStore}
+                    >
                       <FaStore size={20} />
                     </button>
-
+                    <div className="bb-sm-cart-icon-container bb-sm-header-icon">
+                      <button
+                        className=""
+                        onClick={() => setCurrentView("cart")}
+                      >
+                        <FaShoppingCart size={20} />
+                        {Object.keys(cart).length > 0 && (
+                          <span className="bb-sm-cart-count">
+                            {Object.values(cart).reduce(
+                              (sum, { product, quantity }) => sum * quantity,
+                              0
+                            )}
+                          </span>
+                        )}
+                      </button>
+                    </div>
                     <button
-                      className="bb-sm-close-button"
+                      className="bb-sm-close-button bb-sm-header-icon"
                       onClick={handleModalBox}
                     ></button>
                   </div>
@@ -693,7 +917,8 @@ export const ChatWidget: React.FC = () => {
                     initialSettings={settings}
                   />
                 )}
-
+                {currentView === "cart" && <CartView />}
+                {currentView === "checkOut" && <CheckoutView />}
                 {currentView === "chat" && (
                   <>
                     {isNewChat && (
@@ -772,7 +997,7 @@ export const ChatWidget: React.FC = () => {
                   </>
                 )}
 
-                {currentView !== "product" && (
+                {(currentView == "store" || currentView == "chat") && (
                   <div className="bb-sm-chat-input">
                     <textarea
                       className="resize-none w-full placeholder-gray-400 bg-transparent text-white p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
@@ -1005,7 +1230,7 @@ export const ChatWidget: React.FC = () => {
                       <b>Lives up to the hype</b>
                       <br />
                       I've been using BakedBot for a while now and it's been a
-                      game changer for me. I HIGHLY 🚀🪂✈
+                      game changer for me. I HIGHLY 🚀🪂
                     </div>
                     <div className="bb-sm-review text-md">
                       <b>Really Strong</b>

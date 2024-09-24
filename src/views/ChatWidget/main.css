@@ -235,7 +235,7 @@ input {
 }
 
 .bb-sm-hamburger-menu:hover div {
-  background: var(--text-secondary-color);
+  background: var(--primary-color);
 }
 
 .bb-sm-hamburger-menu.bb-sm-open div {
@@ -393,14 +393,9 @@ input {
   margin: 0 auto;
 }
 
-.bb-sm-settings-button:hover,
-.bb-sm-settingss-button:hover {
-  background-color: var(--button-hover-color);
-}
 
 /* Right Panel Styles */
 .bb-sm-right-panel {
-  background-color: var(--menu-hover-color);
   display: none;
   flex-direction: column;
   justify-content: space-between;
@@ -531,9 +526,6 @@ input {
   justify-content: center;
 }
 
-.bb-sm-new-chat-button:hover {
-  background-color: var(--button-hover-color);
-}
 
 .bb-sm-new-chat-button-icon {
   font-size: 1.5rem;
@@ -910,7 +902,7 @@ input {
 
 .bb-sm-close-button:hover::before,
 .bb-sm-close-button:hover::after {
-  background: var(--button-hover-color);
+  background: var(--primary-color);
 }
 
 .bb-sm-chat-footer {
@@ -936,4 +928,91 @@ input {
 .bb-sm-view-store-button svg {
   margin-right: 4px;
   font-size: 14px;
+}
+
+/* Update the cart icon container and count styles */
+.bb-sm-cart-icon-container {
+  position: relative;
+  display: flex;
+  height: 28px; /* Adjust this value as needed */
+}
+.bb-sm-header-icon:hover{
+  color: var(--primary-color);
+}
+
+.bb-sm-cart-count {
+  position: absolute;
+  top: -4px; /* Adjust this value to move the count up or down */
+  right: -8px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bb-sm-cart-view,
+.bb-sm-checkout-view {
+  padding: 1rem;
+}
+
+.bb-sm-cart-item {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.bb-sm-remove-from-cart-button,
+.bb-sm-checkout-button,
+.bb-sm-place-order-button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.bb-sm-remove-from-cart-button:hover,
+.bb-sm-checkout-button:hover,
+.bb-sm-place-order-button:hover {
+  background-color: var(--secondary-color);
+}
+
+.bb-sm-checkout-view input[type="email"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Add these styles to your existing CSS file */
+
+.bb-sm-quantity-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.bb-sm-quantity-button {
+  background-color: var(--primary-color);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+.bb-sm-quantity-button:hover {
+  background-color: var(--secondary-color);
 }

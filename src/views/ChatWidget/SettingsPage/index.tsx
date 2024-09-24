@@ -18,7 +18,7 @@ export interface ThemeSettings {
   textSecondaryColor: string; //text and button hover color
 }
 
-const presetThemes: { [key: string]: ThemeSettings } = {
+export const presetThemes: { [key: string]: ThemeSettings } = {
   default: {
     primaryColor: "#22AD85",
     secondaryColor: "#23504A",
