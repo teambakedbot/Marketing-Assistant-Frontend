@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "../../../utils/api";
-import { ThemeSettings } from "../settings";
+import { ThemeSettings } from "../SettingsPage";
 
 export const renameChat = async (
   token: string,

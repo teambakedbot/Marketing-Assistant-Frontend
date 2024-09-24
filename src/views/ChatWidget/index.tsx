@@ -113,7 +113,6 @@ export const ChatWidget: React.FC = () => {
     root.style.setProperty("--background-color", theme.backgroundColor);
     root.style.setProperty("--header-color", theme.headerColor);
     root.style.setProperty("--text-color", theme.textColor);
-    root.style.setProperty("--text-secondary-color", theme.textSecondaryColor);
     root.style.setProperty(
       "--footer-text-color",
       isLightColor(theme.backgroundColor) ? "#333333" : "#CCCCCC"
