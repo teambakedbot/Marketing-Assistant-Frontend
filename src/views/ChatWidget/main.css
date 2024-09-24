@@ -1051,6 +1051,71 @@ padding-bottom: 0px;
   margin: 1em 0;
 }
 
+/* ... existing styles ... */
+
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+  background-color: var(--chat-background);
+  color: var(--text-color);
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 1rem;
+  color: var(--text-color);
+}
+
+.settings-content {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.setting-item {
+  margin-bottom: 1rem;
+}
+
+.setting-item label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.setting-item select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: var(--input-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.settings-footer {
+  margin-top: 1rem;
+}
+
+.save-button {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background-color: var(--primary-color-hover);
+}
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .bot-message h3 {

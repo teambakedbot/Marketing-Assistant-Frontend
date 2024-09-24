@@ -32,6 +32,7 @@ import {
   FaChevronRight,
 } from "react-icons/fa"; // Import the store icon and back arrow icon
 import { BASE_URL } from "../../utils/api";
+import SettingsPage from "./settings";
 
 const Spinner: React.FC = () => (
   <div className="spinner">
@@ -56,9 +57,9 @@ export const ChatWidget: React.FC = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isNewChat, setIsNewChat] = useState(true);
-  const [currentView, setCurrentView] = useState<"chat" | "store" | "product">(
-    "chat"
-  );
+  const [currentView, setCurrentView] = useState<
+    "chat" | "store" | "product" | "settings"
+  >("chat");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState<any[]>([]); // Add state for products
   const [searchQuery, setSearchQuery] = useState(""); // Add state for search query
@@ -75,6 +76,27 @@ export const ChatWidget: React.FC = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [settings, setSettings] = useState({
+    colorScheme: "default",
+    voiceType: "default",
+  });
+
+  const handleViewSettings = () => {
+    setCurrentView("settings");
+    setIsMenuOpen(false);
+  };
+
+  const handleSettingsClose = () => {
+    setCurrentView("chat");
+  };
+
+  const handleSettingsSave = (newSettings: {
+    colorScheme: string;
+    voiceType: string;
+  }) => {
+    setSettings(newSettings);
+    // Here you can implement logic to save settings to backend or local storage
+  };
 
   const handleProductClick = (product) => {
     setCurrentView("product");
@@ -609,6 +631,13 @@ export const ChatWidget: React.FC = () => {
                 {currentView === "product" && (
                   <ProductDetailView product={selectedProduct} />
                 )}
+                {currentView === "settings" && (
+                  <SettingsPage
+                    onClose={handleSettingsClose}
+                    onSave={handleSettingsSave}
+                    initialSettings={settings}
+                  />
+                )}
 
                 {currentView === "chat" && (
                   <>
@@ -823,7 +852,12 @@ export const ChatWidget: React.FC = () => {
 
                 {isLoggedIn && (
                   <div className="side-menu-footer flex flex-row gap-2">
-                    <button className="settings-button">Settings</button>
+                    <button
+                      className="settings-button"
+                      onClick={handleViewSettings}
+                    >
+                      Settings
+                    </button>
                     <button
                       className="settings-button"
                       onClick={handleViewStore}
