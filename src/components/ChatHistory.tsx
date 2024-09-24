@@ -35,7 +35,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                   />
                 </div>
               ) : (
-                <ReactMarkdown className="text-white text-sm md:text-base bb-sm-prose bb-sm-prose-invert">
+                <ReactMarkdown className="text-sm md:text-base bb-sm-prose bb-sm-prose-invert">
                   {chat.content}
                 </ReactMarkdown>
               )}

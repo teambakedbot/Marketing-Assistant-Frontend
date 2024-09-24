@@ -43,7 +43,7 @@ interface ThemeSettings {
   backgroundColor: string;
   headerColor: string;
   textColor: string;
-  textHoverColor: string;
+  textSecondaryColor: string;
 }
 
 const Spinner: React.FC = () => (
@@ -95,8 +95,17 @@ export const ChatWidget: React.FC = () => {
     backgroundColor: "#1E1E1E",
     headerColor: "#2C2C2C",
     textColor: "#FFFFFF",
-    textHoverColor: "#AAAAAA",
+    textSecondaryColor: "#FFFFFF",
   });
+  function isLightColor(color: string): boolean {
+    const hex = color.replace("#", "");
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 128;
+  }
+
   const applyTheme = (theme: ThemeSettings) => {
     const root = document.documentElement;
     root.style.setProperty("--primary-color", theme.primaryColor);
@@ -104,7 +113,11 @@ export const ChatWidget: React.FC = () => {
     root.style.setProperty("--background-color", theme.backgroundColor);
     root.style.setProperty("--header-color", theme.headerColor);
     root.style.setProperty("--text-color", theme.textColor);
-    root.style.setProperty("--text-hover-color", theme.textHoverColor);
+    root.style.setProperty("--text-secondary-color", theme.textSecondaryColor);
+    root.style.setProperty(
+      "--footer-text-color",
+      isLightColor(theme.backgroundColor) ? "#333333" : "#CCCCCC"
+    );
   };
 
   useEffect(() => {
@@ -155,6 +168,9 @@ export const ChatWidget: React.FC = () => {
       console.error("Error fetching user chats:", error);
     }
   }, [user]);
+  const footerTextColor = isLightColor(settings.backgroundColor)
+    ? "#333333"
+    : "#CCCCCC";
 
   const loadChatHistory = useCallback(
     async (chatId: string | null) => {
@@ -1002,7 +1018,10 @@ export const ChatWidget: React.FC = () => {
                 </div>
               </div>
             </div>
-            <p className="bb-sm-chat-footer mb-2 h-0 p-0 text-sm text-center">
+            <p
+              className="bb-sm-chat-footer mb-2 h-0 p-0 text-sm text-center"
+              style={{ color: footerTextColor }}
+            >
               Powered by BakedBot AI
             </p>
           </div>

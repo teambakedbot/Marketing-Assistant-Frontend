@@ -1,11 +1,11 @@
 :root {
   /* Theme settings */
-  --primary-color: #00A67D;
-  --secondary-color: #00766D;
+  --primary-color: #22AD85;
+  --secondary-color: #24504A;
   --background-color: #1E1E1E;
   --header-color: #2C2C2C;
   --text-color: #FFFFFF;
-  --text-hover-color: #AAAAAA;
+  --text-secondary-color: #FFFFFF;
 
   /* Derived colors */
   --button-color: var(--primary-color);
@@ -127,13 +127,13 @@
 
 .bb-sm-user-message {
   background-color: var(--primary-color);
-  color: var(--text-color);
+  color: var(--text-secondary-color);
   align-self: flex-end;
 }
 
 .bb-sm-bot-message {
   background-color: var(--secondary-color);
-  color: var(--text-color);
+  color: var(--text-secondary-color);
   align-self: flex-start;
 }
 
@@ -198,7 +198,7 @@ input {
 
 .bb-sm-chat-input button {
   background-color: var(--button-color);
-  color: var(--button-text-color);
+  color: var(--text-secondary-color);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -235,7 +235,7 @@ input {
 }
 
 .bb-sm-hamburger-menu:hover div {
-  background: var(--text-hover-color);
+  background: var(--text-secondary-color);
 }
 
 .bb-sm-hamburger-menu.bb-sm-open div {
@@ -311,7 +311,7 @@ input {
 .bb-sm-edit-button {
   background: none;
   border: none;
-  color: var(--button-text-color);
+  color: var(--text-secondary-color);
   cursor: pointer;
   padding: 8px;
 }
@@ -362,7 +362,7 @@ input {
 
 .bb-sm-add-to-cart-button {
   background-color: var(--primary-color);
-  color: var(--button-text-color);
+  color: var(--text-secondary-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -373,7 +373,7 @@ input {
 .bb-sm-settings-button,
 .bb-sm-settingss-button {
   background-color: var(--button-color);
-  color: var(--button-text-color);
+  color: var(--text-secondary-color);
   border: none;
   padding: 5px;
   border-radius: 4px;
@@ -503,7 +503,7 @@ input {
 }
 
 .bb-sm-new-chat-description {
-  color: var(--text-muted);
+  color: var(--text-color);
   font-size: 0.9rem;
   text-align: center;
   margin-bottom: 2rem;
@@ -519,7 +519,7 @@ input {
 
 .bb-sm-new-chat-button {
   background-color: var(--button-color);
-  color: var(--button-text-color);
+  color: var(--text-secondary-color);
   padding: 0.75rem 1rem;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -548,13 +548,21 @@ input {
 
 /* Styling for product list in bot messages */
 .bb-sm-bot-message .bb-sm-prose {
-  color: var(--text-color);
+  color: var(--text-secondary-color);
+}
+.bb-sm-bot-message h3,
+.bb-sm-bot-message strong {
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 1.1em;
+}
+.bb-sm-bot-message p {
+  margin-bottom: 0.5em;
 }
 
 .bb-sm-bot-message h3 {
-  color: var(--accent-color);
   font-size: 1.2em;
-  margin-top: 1em;
+  margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
 
@@ -565,12 +573,12 @@ input {
 }
 
 .bb-sm-bot-message ul li {
-  margin-bottom: 0.5em;
+  margin-bottom: 0em;
 }
 
 .bb-sm-bot-message ul li strong {
-  color: var(--accent-color);
   font-weight: bold;
+  font-size: 1em;
 }
 
 .bb-sm-bot-message img {
@@ -845,7 +853,7 @@ input {
   width: 100%;
   padding: 0.5rem;
   background-color: var(--button-color);
-  color: var(--text-color);
+  color: var(--text-secondary-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -906,14 +914,14 @@ input {
 }
 
 .bb-sm-chat-footer {
-  color: var(--text-hover-color);
+  color: var(--text-secondary-color);
 }
 
 .bb-sm-view-store-button {
   display: flex;
   align-items: center;
   background-color: var(--button-color);
-  color: var(--text-color);
+  color: var(--text-secondary-color);
   font-size: 12px;
   font-weight: bold;
   padding: 4px 8px;

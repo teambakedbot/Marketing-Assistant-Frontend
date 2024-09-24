@@ -15,17 +15,17 @@ export interface ThemeSettings {
   backgroundColor: string; //window background color
   headerColor: string; //header color, text input background color
   textColor: string; //text color, icon color
-  textHoverColor: string; //text and button hover color
+  textSecondaryColor: string; //text and button hover color
 }
 
 const presetThemes: { [key: string]: ThemeSettings } = {
   default: {
-    primaryColor: "#00A67D",
-    secondaryColor: "#00766D",
+    primaryColor: "#22AD85",
+    secondaryColor: "#23504A",
     backgroundColor: "#1E1E1E",
     headerColor: "#2C2C2C",
     textColor: "#FFFFFF",
-    textHoverColor: "#AAAAAA",
+    textSecondaryColor: "#FFFFFF",
   },
   light: {
     primaryColor: "#00A67D",
@@ -33,15 +33,7 @@ const presetThemes: { [key: string]: ThemeSettings } = {
     backgroundColor: "#FFFFFF",
     headerColor: "#F0F0F0",
     textColor: "#000000",
-    textHoverColor: "#555555",
-  },
-  dark: {
-    primaryColor: "#00A67D",
-    secondaryColor: "#00766D",
-    backgroundColor: "#000000",
-    headerColor: "#1E1E1E",
-    textColor: "#FFFFFF",
-    textHoverColor: "#AAAAAA",
+    textSecondaryColor: "#555555",
   },
 };
 
@@ -106,7 +98,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     "backgroundColor",
     "headerColor",
     "textColor",
-    "textHoverColor",
+    "textSecondaryColor",
   ];
 
   return (
@@ -131,7 +123,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 value={themeSettings[key]}
                 onChange={handleChange}
                 name={key}
-                className="flex-grow border-l-0 border border-gray-600 rounded-r px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-grow --footer-text-color border border-gray-600 rounded-r px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -154,7 +146,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 border: `2px solid ${preset.primaryColor}`,
               }}
             >
-              {name}
+              {name.charAt(0).toUpperCase() + name.slice(1)}
               {activePreset === name && (
                 <FaCheck className="inline-block ml-2" />
               )}
