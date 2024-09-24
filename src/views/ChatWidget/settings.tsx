@@ -110,10 +110,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   ];
 
   return (
-    <div className="settings-page bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
-      <div className="settings-content grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div className="bb-sm-settings-page bg-gray-900 text-white p-6 max-w-2xl mx-auto">
+      <div className="bb-sm-settings-content grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {themeSettingsOrder.map((key) => (
-          <div key={key} className="setting-item">
+          <div key={key} className="bb-sm-setting-item">
             <label htmlFor={key} className="block mb-2 font-medium">
               {formatLabel(key)}
             </label>
@@ -124,7 +124,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 name={key}
                 value={themeSettings[key]}
                 onChange={handleChange}
-                className="w-10 h-10 rounded-l cursor-pointer border-r border-gray-600 input-color"
+                className="w-10 h-10 rounded-l cursor-pointer border-r border-gray-600 bb-sm-input-color"
               />
               <input
                 type="text"
@@ -138,14 +138,14 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         ))}
       </div>
 
-      <div className="preset-themes mb-8">
+      <div className="bb-sm-preset-themes mb-8">
         <h3 className="text-xl font-bold mb-4">Preset Themes</h3>
         <div className="grid grid-cols-3 gap-4">
           {Object.entries(presetThemes).map(([name, preset]) => (
             <button
               key={name}
               onClick={() => handlePresetSelect(name, preset)}
-              className={`preset-theme-button p-3 rounded-lg text-center transition-all ${
+              className={`bb-sm-preset-theme-button p-3 rounded-lg text-center transition-all ${
                 activePreset === name ? "ring-2 ring-blue-500" : ""
               }`}
               style={{
@@ -163,10 +163,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         </div>
       </div>
 
-      <div className="settings-footer flex justify-between">
+      <div className="bb-sm-settings-footer flex justify-between">
         <button
           onClick={handleSave}
-          className="save-button bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded transition-colors"
+          className="bb-sm-save-button bg-blue-600 font-bold py-2 px-4 rounded transition-colors"
         >
           Save Changes
         </button>

@@ -27,6 +27,8 @@ import {
   FaStore,
   FaArrowLeft,
   FaCartPlus,
+  FaFly,
+  FaPaperPlane,
   FaEllipsisV,
   FaChevronLeft,
   FaChevronRight,
@@ -45,10 +47,10 @@ interface ThemeSettings {
 }
 
 const Spinner: React.FC = () => (
-  <div className="spinner">
-    <div className="bounce1"></div>
-    <div className="bounce2"></div>
-    <div className="bounce3"></div>
+  <div className="bb-sm-spinner">
+    <div className="bb-sm-bounce1"></div>
+    <div className="bb-sm-bounce2"></div>
+    <div className="bb-sm-bounce3"></div>
   </div>
 );
 
@@ -306,25 +308,25 @@ export const ChatWidget: React.FC = () => {
     return (
       <form
         onSubmit={handleSubmit}
-        className="login-form flex flex-col gap-6 w-full max-w-md"
+        className="bb-sm-login-form flex flex-col gap-6 w-full max-w-md"
       >
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
-          className="login-input p-3 rounded bg-gray-700 text-white text-lg"
+          className="bb-sm-login-input p-3 rounded bg-gray-700 text-white text-lg"
         />
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
-          className="login-input p-3 rounded bg-gray-700 text-white text-lg"
+          className="bb-sm-login-input p-3 rounded bg-gray-700 text-white text-lg"
         />
         <button
           type="submit"
-          className="login-button border-2 border-white rounded-md text-white p-3 text-lg hover:bg-white hover:text-gray-800 transition-colors"
+          className="bb-sm-login-button border-2 border-white rounded-md text-white p-3 text-lg hover:bg-white hover:text-gray-800 transition-colors"
         >
           Login
         </button>
@@ -332,7 +334,7 @@ export const ChatWidget: React.FC = () => {
         <button
           type="button"
           onClick={handleGoogleSignIn}
-          className="google-login-button border-2 border-white rounded-md text-white p-3 text-lg flex items-center justify-center hover:bg-white hover:text-gray-800 transition-colors"
+          className="bb-sm-google-login-button border-2 border-white rounded-md text-white p-3 text-lg flex items-center justify-center hover:bg-white hover:text-gray-800 transition-colors"
         >
           <img
             src="/images/google-icon.png"
@@ -347,10 +349,12 @@ export const ChatWidget: React.FC = () => {
 
   const handleOutsideClick = useCallback(
     (e: MouseEvent) => {
-      const mainArea = document.querySelector(".main-area");
-      const header = document.querySelector(".chat-header");
-      const contextMenu = document.querySelector(".context-menu");
-      const chatRenameInput = document.querySelector(".chat-rename-input");
+      const mainArea = document.querySelector(".bb-sm-main-area");
+      const header = document.querySelector(".bb-sm-chat-header");
+      const contextMenu = document.querySelector(".bb-sm-context-menu");
+      const chatRenameInput = document.querySelector(
+        ".bb-sm-chat-rename-input"
+      );
       if (
         mainArea &&
         mainArea.contains(e.target as Node) &&
@@ -483,13 +487,13 @@ export const ChatWidget: React.FC = () => {
   };
 
   const StoreView = () => (
-    <div className="store-view">
-      {/* <div className="filters pt-2 pb-2 color-black">
+    <div className="bb-sm-store-view">
+      {/* <div className="bb-sm-filters pt-2 pb-2 color-black">
         <button className="text-sm">Happy</button>
         <button className="text-sm">$100-$500</button>
         <button className="text-sm">All types</button>
       </div> */}
-      <div className="results-header p-2">
+      <div className="bb-sm-results-header p-2">
         <h2>Showing results "{totalProducts}"</h2>
         <button
           onClick={() => {
@@ -502,7 +506,7 @@ export const ChatWidget: React.FC = () => {
       </div>
       {error && (
         <div
-          className="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+          className="bb-sm-error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
           role="alert"
         >
           <strong className="font-bold">Error:</strong>
@@ -510,14 +514,14 @@ export const ChatWidget: React.FC = () => {
         </div>
       )}
       {isLoading ? (
-        <div className="loading-container flex justify-center items-center h-64">
+        <div className="bb-sm-loading-container flex justify-center items-center h-64">
           <Spinner />
         </div>
       ) : (
         <>
-          <div className="product-grid">
+          <div className="bb-sm-product-grid">
             {products?.map((product, index) => (
-              <div className="product-item" key={index}>
+              <div className="bb-sm-product-item" key={index}>
                 <img
                   src={product.image_url}
                   alt={product.product_name}
@@ -532,17 +536,17 @@ export const ChatWidget: React.FC = () => {
                 </h3>
                 <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
                 <p className="text-sm mt-2">{product.description}</p>
-                <button className="text-md add-to-cart-button p-1 mt-2 align-end">
+                <button className="text-md bb-sm-add-to-cart-button p-1 mt-2 align-end">
                   Add to cart
                 </button>
               </div>
             ))}
           </div>
-          <div className="pagination flex justify-center items-center mt-4">
+          <div className="bb-sm-pagination flex justify-center items-center mt-4">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1 || isLoading}
-              className="pagination-button"
+              className="bb-sm-pagination-button"
               aria-label="Previous page"
             >
               <FaChevronLeft />
@@ -553,7 +557,7 @@ export const ChatWidget: React.FC = () => {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages || isLoading}
-              className="pagination-button"
+              className="bb-sm-pagination-button"
               aria-label="Next page"
             >
               <FaChevronRight />
@@ -581,10 +585,10 @@ export const ChatWidget: React.FC = () => {
       return null;
     }
     return (
-      <div className="product-detail-view p-2">
+      <div className="bb-sm-product-detail-view p-2">
         <div className="flex justify-center items-center pb-2 w-full rounded-md border-2 border-white mb-5">
           <img
-            className="product-detail-image"
+            className="bb-sm-product-detail-image"
             src={product.image_url}
             alt={product.product_name}
           />
@@ -595,7 +599,7 @@ export const ChatWidget: React.FC = () => {
         </div>
         <p className="pb-2">{product.description}</p>
 
-        <div className="flex flex-row justify-around gap-2 pb-2 data-container">
+        <div className="flex flex-row justify-around gap-2 pb-2 bb-sm-data-container">
           {product.thc && (
             <div className="flex flex-col justify-between gap-2 pb-2 text-center">
               <span className="font-bold">THC</span>
@@ -616,26 +620,28 @@ export const ChatWidget: React.FC = () => {
           )}
         </div>
 
-        <button className="add-to-cart-button p-2 mt-10">Add To Cart</button>
+        <button className="bb-sm-add-to-cart-button p-2 mt-10">
+          Add To Cart
+        </button>
       </div>
     );
   };
   return (
-    <div className="chat-widget">
+    <div className="bb-sm-chat-widget">
       <button className="border-none outline-0" onClick={handleModalBox}>
         <img src={bottom} className="w-10" alt="Open Chatbot" />
       </button>
       {isModalOpen && (
-        <div className="absolute right-2 bottom-14 flex justify-center items-center z-50 animate-open">
-          <div className="chat-container p-0 pb-2 rounded-lg shadow-lg relative max-h-[calc(100vh-4rem)] overflow-hidden">
+        <div className="absolute right-2 bottom-14 flex justify-center items-center z-50 bb-sm-animate-open">
+          <div className="bb-sm-chat-container p-0 pb-2 rounded-lg shadow-lg relative max-h-[calc(100vh-4rem)] overflow-hidden">
             <div className="md:flex md:flex-row flex-col gap-3 h-full max-h-full lg:min-w-[500px]">
               {/* Chat area */}
-              <div className="h-full w-full md:w-4/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden main-area">
-                <div className="chat-header">
+              <div className="h-full w-full md:w-4/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden bb-sm-main-area">
+                <div className="bb-sm-chat-header">
                   <div className="flex flex-row gap-5 w-15">
                     <button
-                      className={`hamburger-menu ${
-                        isMenuOpen || currentView !== "chat" ? "open" : ""
+                      className={`bb-sm-hamburger-menu ${
+                        isMenuOpen || currentView !== "chat" ? "bb-sm-open" : ""
                       }`}
                       onClick={toggleMenu}
                     >
@@ -656,7 +662,7 @@ export const ChatWidget: React.FC = () => {
                     </button>
 
                     <button
-                      className="close-button"
+                      className="bb-sm-close-button"
                       onClick={handleModalBox}
                     ></button>
                   </div>
@@ -676,61 +682,71 @@ export const ChatWidget: React.FC = () => {
                 {currentView === "chat" && (
                   <>
                     {isNewChat && (
-                      <div className="new-chat-view flex-grow overflow-y-auto">
+                      <div className="bb-sm-new-chat-view flex-grow overflow-y-auto">
                         <img
                           src={bluntSmokey}
                           alt="Smokey Robot"
                           className="w-32 h-auto mb-4"
                         />
-                        <h2 className="new-chat-title">What's up, bud?</h2>
-                        <p className="new-chat-description">
+                        <h2 className="bb-sm-new-chat-title">
+                          What's up, bud?
+                        </h2>
+                        <p className="bb-sm-new-chat-description">
                           I'm Smokey, your AI budtender. I'm here to help you
                           find the right strain for you.
                         </p>
-                        <div className="new-chat-buttons">
+                        <div className="bb-sm-new-chat-buttons">
                           <button
-                            className="new-chat-button"
+                            className="bb-sm-new-chat-button"
                             onMouseDown={() =>
                               setPrompts("Show me new products")
                             }
                             onClick={() => playHandler()}
                           >
-                            <span className="new-chat-button-icon">📦</span>
+                            <span className="bb-sm-new-chat-button-icon">
+                              📦
+                            </span>
                             See new products
                           </button>
                           <button
-                            className="new-chat-button"
+                            className="bb-sm-new-chat-button"
                             onMouseDown={() =>
                               setPrompts("Find a new location")
                             }
                             onClick={() => playHandler()}
                           >
-                            <span className="new-chat-button-icon">📍</span>
+                            <span className="bb-sm-new-chat-button-icon">
+                              📍
+                            </span>
                             Find new location
                           </button>
                           <button
-                            className="new-chat-button"
+                            className="bb-sm-new-chat-button"
                             onMouseDown={() =>
                               setPrompts("Recommend a relaxing strain")
                             }
                             onClick={() => playHandler()}
                           >
-                            <span className="new-chat-button-icon">🧘</span>
+                            <span className="bb-sm-new-chat-button-icon">
+                              🧘
+                            </span>
                             Relaxing strain
                           </button>
                           <button
-                            className="new-chat-button"
+                            className="bb-sm-new-chat-button"
                             onMouseDown={() => setPrompts("Tell me about CBD")}
                             onClick={() => playHandler()}
                           >
-                            <span className="new-chat-button-icon">🌿</span>
+                            <span className="bb-sm-new-chat-button-icon">
+                              🌿
+                            </span>
                             Learn about CBD
                           </button>
                         </div>
                       </div>
                     )}
                     {!isNewChat && (
-                      <div className="chat-messages flex-grow overflow-y-auto">
+                      <div className="bb-sm-chat-messages flex-grow overflow-y-auto">
                         <ChatHistory
                           chatHistory={chatHistory}
                           loading={loading}
@@ -742,7 +758,7 @@ export const ChatWidget: React.FC = () => {
                 )}
 
                 {currentView !== "product" && (
-                  <div className="chat-input">
+                  <div className="bb-sm-chat-input">
                     <textarea
                       className="resize-none w-full placeholder-gray-400 bg-transparent text-white p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
                       onKeyDown={(e) => {
@@ -774,7 +790,7 @@ export const ChatWidget: React.FC = () => {
                           );
                           target.style.height = `${newHeight}px`;
                           const chatInput = target.closest(
-                            ".chat-input"
+                            ".bb-sm-chat-input"
                           ) as HTMLElement;
                           if (chatInput) {
                             chatInput.style.minHeight = `${newHeight + 24}px`; // 24px for padding
@@ -789,7 +805,7 @@ export const ChatWidget: React.FC = () => {
                     <button
                       onClick={playHandler}
                       disabled={loading}
-                      className="send-button"
+                      className="bb-sm-send-button"
                     >
                       {loading ? (
                         <img
@@ -798,7 +814,7 @@ export const ChatWidget: React.FC = () => {
                           alt="Loading"
                         />
                       ) : (
-                        <img src={sendIcon} className="w-5 h-5" alt="Send" />
+                        <FaPaperPlane />
                       )}
                     </button>
                   </div>
@@ -806,37 +822,39 @@ export const ChatWidget: React.FC = () => {
               </div>
 
               {/* Side menu */}
-              <div className={`side-menu ${isMenuOpen ? "open" : ""}`}>
-                <div className="side-menu-header">
-                  <div className="robot-icon-container">
+              <div
+                className={`bb-sm-side-menu ${isMenuOpen ? "bb-sm-open" : ""}`}
+              >
+                <div className="bb-sm-side-menu-header">
+                  <div className="bb-sm-robot-icon-container">
                     <img
                       src={isLoggedIn ? robotIcon : notLoggedInIcon}
                       alt={isLoggedIn ? "Chat Bot" : "Not Logged In"}
-                      className="robot-icon"
+                      className="bb-sm-robot-icon"
                     />
                   </div>
                   {isLoggedIn && (
-                    <h2 className="chat-history-title">Chat history</h2>
+                    <h2 className="bb-sm-chat-history-title">Chat history</h2>
                   )}
                   <button
-                    className="settings-button"
+                    className="bb-sm-settings-button"
                     onClick={() => loadChatHistory(null)}
                   >
                     New Chat
                   </button>
                 </div>
 
-                <div className="side-menu-content">
+                <div className="bb-sm-side-menu-content">
                   {isLoggedIn ? (
-                    <div className="chat-history-scroll">
+                    <div className="bb-sm-chat-history-scroll">
                       {chats.length > 0 ? (
                         chats.map(({ chat_id, name }: any, index) => (
                           <div
                             key={`${chat_id}-${index}`}
-                            className="chat-item-container"
+                            className="bb-sm-chat-item-container"
                           >
                             {editingChatId === chat_id ? (
-                              <div className="chat-rename-input">
+                              <div className="bb-sm-chat-rename-input">
                                 <input
                                   ref={renameInputRef}
                                   type="text"
@@ -853,17 +871,19 @@ export const ChatWidget: React.FC = () => {
                                 />
                               </div>
                             ) : (
-                              <div className="chat-item-wrapper">
+                              <div className="bb-sm-chat-item-wrapper">
                                 <button
                                   onClick={() => loadChatHistory(chat_id)}
-                                  className={`menu-item text-md ${
-                                    activeChatId === chat_id ? "active" : ""
+                                  className={`bb-sm-menu-item text-md ${
+                                    activeChatId === chat_id
+                                      ? "bb-sm-active"
+                                      : ""
                                   }`}
                                 >
                                   {name}
                                 </button>
                                 <button
-                                  className="chat-options-button"
+                                  className="bb-sm-chat-options-button"
                                   onClick={(e) => handleContextMenu(e, chat_id)}
                                 >
                                   <FaEllipsisV />
@@ -889,15 +909,15 @@ export const ChatWidget: React.FC = () => {
                 </div>
 
                 {isLoggedIn && (
-                  <div className="side-menu-footer flex flex-row gap-2">
+                  <div className="bb-sm-side-menu-footer flex flex-row gap-2 mb-2">
                     <button
-                      className="settings-button"
+                      className="bb-sm-settings-button"
                       onClick={handleViewSettings}
                     >
                       Settings
                     </button>
                     <button
-                      className="settings-button"
+                      className="bb-sm-settings-button"
                       onClick={handleViewStore}
                     >
                       Shop
@@ -907,8 +927,8 @@ export const ChatWidget: React.FC = () => {
               </div>
 
               {/* Right panel */}
-              <div className="h-full w-full md:w-1/3 rounded-md p-2 flex flex-col justify-between gap-1 right-panel">
-                <div className="panel-container product-info">
+              <div className="h-full w-full md:w-1/3 rounded-md p-2 flex flex-col justify-between gap-1 bb-sm-right-panel">
+                <div className="bb-sm-panel-container bb-sm-product-info">
                   <h3 className="text-center">Purple Punch I</h3>
                   <p className="text-center text-sm">
                     A premium cannabis strain
@@ -921,9 +941,9 @@ export const ChatWidget: React.FC = () => {
                     className="w-full object-contain h-[100px] md:h-[150px]"
                   />
                 </div>
-                <div className="panel-container desired-effects">
+                <div className="bb-sm-panel-container bb-sm-desired-effects">
                   <h4>Desired Effect:</h4>
-                  <div className="effects-icons">
+                  <div className="bb-sm-effects-icons">
                     <input
                       type="range"
                       id="slider"
@@ -956,23 +976,23 @@ export const ChatWidget: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="panel-container community-reviews">
+                <div className="bb-sm-panel-container bb-sm-community-reviews">
                   <h4 className="text-center">Community Reviews</h4>
 
-                  <div className="reviews-list">
+                  <div className="bb-sm-reviews-list">
                     {/* Add sample reviews here */}
-                    <div className="review text-md">
+                    <div className="bb-sm-review text-md">
                       <b>Awesome</b>
                       <br /> Smell is 10/10 Taste is 10/10 High is 20/10 Smell
                       is 10/10 Taste is 10/10 High is 20/10 fireeeeee
                     </div>
-                    <div className="review text-md">
+                    <div className="bb-sm-review text-md">
                       <b>Lives up to the hype</b>
                       <br />
                       I've been using BakedBot for a while now and it's been a
                       game changer for me. I HIGHLY 🚀🪂✈
                     </div>
-                    <div className="review text-md">
+                    <div className="bb-sm-review text-md">
                       <b>Really Strong</b>
                       <br /> Its actually 32.21% total cannabinoids It's not
                       36.37% or whatever it says on the description.
@@ -982,7 +1002,7 @@ export const ChatWidget: React.FC = () => {
                 </div>
               </div>
             </div>
-            <p className="chat-footer mb-2 h-0 p-0 text-sm text-center">
+            <p className="bb-sm-chat-footer mb-2 h-0 p-0 text-sm text-center">
               Powered by BakedBot AI
             </p>
           </div>
@@ -990,7 +1010,7 @@ export const ChatWidget: React.FC = () => {
       )}
       {contextMenu && (
         <div
-          className="context-menu"
+          className="bb-sm-context-menu"
           style={{ top: contextMenu.y, left: contextMenu.x }}
         >
           <button
