@@ -1,13 +1,29 @@
+:root {
+  /* Theme settings */
+  --primary-color: #00A67D;
+  --secondary-color: #00766D;
+  --background-color: #1E1E1E;
+  --header-color: #2C2C2C;
+  --text-color: #FFFFFF;
+  --text-hover-color: #AAAAAA;
+
+  /* Derived colors */
+  --button-color: var(--primary-color);
+  --button-hover-color: var(--secondary-color);
+  --input-background: var(--header-color);
+  --border-color: #3A3A3A;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Simplebar styles */
 .simplebar-track.simplebar-vertical,
 .simplebar-track.simplebar-horizontal {
   opacity: 1 !important;
   visibility: hidden !important;
 }
-
 
 .simplebar-track.simplebar-vertical .simplebar-scrollbar,
 .simplebar-track.simplebar-horizontal .simplebar-scrollbar {
@@ -21,19 +37,6 @@
   background-color: #d9d9d9 !important;
 }
 
-/* Commented Out Audio-Specific Styles */
-/*
-.simplebar-track.simplebar-vertical .simplebar-scrollbar,
-.simplebar-track.simplebar-horizontal .simplebar-scrollbar {
-  width: 8px !important;
-}
-
-.simplebar-track.simplebar-vertical .simplebar-scrollbar,
-.simplebar-track.simplebar-horizontal .simplebar-scrollbar {
-  border-radius: 10px;
-}
-*/
-
 .scrollbar-hidden {
   scrollbar-width: none;
 }
@@ -45,18 +48,22 @@
   height: -webkit-fill-available;
 }
 
+/* Base styles */
 * {
   @apply box-border p-0 m-0;
 }
 
 body {
   @apply font-roboto text-white font-normal text-3xl;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
+/* Component styles */
 .li-customer-name {
-  color: white;
+  color: var(--text-color);
   margin-bottom: 5px;
-  background-color: #414141;
+  background-color: var(--surface-color);
   width: 50%;
   border-radius: 5px;
   padding: 5px;
@@ -67,19 +74,22 @@ body {
   width: 100%;
   margin-left: 5px;
 }
+
+/* Chat widget styles */
 .chat-widget {
   position: fixed;
   bottom: 20px;
   right: 20px;
   max-height: 40vh;
-  z-index: 1000; /* Ensure it is above other elements */
+  z-index: 1000;
 }
 
 @media (max-width: 768px) {
   .chat-widget {
-    visibility: visible; /* Changed from hidden to visible */
+    visibility: visible;
   }
 }
+
 @keyframes openAnimation {
   0% {
     transform: translate(100%, 100%) scale(0.1);
@@ -106,7 +116,7 @@ body {
   animation: openAnimation 0.5s ease-out;
 }
 
-/* Updated message styles */
+/* Message styles */
 .message {
   padding: 8px 12px;
   border-radius: 12px;
@@ -116,46 +126,43 @@ body {
 }
 
 .user-message {
-  background-color: #00766D; /* Pine Green */
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--text-color);
   align-self: flex-end;
 }
 
 .bot-message {
-  background-color: #0D211D; /* Dark Jungle Green */
-  color: white;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
   align-self: flex-start;
 }
 
-/* New styles for the chat interface */
+/* Chat container styles */
 .chat-container {
-  background-color: #1E1E1E;
+  background-color: var(--background-color);
   border-radius: 12px;
   overflow: hidden;
   height: 100%;
   display: flex;
   flex-direction: column;
-  width: 100%; /* Set default width to 100% */
-  max-width: 500px; /* Set a max-width for larger screens */
+  width: 100%;
+  max-width: 500px;
 }
 
-/* Add this media query for mobile devices */
 @media (max-width: 767px) {
   .chat-container {
-    width: 90vw; /* Set width to 90% of viewport width on mobile */
-    max-width: none; /* Remove max-width constraint on mobile */
+    width: 90vw;
+    max-width: none;
   }
 }
 
 .chat-header {
-  background-color: #2C2C2C;
+  background-color: var(--header-color);
   padding: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-left: -10px;
-  margin-right: -10px;
-  margin-top: -10px;
+  margin: -10px -10px 0;
 }
 
 .chat-messages {
@@ -165,18 +172,22 @@ body {
 }
 
 .chat-input {
-  background-color: #2C2C2C;
+  background-color: var(--background-color);
   padding: 12px;
   display: flex;
   align-items: center;
   min-height: 64px;
 }
+input {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
 
 .chat-input textarea {
   flex-grow: 1;
-  background-color: #3A3A3A;
+  background-color: var(--input-background);
   border: none;
-  color: white;
+  color: var(--input-text-color);
   padding: 12px;
   border-radius: 12px;
   resize: none;
@@ -186,8 +197,8 @@ body {
 }
 
 .chat-input button {
-  background-color: #00A67D;
-  color: white;
+  background-color: var(--button-color);
+  color: var(--button-text-color);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -209,14 +220,14 @@ body {
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 20; /* Increased z-index to ensure it's clickable */
-  position: relative; /* Added position relative */
+  z-index: 20;
+  position: relative;
 }
 
 .hamburger-menu div {
   width: 20px;
   height: 2px;
-  background: white;
+  background: var(--text-color);
   border-radius: 10px;
   transition: all 0.3s linear;
   position: relative;
@@ -224,14 +235,13 @@ body {
 }
 
 .hamburger-menu:hover div {
-  background: #00A67D; /* Change color on hover */
+  background: var(--text-hover-color);
 }
 
 .hamburger-menu.open div {
   width: 16px;
   transition: width 0.3s ease, height 0.3s ease; 
 }
-
 
 .hamburger-menu.open div:first-child {
   transform: rotate(45deg) translate(4px, 4px);
@@ -252,7 +262,7 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background-color: #2C2C2C;
+  background-color: var(--header-color);
   transition: left 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -273,19 +283,20 @@ body {
 
 .side-menu-header {
   padding: 16px;
-  background-color: #3A3A3A;
 }
 
 .robot-icon-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 8px; /* Reduced margin */
+  margin-bottom: 8px;
 }
 
 .robot-icon {
-  width: 100px; /* Adjust size as needed */
-  height: 100px; /* Adjust size as needed */
+  width: 100px;
+  height: 100px;
   object-fit: contain;
+  border-radius: 50%;
+  max-width: 200px;
 }
 
 .chat-history-title {
@@ -293,28 +304,16 @@ body {
   margin-bottom: 16px;
   font-weight: bold;
   font-size: 18px;
-  color: white;
+  color: var(--text-color);
 }
 
 .back-button,
 .edit-button {
   background: none;
   border: none;
-  color: white;
+  color: var(--button-text-color);
   cursor: pointer;
   padding: 8px;
-}
-
-.robot-icon {
-  border-radius: 50%;
-  max-width: 200px;
-  height: auto;
-}
-
-.chat-history-title {
-  margin-top: 16px;
-  color: white;
-  font-size: 18px;
 }
 
 .side-menu-content {
@@ -330,37 +329,30 @@ body {
 .menu-item {
   background: none;
   border: none;
-  color: white;
-  padding: 12px 16px; /* Added horizontal padding */
+  color: var(--text-color);
+  padding: 12px 16px;
   text-align: left;
   width: 100%;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  border-radius: 4px; /* Optional: adds rounded corners */
+  border-radius: 4px;
 }
 
 .menu-item.active,
 .menu-item:hover {
-  background-color: #23504A; /* Brunswick Green */
-}
-
-.menu-item:hover,
-.menu-item:focus {
-  background-color: rgba(255, 255, 255, 0.1); 
+  background-color: var(--secondary-color);
 }
 
 .side-menu-footer {
-  padding: 16px;
-  padding-top: 0px;
+  padding: 16px 16px 0;
 }
 
 .side-menu-footer h3 {
-  color: white;
+  color: var(--text-color);
   margin-bottom: 8px;
 }
 
 .featured-product {
-  /* Add styles for featured product images if needed */
   margin-bottom: 16px;
 }
 
@@ -369,8 +361,8 @@ body {
 }
 
 .add-to-cart-button {
-  background-color: #00766D; /* Pine Green */
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--button-text-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -378,58 +370,54 @@ body {
   transition: background-color 0.2s ease;
 }
 
-.settings-button {
-  background-color: #00766D; /* Pine Green */
-  color: white;
+.settings-button,
+.settingss-button {
+  background-color: var(--button-color);
+  color: var(--button-text-color);
   border: none;
   padding: 5px;
   border-radius: 4px;
   cursor: pointer;
-  width: 100%;
   font-size: 14px;
   transition: background-color 0.2s ease;
   margin-top: 16px;
 }
 
-.settingss-button {
-  background-color: #00766D; /* Pine Green */
-  color: white;
-  border: none;
-  padding: 5px;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 60%;
-  font-size: 14px;
-  transition: background-color 0.2s ease;
-  display: block; /* Add this line */
-  margin: 0 auto; /* Add this line */
+.settings-button {
+  width: 100%;
 }
 
-.settings-button:hover {
-  background-color: #00A67D; /* Emerald Green */
+.settingss-button {
+  width: 60%;
+  display: block;
+  margin: 0 auto;
+}
+
+.settings-button:hover,
+.settingss-button:hover {
+  background-color: var(--button-hover-color);
 }
 
 /* Right Panel Styles */
 .right-panel {
-  background-color: #23504A; /* Brunswick Green */
+  background-color: var(--menu-hover-color);
   display: none;
   flex-direction: column;
   justify-content: space-between;
-  padding: 8px;
-  padding-top: 0px;
+  padding: 8px 8px 0;
   height: 100%;
 }
 
 .right-panel .panel-container {
-  background-color: #00766D; /* Pine Green */
+  background-color: var(--primary-color);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
 }
 
 .right-panel .product-info {
-  background-color: white;
-  color: #0D211D; /* Dark Jungle Green */
+  background-color: var(--text-color);
+  color: var(--secondary-color);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
@@ -437,7 +425,7 @@ body {
 
 .right-panel .product-info h3,
 .right-panel .product-info p {
-  color: #0D211D; /* Dark Jungle Green */
+  color: var(--secondary-color);
 }
 
 .right-panel .product-info img {
@@ -446,35 +434,35 @@ body {
 
 .right-panel .desired-effects,
 .right-panel .community-reviews {
-  background-color: #00766D; /* Pine Green */
+  background-color: var(--primary-color);
   border-radius: 8px;
   padding: 12px;
-  
 }
+
 .right-panel h4 {
-  color: white;
+  color: var(--text-color);
   margin-bottom: 8px;
 }
 
 .right-panel p {
-  color: white;
+  color: var(--text-color);
 }
 
 .right-panel .effects-icons label {
-  color: white;
+  color: var(--text-color);
 }
 
 .right-panel .effects-icons input[type="range"] {
-  accent-color: #23504A; /* Brunswick Green */
+  accent-color: var(--menu-hover-color);
 }
 
 .right-panel .effects-icons .flex span {
-  color: white;
+  color: var(--text-color);
 }
 
 .right-panel .reviews-list .review {
-  background-color: #23504A; /* Brunswick Green */
-  color: white;
+  background-color: var(--menu-hover-color);
+  color: var(--text-color);
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 8px;
@@ -491,23 +479,14 @@ body {
   max-height: 600px;
 }
 
-/* Make sure the chat messages area takes remaining space */
-.chat-messages {
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
 /* Ensure the right column has the same height as the left column */
 .chat-widget .animate-open > div > div > div:last-child {
   height: 100%;
 }
 
-.right-panel{
-padding-bottom: 0px;
-}
-
+/* New chat view styles */
 .new-chat-view {
-  background-color: #1E1E1E;
+  background-color: var(--background-color);
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -517,14 +496,14 @@ padding-bottom: 0px;
 }
 
 .new-chat-title {
-  color: #FFFFFF;
+  color: var(--text-color);
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
 }
 
 .new-chat-description {
-  color: #AAAAAA;
+  color: var(--text-muted);
   font-size: 0.9rem;
   text-align: center;
   margin-bottom: 2rem;
@@ -539,8 +518,8 @@ padding-bottom: 0px;
 }
 
 .new-chat-button {
-  background-color: #3A3A3A;
-  color: #FFFFFF;
+  background-color: var(--button-color);
+  color: var(--button-text-color);
   padding: 0.75rem 1rem;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -553,7 +532,7 @@ padding-bottom: 0px;
 }
 
 .new-chat-button:hover {
-  background-color: #4A4A4A;
+  background-color: var(--button-hover-color);
 }
 
 .new-chat-button-icon {
@@ -561,462 +540,13 @@ padding-bottom: 0px;
   margin-bottom: 0.5rem;
 }
 
-.chat-input {
-  background-color: #1E1E1E;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  min-height: 64px;
-}
-
-.chat-input textarea {
-  flex-grow: 1;
-  background-color: #2C2C2C;
-  border: none;
-  color: white;
-  padding: 12px;
-  border-radius: 12px;
-  resize: none;
-  min-height: 40px;
-  max-height: 120px;
-  overflow-y: auto;
-}
-
-.chat-input button {
-  background-color: #00A67D;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  margin-left: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Styling for product list */
-.bot-message ol {
-  margin-top: 20px;
-  list-style-type: none;
-  padding: 0;
-  counter-reset: product-counter;
-}
-
-.bot-message ol > li {
-  counter-increment: product-counter;
-  margin-bottom: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 15px;
-  position: relative;
-}
-
-
-.bot-message ol > li > p:first-child {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #00A67D;
-}
-
-.bot-message ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.bot-message ul li {
-  margin-bottom: 5px;
-}
-
-.bot-message ul img:not(.loading-icon) {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-top: 10px;
-}
-
-
-
-
-.bot-message p img:not(.loading-icon) {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-
-.bot-message strong {
-  color: #00A67D;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .bot-message ol > li {
-    padding: 10px;
-  }
-
-  .bot-message ol > li::before {
-    left: -25px;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-  }
-
-  .bot-message ol > li > p:first-child {
-    font-size: 16px;
-  }
-}
-
-/* Close button styles */
-.close-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20px;
-  height: 20px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 20;
-  position: relative;
-}
-
-.close-button::before,
-.close-button::after {
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 2px;
-  background: white;
-  border-radius: 10px;
-  transition: all 0.3s linear;
-}
-
-.close-button::before {
-  transform: rotate(45deg);
-}
-
-.close-button::after {
-  transform: rotate(-45deg);
-}
-
-.close-button:hover::before,
-.close-button:hover::after {
-  background: #00A67D; /* Change color on hover */
-}
-
-.chat-footer {
-  color: #AAAAAA;
-
-}
-
-.view-store-button {
-  display: flex;
-  align-items: center;
-  background-color: #00A67D;
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.view-store-button:hover {
-  background-color: #008C6A;
-}
-
-.view-store-button svg {
-  margin-right: 4px;
-  font-size: 14px;
-}
-
-.store-view {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
-}
-
-.search-bar {
-  display: flex;
-  margin-bottom: 10px;
-}
-
-.search-bar input {
-  flex-grow: 1;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #554d4d;
-}
-
-.filters {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.filters button {
-  padding: 5px 10px;
-  border-radius: 15px;
-  background-color: #3A3A3A;
-  border: none;
-}
-
-.results-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
-}
-
-.product-item {
-  border: 1px solid #554d4d;
-  border-radius: 8px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-}
-
-.product-item img {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
-.back-button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.pagination-button {
-  background-color: #4a5568;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.pagination-button:hover:not(:disabled) {
-  background-color: #2d3748;
-}
-
-.pagination-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.error-message {
-  margin-bottom: 1rem;
-}
-
-.loading-container {
-  height: 16rem;
-}
-
-.spinner {
-  width: 70px;
-  text-align: center;
-}
-
-.spinner > div {
-  width: 18px;
-  height: 18px;
-  background-color: #333;
-  border-radius: 100%;
-  display: inline-block;
-  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-}
-
-.spinner .bounce1 {
-  animation-delay: -0.32s;
-}
-
-.spinner .bounce2 {
-  animation-delay: -0.16s;
-}
-
-@keyframes sk-bouncedelay {
-  0%, 80%, 100% { 
-    transform: scale(0);
-  } 40% { 
-    transform: scale(1.0);
-  }
-}
-
-.pagination-button {
-  background-color: #4a5568;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.pagination-button:hover:not(:disabled) {
-  background-color: #2d3748;
-}
-
-.pagination-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.spinner {
-  width: 70px;
-  text-align: center;
-}
-
-.spinner > div {
-  width: 18px;
-  height: 18px;
-  background-color: #333;
-  border-radius: 100%;
-  display: inline-block;
-  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-}
-
-.spinner .bounce1 {
-  animation-delay: -0.32s;
-}
-
-.spinner .bounce2 {
-  animation-delay: -0.16s;
-}
-
-@keyframes sk-bouncedelay {
-  0%, 80%, 100% { 
-    transform: scale(0);
-  } 40% { 
-    transform: scale(1.0);
-  }
-}
-
-.error-message {
-  margin-bottom: 1rem;
-}
-
-.loading-container {
-  height: 16rem;
-}
-
-.product-detail-image {
-  width: auto;
-  height: 200px;
-  object-fit: contain;
-  border-radius: 4px;
-}
-
-
-.data-container > div {
- background-color: #3A3A3A;
- padding: 5px;
- border-radius: 5px;
- min-width: 25%;
-}
-
-.chat-item-container {
-  position: relative;
-}
-
-.chat-item-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.menu-item {
-  width: 100%;
-  text-align: left;
-  padding-right: 30px; /* Make space for the ellipsis button */
-}
-
-.chat-options-button {
-  position: absolute;
-  top: 50%;
-  right: 5px;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.chat-item-wrapper:hover .chat-options-button {
-  opacity: 1;
-}
-
-.context-menu {
-  position: fixed;
-  background-color: #2C2C2C;
-  border: 1px solid #3A3A3A;
-  border-radius: 4px;
-  padding: 5px 0;
-  z-index: 1000;
-}
-
-.context-menu button {
-  display: block;
-  width: 100%;
-  padding: 5px 10px;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: white;
-}
-
-.context-menu button:hover {
-  background-color: #3A3A3A;
-}
-
-.chat-rename-input {
-  display: flex;
-  align-items: center;
-  padding-left: 15px;
-  padding-right: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
-
-.chat-rename-input input {
-  flex-grow: 1;
-  margin-right: 5px;
-  padding-left: 5px;
-  background-color: #3A3A3A;
-}
-
 /* Styling for product list in bot messages */
 .bot-message .prose {
-  color: white;
+  color: var(--text-color);
 }
 
 .bot-message h3 {
-  color: #00A67D;
+  color: var(--accent-color);
   font-size: 1.2em;
   margin-top: 1em;
   margin-bottom: 0.5em;
@@ -1033,7 +563,7 @@ padding-bottom: 0px;
 }
 
 .bot-message ul li strong {
-  color: #00A67D;
+  color: var(--accent-color);
   font-weight: bold;
 }
 
@@ -1047,18 +577,228 @@ padding-bottom: 0px;
 
 .bot-message hr {
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--border-color);
   margin: 1em 0;
 }
 
-/* ... existing styles ... */
+/* Store view styles */
+.store-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
 
+.search-bar {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  flex-grow: 1;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-background);
+  color: var(--input-text-color);
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.filters button {
+  padding: 5px 10px;
+  border-radius: 15px;
+  background-color: var(--input-background);
+  border: none;
+  color: var(--text-color);
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.product-item {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-item img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.pagination-button {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: var(--menu-hover-color);
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 70px;
+  text-align: center;
+}
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: var(--text-color);
+  border-radius: 100%;
+  display: inline-block;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  animation-delay: -0.16s;
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% { 
+    transform: scale(0);
+  } 40% { 
+    transform: scale(1.0);
+  }
+}
+
+.error-message {
+  margin-bottom: 1rem;
+  color: #ff6b6b; /* Consider adding an error color to your theme */
+}
+
+.loading-container {
+  height: 16rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-detail-image {
+  width: auto;
+  height: 200px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.data-container > div {
+  background-color: var(--surface-color);
+  padding: 5px;
+  border-radius: 5px;
+  min-width: 25%;
+}
+
+/* Chat item styles */
+.chat-item-container {
+  position: relative;
+}
+
+.chat-item-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.chat-options-button {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: var(--text-color);
+}
+
+.chat-item-wrapper:hover .chat-options-button {
+  opacity: 1;
+}
+
+.context-menu {
+  position: fixed;
+  background-color: var(--header-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 5px 0;
+  z-index: 1000;
+}
+
+.context-menu button {
+  display: block;
+  width: 100%;
+  padding: 5px 10px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.context-menu button:hover {
+  background-color: var(--button-hover-color);
+}
+
+.chat-rename-input {
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.chat-rename-input input {
+  flex-grow: 1;
+  margin-right: 5px;
+  padding-left: 5px;
+  background-color: var(--input-background);
+  color: var(--input-text-color);
+}
+
+/* Settings page styles */
 .settings-page {
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: 1rem;
-  background-color: var(--chat-background);
+  background-color: var(--background-color);
   color: var(--text-color);
 }
 
@@ -1066,14 +806,6 @@ padding-bottom: 0px;
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
-}
-
-.back-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-right: 1rem;
-  color: var(--text-color);
 }
 
 .settings-content {
@@ -1106,16 +838,17 @@ padding-bottom: 0px;
 .save-button {
   width: 100%;
   padding: 0.5rem;
-  background-color: var(--primary-color);
-  color: white;
+  background-color: var(--button-color);
+  color: var(--text-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .save-button:hover {
-  background-color: var(--primary-color-hover);
+  background-color: var(--button-hover-color);
 }
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .bot-message h3 {
@@ -1125,4 +858,68 @@ padding-bottom: 0px;
   .bot-message ul li {
     font-size: 0.9em;
   }
+}
+
+/* Close button styles */
+.close-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 20;
+  position: relative;
+}
+
+.close-button::before,
+.close-button::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: var(--text-color);
+  border-radius: 10px;
+  transition: all 0.3s linear;
+}
+
+.close-button::before {
+  transform: rotate(45deg);
+}
+
+.close-button::after {
+  transform: rotate(-45deg);
+}
+
+.close-button:hover::before,
+.close-button:hover::after {
+  background: var(--button-hover-color);
+}
+
+.chat-footer {
+  color: var(--text-hover-color);
+}
+
+.view-store-button {
+  display: flex;
+  align-items: center;
+  background-color: var(--button-color);
+  color: var(--text-color);
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.view-store-button:hover {
+  background-color: var(--button-hover-color);
+}
+
+.view-store-button svg {
+  margin-right: 4px;
+  font-size: 14px;
 }

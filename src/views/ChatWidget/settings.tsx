@@ -1,55 +1,173 @@
 import React, { useState, useEffect } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaCheck } from "react-icons/fa";
+import useAuth from "../../hooks/useAuth";
+import { saveThemeSettings, getThemeSettings } from "./api/renameChat";
 
 interface SettingsPageProps {
   onClose: () => void;
-  onSave: (settings: { colorScheme: string; voiceType: string }) => void;
-  initialSettings: { colorScheme: string; voiceType: string };
+  onSave: (settings: ThemeSettings) => void;
+  initialSettings: ThemeSettings;
 }
+
+export interface ThemeSettings {
+  primaryColor: string; //buttons color,  user message color
+  secondaryColor: string; // robot message color, highlight color for active buttons,
+  backgroundColor: string; //window background color
+  headerColor: string; //header color, text input background color
+  textColor: string; //text color, icon color
+  textHoverColor: string; //text and button hover color
+}
+
+const presetThemes: { [key: string]: ThemeSettings } = {
+  default: {
+    primaryColor: "#00A67D",
+    secondaryColor: "#00766D",
+    backgroundColor: "#1E1E1E",
+    headerColor: "#2C2C2C",
+    textColor: "#FFFFFF",
+    textHoverColor: "#AAAAAA",
+  },
+  light: {
+    primaryColor: "#00A67D",
+    secondaryColor: "#00766D",
+    backgroundColor: "#FFFFFF",
+    headerColor: "#F0F0F0",
+    textColor: "#000000",
+    textHoverColor: "#555555",
+  },
+  dark: {
+    primaryColor: "#00A67D",
+    secondaryColor: "#00766D",
+    backgroundColor: "#000000",
+    headerColor: "#1E1E1E",
+    textColor: "#FFFFFF",
+    textHoverColor: "#AAAAAA",
+  },
+};
 
 const SettingsPage: React.FC<SettingsPageProps> = ({
   onClose,
   onSave,
   initialSettings,
 }) => {
-  const [colorScheme, setColorScheme] = useState(initialSettings.colorScheme);
-  const [voiceType, setVoiceType] = useState(initialSettings.voiceType);
+  const [themeSettings, setThemeSettings] =
+    useState<ThemeSettings>(initialSettings);
+  const [activePreset, setActivePreset] = useState<string | null>(null);
 
-  const handleSave = () => {
-    onSave({ colorScheme, voiceType });
+  const { user } = useAuth();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setThemeSettings((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setActivePreset(null);
+  };
+
+  const handlePresetSelect = (name: string, preset: ThemeSettings) => {
+    setThemeSettings(preset);
+    setActivePreset(name);
+  };
+
+  const handleRevert = () => {
+    setThemeSettings(initialSettings);
+    setActivePreset(null);
+  };
+
+  const handleSave = async () => {
+    const token = await user!.getIdToken();
+    saveThemeSettings(token, themeSettings);
+    onSave(themeSettings);
     onClose();
   };
 
+  useEffect(() => {
+    const fetchThemeSettings = async () => {
+      const token = await user!.getIdToken();
+      const settings = await getThemeSettings(token);
+      if (settings) {
+        setThemeSettings(settings);
+      }
+    };
+    fetchThemeSettings();
+  }, []);
+
+  const formatLabel = (key: string) => {
+    return key
+      .replace(/([A-Z])/g, " $1")
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  const themeSettingsOrder: (keyof ThemeSettings)[] = [
+    "primaryColor",
+    "secondaryColor",
+    "backgroundColor",
+    "headerColor",
+    "textColor",
+    "textHoverColor",
+  ];
+
   return (
-    <div className="settings-page">
-      <div className="settings-content">
-        <div className="setting-item">
-          <label htmlFor="colorScheme">Color Scheme:</label>
-          <select
-            id="colorScheme"
-            value={colorScheme}
-            onChange={(e) => setColorScheme(e.target.value)}
-          >
-            <option value="default">Default</option>
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-          </select>
-        </div>
-        <div className="setting-item">
-          <label htmlFor="voiceType">Voice Type:</label>
-          <select
-            id="voiceType"
-            value={voiceType}
-            onChange={(e) => setVoiceType(e.target.value)}
-          >
-            <option value="default">Default</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
+    <div className="settings-page bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+      <div className="settings-content grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {themeSettingsOrder.map((key) => (
+          <div key={key} className="setting-item">
+            <label htmlFor={key} className="block mb-2 font-medium">
+              {formatLabel(key)}
+            </label>
+            <div className="flex items-center">
+              <input
+                type="color"
+                id={key}
+                name={key}
+                value={themeSettings[key]}
+                onChange={handleChange}
+                className="w-10 h-10 rounded-l cursor-pointer border-r border-gray-600 input-color"
+              />
+              <input
+                type="text"
+                value={themeSettings[key]}
+                onChange={handleChange}
+                name={key}
+                className="flex-grow border-l-0 border border-gray-600 rounded-r px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="preset-themes mb-8">
+        <h3 className="text-xl font-bold mb-4">Preset Themes</h3>
+        <div className="grid grid-cols-3 gap-4">
+          {Object.entries(presetThemes).map(([name, preset]) => (
+            <button
+              key={name}
+              onClick={() => handlePresetSelect(name, preset)}
+              className={`preset-theme-button p-3 rounded-lg text-center transition-all ${
+                activePreset === name ? "ring-2 ring-blue-500" : ""
+              }`}
+              style={{
+                backgroundColor: preset.backgroundColor,
+                color: preset.textColor,
+                border: `2px solid ${preset.primaryColor}`,
+              }}
+            >
+              {name}
+              {activePreset === name && (
+                <FaCheck className="inline-block ml-2" />
+              )}
+            </button>
+          ))}
         </div>
       </div>
-      <div className="settings-footer">
-        <button onClick={handleSave} className="save-button">
+
+      <div className="settings-footer flex justify-between">
+        <button
+          onClick={handleSave}
+          className="save-button bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded transition-colors"
+        >
           Save Changes
         </button>
       </div>

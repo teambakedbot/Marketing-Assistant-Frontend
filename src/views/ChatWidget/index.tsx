@@ -33,6 +33,16 @@ import {
 } from "react-icons/fa"; // Import the store icon and back arrow icon
 import { BASE_URL } from "../../utils/api";
 import SettingsPage from "./settings";
+import { getThemeSettings } from "./api/renameChat";
+
+interface ThemeSettings {
+  primaryColor: string;
+  secondaryColor: string;
+  backgroundColor: string;
+  headerColor: string;
+  textColor: string;
+  textHoverColor: string;
+}
 
 const Spinner: React.FC = () => (
   <div className="spinner">
@@ -76,10 +86,28 @@ export const ChatWidget: React.FC = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [settings, setSettings] = useState({
-    colorScheme: "default",
-    voiceType: "default",
+
+  const [settings, setSettings] = useState<ThemeSettings>({
+    primaryColor: "#00A67D",
+    secondaryColor: "#00766D",
+    backgroundColor: "#1E1E1E",
+    headerColor: "#2C2C2C",
+    textColor: "#FFFFFF",
+    textHoverColor: "#AAAAAA",
   });
+  const applyTheme = (theme: ThemeSettings) => {
+    const root = document.documentElement;
+    root.style.setProperty("--primary-color", theme.primaryColor);
+    root.style.setProperty("--secondary-color", theme.secondaryColor);
+    root.style.setProperty("--background-color", theme.backgroundColor);
+    root.style.setProperty("--header-color", theme.headerColor);
+    root.style.setProperty("--text-color", theme.textColor);
+    root.style.setProperty("--text-hover-color", theme.textHoverColor);
+  };
+
+  useEffect(() => {
+    applyTheme(settings);
+  }, [settings]);
 
   const handleViewSettings = () => {
     setCurrentView("settings");
@@ -90,12 +118,8 @@ export const ChatWidget: React.FC = () => {
     setCurrentView("chat");
   };
 
-  const handleSettingsSave = (newSettings: {
-    colorScheme: string;
-    voiceType: string;
-  }) => {
+  const handleSettingsSave = (newSettings: ThemeSettings) => {
     setSettings(newSettings);
-    // Here you can implement logic to save settings to backend or local storage
   };
 
   const handleProductClick = (product) => {
@@ -107,7 +131,6 @@ export const ChatWidget: React.FC = () => {
     setCurrentView("chat");
     setSelectedProduct(null);
   };
-
   const fetchChatMessages = useCallback(async () => {
     if (!currentChatId || chatHistory.length > 0) return;
     try {
@@ -194,6 +217,17 @@ export const ChatWidget: React.FC = () => {
         break;
     }
   };
+
+  useEffect(() => {
+    const fetchThemeSettings = async () => {
+      const token = await user!.getIdToken();
+      const settings = await getThemeSettings(token);
+      if (settings) {
+        setSettings(settings);
+      }
+    };
+    fetchThemeSettings();
+  }, [user]);
 
   const playHandler = async () => {
     if (!prompts || loading) return;
@@ -600,8 +634,8 @@ export const ChatWidget: React.FC = () => {
                 <div className="chat-header">
                   <div className="flex flex-row gap-5 w-15">
                     <button
-                      className={`${"hamburger-menu"} ${
-                        isMenuOpen || currentView != "chat" ? "open" : ""
+                      className={`hamburger-menu ${
+                        isMenuOpen || currentView !== "chat" ? "open" : ""
                       }`}
                       onClick={toggleMenu}
                     >
@@ -752,7 +786,11 @@ export const ChatWidget: React.FC = () => {
                       }}
                       rows={1}
                     />
-                    <button onClick={playHandler} disabled={loading}>
+                    <button
+                      onClick={playHandler}
+                      disabled={loading}
+                      className="send-button"
+                    >
                       {loading ? (
                         <img
                           src={loadingIcon}
