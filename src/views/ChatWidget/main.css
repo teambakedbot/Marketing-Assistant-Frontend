@@ -25,6 +25,14 @@
   color: var(--text-secondary-color);
 }
 
+.bg-primary-color{
+  background-color: var(--primary-color);
+}
+
+.bg-secondary-color{
+  background-color: var(--secondary-color);
+}
+
 /* Simplebar styles */
 .simplebar-track.simplebar-vertical,
 .simplebar-track.simplebar-horizontal {
@@ -185,8 +193,15 @@
   align-items: center;
   min-height: 64px;
 }
-input, textarea {
+
+
+.bb-sm-body input, .bb-sm body textarea {
   outline: none;
+  color: var(--text-color);
+  background-color: var(--input-background);
+  border: var(--border-color);
+  border: 1px solid;
+  border-radius: 12px;
 }
 
 .bb-sm-chat-input textarea {
@@ -1004,15 +1019,6 @@ input, textarea {
   background-color: var(--secondary-color);
 }
 
-.bb-sm-checkout-view input[type="email"] {
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-/* Add these styles to your existing CSS file */
 
 .bb-sm-quantity-selector {
   display: flex;
@@ -1037,3 +1043,21 @@ input, textarea {
 .bb-sm-quantity-button:hover {
   background-color: var(--secondary-color);
 }
+
+.bb-sm-delete-button{
+  background-color: #ff4500;
+  color: var(--text-color);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+.bb-sm-delete-button:hover {
+  color: var(--primary-color);
+}
+

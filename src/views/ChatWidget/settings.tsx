@@ -111,11 +111,12 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             <div className="flex items-center">
               <input
                 type="color"
+                style={{ border: "none" }}
                 id={key}
                 name={key}
                 value={themeSettings[key]}
                 onChange={handleChange}
-                className="w-10 h-10 rounded-l cursor-pointer border-r border-gray-600 bb-sm-input-color"
+                className="w-10 h-10 rounded-l cursor-pointer  bb-sm-input-color"
               />
               <input
                 type="text"

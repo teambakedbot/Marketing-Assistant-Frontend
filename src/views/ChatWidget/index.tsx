@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  memo,
+  useContext,
+} from "react";
 import bottom from "/images/Chatbot logo white background large-circle.png";
 import botIcon from "/images/receiver.jpeg";
 import product1 from "/images/product1.png";
@@ -29,16 +36,19 @@ import {
   FaCartPlus,
   FaFly,
   FaPaperPlane,
+  FaTimes,
   FaEllipsisV,
   FaChevronLeft,
   FaChevronRight,
   FaShoppingCart,
   FaMinus,
   FaPlus,
+  FaTrash,
 } from "react-icons/fa"; // Import the store icon and back arrow icon
 import { BASE_URL } from "../../utils/api";
 import SettingsPage from "./settings";
 import { getThemeSettings } from "./api/renameChat";
+import { CartContext } from "./CartContext";
 
 interface ThemeSettings {
   primaryColor: string;
@@ -59,6 +69,8 @@ const Spinner: React.FC = () => (
 
 export const ChatWidget: React.FC = () => {
   const { displayName, photoURL, user } = useAuth();
+  const { cart, addToCart, updateQuantity, removeFromCart, handleCheckout } =
+    useContext(CartContext)!;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [value, setValue] = useState(1);
   const [prompts, setPrompts] = useState<string>("");
@@ -91,10 +103,7 @@ export const ChatWidget: React.FC = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cart, setCart] = useState<{
-    [key: string]: { product: any; quantity: number };
-  }>({});
-  const [customerEmail, setCustomerEmail] = useState("");
+
   type Windows =
     | "chat"
     | "store"
@@ -530,56 +539,8 @@ export const ChatWidget: React.FC = () => {
     }
   };
 
-  const addToCart = (product: any) => {
-    setCart((prevCart) => {
-      const newCart = { ...prevCart };
-      if (newCart[product.id]) {
-        newCart[product.id].quantity += 1;
-      } else {
-        newCart[product.id] = { product, quantity: 1 };
-      }
-      return newCart;
-    });
-  };
-
-  const removeFromCart = (productId: string) => {
-    setCart((prevCart) => {
-      const newCart = { ...prevCart };
-      delete newCart[productId];
-      return newCart;
-    });
-  };
-
-  const updateQuantity = (productId: string, delta: number) => {
-    setCart((prevCart) => {
-      const newCart = { ...prevCart };
-      if (newCart[productId]) {
-        // Use a callback to ensure we're working with the latest state
-        newCart[productId] = {
-          ...newCart[productId],
-          quantity: Math.max(0, newCart[productId].quantity + delta),
-        };
-        if (newCart[productId].quantity === 0) {
-          delete newCart[productId];
-        }
-      }
-      return newCart;
-    });
-  };
-
-  const handleCheckout = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you would typically send the order to your backend
-    // For this example, we'll just log the order details
-    console.log("Order placed:", { customerEmail, cart });
-    // Reset cart and close checkout
-    setCart({});
-    navigateTo("cart");
-    // Show confirmation message
-    alert("Order placed successfully! We will contact you for pickup details.");
-  };
   const CartView = () => (
-    <div className="bb-sm-cart-view">
+    <div className="bb-sm-cart-view  p-4">
       <h2 className="text-xl font-bold mb-4">Your Cart</h2>
       {Object.keys(cart).length === 0 ? (
         <p>Your cart is empty.</p>
@@ -588,81 +549,42 @@ export const ChatWidget: React.FC = () => {
           {Object.entries(cart).map(([productId, { product, quantity }]) => (
             <div
               key={productId}
-              className="bb-sm-cart-item flex justify-between items-center mb-2"
+              className="bb-sm-cart-item flex items-center justify-between py-3 border-b border-gray-700"
             >
-              <span>{product.product_name}</span>
-              <div className="flex items-center">
+              <span
+                className="flex-grow truncate pr-2"
+                title={product.product_name}
+              >
+                {product.product_name}
+              </span>
+              <div className="flex items-center justify-center ml-2">
                 <button
                   onClick={() => updateQuantity(productId, -1)}
-                  className="bb-sm-quantity-button"
+                  className="bb-sm-quantity-button w-6 h-6 rounded-full flex items-center justify-center"
                 >
-                  <FaMinus size={12} />
+                  {quantity > 1 ? <FaMinus size={12} /> : <FaTrash size={12} />}
                 </button>
-                <span className="mx-2">{quantity}</span>
+                <span className="mx-2 w-6 text-center">{quantity}</span>
                 <button
                   onClick={() => updateQuantity(productId, 1)}
-                  className="bb-sm-quantity-button"
+                  className="bb-sm-quantity-button w-6 h-6 rounded-full flex items-center justify-center"
                 >
                   <FaPlus size={12} />
                 </button>
               </div>
-              <span>${(product.latest_price * quantity).toFixed(2)}</span>
-              <button
+              <span className="w-20 text-right ml-2">
+                ${(product.latest_price * quantity).toFixed(2)}
+              </span>
+              {/* <button
                 onClick={() => removeFromCart(productId)}
-                className="bb-sm-remove-from-cart-button"
+                className="w-8 flex justify-center items-center text-gray-400 hover:text-white ml-2 rounded-full bb-sm-delete-button"
+                aria-label="Remove from cart"
               >
-                Remove
-              </button>
+                <FaTimes size={16} />
+              </button> */}
             </div>
           ))}
-          <div className="bb-sm-cart-total mt-4">
-            <strong>
-              Total: $
-              {Object.values(cart)
-                .reduce(
-                  (sum, { product, quantity }) =>
-                    sum + product.latest_price * quantity,
-                  0
-                )
-                .toFixed(2)}
-            </strong>
-          </div>
-          <button
-            onClick={() => navigateTo("checkOut")}
-            className="bb-sm-checkout-button mt-4"
-          >
-            Proceed to Checkout
-          </button>
-        </>
-      )}
-    </div>
-  );
-
-  const CheckoutView = () => (
-    <div className="bb-sm-checkout-view p-4">
-      <form onSubmit={handleCheckout}>
-        <div className="mb-4">
-          <label htmlFor="email" className="block mb-2">
-            Email:
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={customerEmail}
-            onChange={(e) => setCustomerEmail(e.target.value)}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <h3 className="font-bold">Order Summary:</h3>
-          {Object.entries(cart).map(([productId, { product, quantity }]) => (
-            <div key={productId} className="flex justify-between">
-              <span>{product.product_name}</span>
-              <span>${(product.latest_price * quantity).toFixed(2)}</span>
-            </div>
-          ))}
-          <div className="font-bold mt-2">
+          <div className="bb-sm-cart-total mt-4 text-xl font-bold flex justify-end">
             Total: $
             {Object.values(cart)
               .reduce(
@@ -672,116 +594,226 @@ export const ChatWidget: React.FC = () => {
               )
               .toFixed(2)}
           </div>
-        </div>
-        <button type="submit" className="bb-sm-place-order-button">
-          Place Order
-        </button>
-      </form>
-    </div>
-  );
-
-  const StoreView = () => (
-    <div className="bb-sm-store-view">
-      {/* <div className="bb-sm-filters pt-2 pb-2 color-black">
-        <button className="text-sm">Happy</button>
-        <button className="text-sm">$100-$500</button>
-        <button className="text-sm">All types</button>
-      </div> */}
-      <div className="bb-sm-results-header p-2">
-        <h2>Showing results "{totalProducts}"</h2>
-        <button
-          onClick={() => {
-            setSearchQuery("");
-            fetchProducts();
-          }}
-        >
-          See all
-        </button>
-      </div>
-      {error && (
-        <div
-          className="bb-sm-error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-          role="alert"
-        >
-          <strong className="font-bold">Error:</strong>
-          <span className="block sm:inline"> {error}</span>
-        </div>
-      )}
-      {isLoading ? (
-        <div className="bb-sm-loading-container flex justify-center items-center h-64">
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          <div className="bb-sm-product-grid">
-            {products?.map((product) => (
-              <div className="bb-sm-product-item" key={product.id}>
-                <img
-                  src={product.image_url}
-                  alt={product.product_name}
-                  className="pb-1 cursor-pointer"
-                  onClick={() => handleProductClick(product)}
-                />
-                <h3
-                  className="text-md font-semibold cursor-pointer mt-2"
-                  onClick={() => handleProductClick(product)}
-                >
-                  {product.product_name}
-                </h3>
-                <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
-                <p className="text-sm mt-2">{product.description}</p>
-                {cart[product.id] ? (
-                  <div className="bb-sm-quantity-selector">
-                    <button
-                      onClick={() => updateQuantity(product.id, -1)}
-                      className="bb-sm-quantity-button"
-                    >
-                      <FaMinus size={12} />
-                    </button>
-                    <span className="mx-2">{cart[product.id].quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(product.id, 1)}
-                      className="bb-sm-quantity-button"
-                    >
-                      <FaPlus size={12} />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    className="text-md bb-sm-add-to-cart-button p-1 mt-2 align-end"
-                    onClick={() => addToCart(product)}
-                  >
-                    Add to cart
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="bb-sm-pagination flex justify-center items-center mt-4">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1 || isLoading}
-              className="bb-sm-pagination-button"
-              aria-label="Previous page"
-            >
-              <FaChevronLeft />
-            </button>
-            <span className="mx-4">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages || isLoading}
-              className="bb-sm-pagination-button"
-              aria-label="Next page"
-            >
-              <FaChevronRight />
-            </button>
-          </div>
+          <button
+            onClick={() => navigateTo("checkOut")}
+            className="bb-sm-checkout-button mt-4 w-full  py-2 rounded"
+          >
+            Proceed to Checkout
+          </button>
         </>
       )}
     </div>
   );
+  const CheckoutView = () => {
+    const [customerName, setCustomerName] = useState("");
+    const [contactMethod, setContactMethod] = useState("email");
+    const [contactValue, setContactValue] = useState("");
+
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      const contactInfo = {
+        [contactMethod]: contactValue,
+      };
+      handleCheckout(customerName, contactInfo);
+    };
+
+    return (
+      <div className="bb-sm-checkout-view p-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <h3 className="font-bold mb-2">Order Summary</h3>
+            <div className="space-y-2 mb-4">
+              {Object.entries(cart).map(
+                ([productId, { product, quantity }]) => (
+                  <div key={productId} className="flex justify-between text-sm">
+                    <span>
+                      {product.product_name} (x{quantity})
+                    </span>
+                    <span>${(product.latest_price * quantity).toFixed(2)}</span>
+                  </div>
+                )
+              )}
+            </div>
+            <div className="flex justify-between font-bold">
+              <span>Total:</span>
+              <span>
+                $
+                {Object.values(cart)
+                  .reduce(
+                    (sum, { product, quantity }) =>
+                      sum + product.latest_price * quantity,
+                    0
+                  )
+                  .toFixed(2)}
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-between mb-2">
+            <label></label>
+            <div>
+              <button
+                type="button"
+                onClick={() => setContactMethod("email")}
+                className={`mr-2 px-3 py-1 rounded text-md ${
+                  contactMethod === "email"
+                    ? "bg-primary-color text-secondary-color"
+                    : "bg-secondary-color text-secondary-color opacity-70 hover:opacity-100"
+                }`}
+              >
+                Email
+              </button>
+              <button
+                type="button"
+                onClick={() => setContactMethod("phone")}
+                className={`px-3 py-1 rounded text-md ${
+                  contactMethod === "phone"
+                    ? "bg-primary-color text-secondary-color"
+                    : "bg-secondary-color text-secondary-color opacity-70 hover:opacity-100"
+                }`}
+              >
+                Phone
+              </button>
+            </div>
+          </div>
+          <div className="flex space-x-4">
+            <div className="flex-1">
+              <input
+                type="text"
+                id="name"
+                placeholder="Enter your name"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div className="flex-1">
+              <input
+                type={contactMethod === "email" ? "email" : "tel"}
+                id="contact"
+                placeholder={`Enter your ${contactMethod}`}
+                value={contactValue}
+                onChange={(e) => setContactValue(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+              />
+            </div>
+          </div>
+          <button
+            type="submit"
+            className="bb-sm-place-order-button w-full py-2 rounded mt-10 pb-2"
+          >
+            Place Order
+          </button>
+        </form>
+      </div>
+    );
+  };
+
+  const StoreView: React.FC<any> = memo(() => {
+    return (
+      <div className="bb-sm-store-view">
+        {/* <div className="bb-sm-filters pt-2 pb-2 color-black">
+        <button className="text-sm">Happy</button>
+        <button className="text-sm">$100-$500</button>
+        <button className="text-sm">All types</button>
+      </div> */}
+        <div className="bb-sm-results-header p-2">
+          <h2>Showing results "{totalProducts}"</h2>
+          <button
+            onClick={() => {
+              setSearchQuery("");
+              fetchProducts();
+            }}
+          >
+            See all
+          </button>
+        </div>
+        {error && (
+          <div
+            className="bb-sm-error-message border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
+            <strong className="font-bold">Error:</strong>
+            <span className="block sm:inline"> {error}</span>
+          </div>
+        )}
+        {isLoading ? (
+          <div className="bb-sm-loading-container flex justify-center items-center h-64">
+            <Spinner />
+          </div>
+        ) : (
+          <>
+            <div className="bb-sm-product-grid">
+              {products?.map((product) => (
+                <div className="bb-sm-product-item" key={product.id}>
+                  <img
+                    src={product.image_url}
+                    alt={product.product_name}
+                    className="pb-1 cursor-pointer"
+                    onClick={() => handleProductClick(product)}
+                  />
+                  <h3
+                    className="text-md font-semibold cursor-pointer mt-2"
+                    onClick={() => handleProductClick(product)}
+                  >
+                    {product.product_name}
+                  </h3>
+                  <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
+                  <p className="text-sm mt-2">{product.description}</p>
+                  {cart[product.id] ? (
+                    <div className="bb-sm-quantity-selector">
+                      <button
+                        onClick={() => updateQuantity(product.id, -1)}
+                        className="bb-sm-quantity-button"
+                      >
+                        <FaMinus size={12} />
+                      </button>
+                      <span className="mx-2">{cart[product.id].quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(product.id, 1)}
+                        className="bb-sm-quantity-button"
+                      >
+                        <FaPlus size={12} />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className="text-md bb-sm-add-to-cart-button p-1 mt-2 align-end"
+                      onClick={() => addToCart(product)}
+                    >
+                      Add to cart
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="bb-sm-pagination flex justify-center items-center mt-4">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || isLoading}
+                className="bb-sm-pagination-button"
+                aria-label="Previous page"
+              >
+                <FaChevronLeft />
+              </button>
+              <span className="mx-4">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages || isLoading}
+                className="bb-sm-pagination-button"
+                aria-label="Next page"
+              >
+                <FaChevronRight />
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  });
   interface ProductDetailProps {
     product?: {
       product_name: string;
@@ -1015,7 +1047,7 @@ export const ChatWidget: React.FC = () => {
                 {(currentView == "store" || currentView == "chat") && (
                   <div className="bb-sm-chat-input">
                     <textarea
-                      className="resize-none w-full placeholder-gray-200 bg-transparent p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
+                      className="resize-none w-full placeholder-gray-200  p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           if (currentView === "chat") {
