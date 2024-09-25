@@ -4,11 +4,11 @@ import loadingIcon from "/images/loading-spinner-white.gif";
 import { FaThumbsUp, FaThumbsDown, FaRedo, FaCopy } from "react-icons/fa";
 
 interface ChatHistoryProps {
-  chatHistory: { role: string; content: string; id: string }[];
+  chatHistory: { role: string; content: string; message_id: string }[];
   loading: boolean;
   chatEndRef: React.RefObject<HTMLDivElement>;
-  onFeedback: (index: number, feedbackType: "like" | "dislike") => void;
-  onRetry: (index: number) => void;
+  onFeedback: (message_id: string, feedbackType: "like" | "dislike") => void;
+  onRetry: (message_id: string) => void;
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
@@ -22,9 +22,12 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
     [key: string]: "like" | "dislike" | null;
   }>({});
 
-  const handleFeedback = (index: number, feedbackType: "like" | "dislike") => {
-    onFeedback(index, feedbackType);
-    setFeedbackGiven((prev) => ({ ...prev, [index]: feedbackType }));
+  const handleFeedback = (
+    message_id: string,
+    feedbackType: "like" | "dislike"
+  ) => {
+    onFeedback(message_id, feedbackType);
+    setFeedbackGiven((prev) => ({ ...prev, [message_id]: feedbackType }));
   };
 
   const handleCopy = (content: string) => {
@@ -35,15 +38,15 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
 
   return (
     <div className="bb-sm-chat-messages flex-1 overflow-y-auto mb-2">
-      {chatHistory?.map((chat, index) => {
-        const isBot = chat.role === "assistant";
+      {chatHistory?.map((message, index) => {
+        const isBot = message.role === "assistant";
         const isLoading = loading && isBot && index === chatHistory.length - 1;
         const messageClass = isBot ? "bb-sm-bot-message" : "bb-sm-user-message";
 
         return (
           <div
             className={`flex ${isBot ? "justify-start" : "justify-end"} mb-4`}
-            key={`chat-message-${index}`}
+            key={`chat-message-${message.message_id}`}
           >
             <div
               className={`bb-sm-message-container ${
@@ -61,7 +64,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                   </div>
                 ) : (
                   <ReactMarkdown className="text-sm md:text-base bb-sm-prose bb-sm-prose-invert">
-                    {chat.content}
+                    {message.content}
                   </ReactMarkdown>
                 )}
               </div>
@@ -69,7 +72,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                 <div className="bb-sm-feedback-buttons">
                   <div className="bb-sm-left-buttons">
                     <button
-                      onClick={() => handleCopy(chat.content)}
+                      onClick={() => handleCopy(message.content)}
                       className="bb-sm-feedback-button text-xs flex items-center gap-1"
                     >
                       <FaCopy size={12} />
@@ -78,30 +81,32 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                   </div>
                   <div className="bb-sm-right-buttons">
                     <button
-                      onClick={() => onRetry(index)}
+                      onClick={() => onRetry(message.message_id)}
                       className="bb-sm-feedback-button"
                     >
                       <FaRedo size={12} />
                     </button>
                     <button
-                      onClick={() => handleFeedback(index, "like")}
+                      onClick={() => handleFeedback(message.message_id, "like")}
                       className={`bb-sm-feedback-button ${
-                        feedbackGiven[index] === "like"
+                        feedbackGiven[message.message_id] === "like"
                           ? "bb-sm-feedback-given"
                           : ""
                       }`}
-                      disabled={feedbackGiven[index] === null}
+                      disabled={feedbackGiven[message.message_id] === null}
                     >
                       <FaThumbsUp size={12} />
                     </button>
                     <button
-                      onClick={() => handleFeedback(index, "dislike")}
+                      onClick={() =>
+                        handleFeedback(message.message_id, "dislike")
+                      }
                       className={`bb-sm-feedback-button ${
-                        feedbackGiven[index] === "dislike"
+                        feedbackGiven[message.message_id] === "dislike"
                           ? "bb-sm-feedback-given"
                           : ""
                       }`}
-                      disabled={feedbackGiven[index] === null}
+                      disabled={feedbackGiven[message.message_id] === null}
                     >
                       <FaThumbsDown size={12} />
                     </button>

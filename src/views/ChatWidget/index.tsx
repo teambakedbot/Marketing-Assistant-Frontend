@@ -24,6 +24,8 @@ import {
   sendMessage,
   renameChat,
   deleteChat,
+  recordFeedback,
+  retryMessage,
 } from "../../utils/api";
 import robotIcon from "/images/pointing.png"; // Import the robot icon
 import notLoggedInIcon from "/images/security.png"; // Import the not logged in icon
@@ -77,8 +79,8 @@ export const ChatWidget: React.FC = () => {
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<
-    { role: string; content: string; id: string }[]
-  >([{ role: "assistant", content: "Hey, how can I help?", id: "1" }]);
+    { role: string; content: string; message_id: string }[]
+  >([{ role: "assistant", content: "Hey, how can I help?", message_id: "1" }]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
@@ -206,7 +208,11 @@ export const ChatWidget: React.FC = () => {
         setActiveChatId(null);
         setCurrentChatId(null);
         setChatHistory([
-          { role: "assistant", content: "Hey, how can I help?", id: "1" },
+          {
+            role: "assistant",
+            content: "Hey, how can I help?",
+            message_id: "1",
+          },
         ]);
       } else {
         setIsNewChat(false);
@@ -286,8 +292,8 @@ export const ChatWidget: React.FC = () => {
     setIsNewChat(false);
     setChatHistory((prevHistory) => [
       ...prevHistory,
-      { role: "user", content: prompts, id: "2" },
-      { role: "assistant", content: "loading", id: "3" },
+      { role: "user", content: prompts, message_id: "2" },
+      { role: "assistant", content: "loading", message_id: "3" },
     ]);
     setPrompts("");
     setLoading(true);
@@ -532,36 +538,33 @@ export const ChatWidget: React.FC = () => {
   };
 
   const handleFeedback = async (
-    index: number,
+    message_id: string,
     feedbackType: "like" | "dislike"
   ) => {
     try {
       const token = await user!.getIdToken();
-      // Implement API call to record feedback
-      // For example:
-      // await recordFeedback(token, messageId, feedbackType);
-      console.log(`Feedback recorded: ${feedbackType} for message ${index}`);
+      const response = await recordFeedback(token, message_id, feedbackType);
+      if (!response.ok) {
+        throw new Error("Failed to record feedback");
+      }
+      console.log(
+        `Feedback recorded: ${feedbackType} for message ${message_id}`
+      );
     } catch (error) {
       console.error("Error recording feedback:", error);
     }
   };
 
-  const handleRetry = async (index: number) => {
+  const handleRetry = async (message_id: string) => {
     try {
-      // Find the user message that preceded this bot message
-      const messageIndex = chatHistory.findIndex(
-        (msg: any) => msg.id === index
-      );
-      if (messageIndex > 0 && messageIndex < chatHistory.length) {
-        const userMessage = chatHistory[messageIndex - 1];
-
-        // Remove the bot message and all subsequent messages
-        setChatHistory((prevHistory) => prevHistory.slice(0, messageIndex));
-
-        // Resend the user message
-        setPrompts(userMessage.content);
-        await playHandler();
+      const token = await user!.getIdToken();
+      const response = await retryMessage(token, message_id);
+      if (!response.ok) {
+        throw new Error("Failed to retry message");
       }
+      const result = await response.json();
+      // Update chat history with the new response
+      setChatHistory((prevHistory) => [...prevHistory, result]);
     } catch (error) {
       console.error("Error retrying message:", error);
     }
@@ -637,12 +640,13 @@ export const ChatWidget: React.FC = () => {
     const [contactMethod, setContactMethod] = useState("email");
     const [contactValue, setContactValue] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       const contactInfo = {
         [contactMethod]: contactValue,
       };
-      handleCheckout(customerName, contactInfo);
+      await handleCheckout(customerName, contactInfo);
+      navigateTo("chat");
     };
 
     return (
@@ -737,7 +741,6 @@ export const ChatWidget: React.FC = () => {
       </div>
     );
   };
-
   const StoreView: React.FC<any> = memo(() => {
     return (
       <div className="bb-sm-store-view">

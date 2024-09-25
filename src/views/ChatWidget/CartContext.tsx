@@ -1,9 +1,38 @@
 import React, { createContext, ReactNode, useState } from "react";
+import useAuth from "../../hooks/useAuth";
+import { checkout } from "../../utils/api";
 
 interface CartItem {
   product: any;
   quantity: number;
 }
+
+interface CartData {
+  name: string;
+  contact_info: {
+    email: string;
+    phone: string;
+  };
+  cart: {
+    [key: string]: CartItem;
+  };
+}
+
+const buildCartData = (
+  email: string,
+  phone: string,
+  name: string,
+  cartItems: Map<string, CartItem>
+): CartData => {
+  return {
+    name: name || "Anonymous",
+    contact_info: {
+      email: email || "",
+      phone: phone || "",
+    },
+    cart: Object.fromEntries(cartItems),
+  };
+};
 
 interface CartContextProps {
   cart: { [key: string]: CartItem };
@@ -26,8 +55,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({
   children,
 }: any) => {
   const [cart, setCart] = useState<{ [key: string]: CartItem }>({});
+  const { user } = useAuth();
 
-  const addToCart = (product: any) => {
+  const addToCart = async (product: any) => {
+    // Use cartData in your API call
     setCart((prevCart) => {
       const newCart = { ...prevCart };
       if (newCart[product.id]) {
@@ -63,18 +94,32 @@ export const CartProvider: React.FC<CartProviderProps> = ({
     });
   };
 
-  const handleCheckout = (
+  const handleCheckout = async (
     name: string,
     contactInfo: { email?: string; phone?: string }
   ) => {
-    // Here you would typically send the order to your backend
-    // For this example, we'll just log the order details
-    console.log("Order placed:", { name, contactInfo, cart });
-    // Reset cart and close checkout
-    setCart({});
-    // navigateTo("cart");
-    // Show confirmation message
-    alert("Order placed successfully! We will contact you for pickup details.");
+    try {
+      const token = await user!.getIdToken();
+      const checkoutData = {
+        name,
+        contact_info: contactInfo,
+        cart: Object.fromEntries(
+          Object.entries(cart).map(([id, { product, quantity }]) => [
+            id,
+            { quantity },
+          ])
+        ),
+      };
+      const response = await checkout(token, checkoutData);
+      console.log("Checkout response:", response);
+      setCart({});
+      alert(
+        "Order placed successfully! We will contact you for pickup details."
+      );
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      alert("There was an error processing your order. Please try again.");
+    }
   };
   return (
     <CartContext.Provider

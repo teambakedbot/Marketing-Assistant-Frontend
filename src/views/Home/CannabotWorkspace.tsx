@@ -10,7 +10,7 @@ import useAuth from "../../hooks/useAuth";
 import loadingIcon from "/images/loading-spinner-white.gif";
 
 interface CannabotWorkspaceProps {
-  chatHistory: { role: string; content: string; id: string }[];
+  chatHistory: { role: string; content: string; message_id: string }[];
   voiceType: string;
   loading: boolean;
 }
@@ -29,12 +29,17 @@ function CannabotWorkspace({
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-  const handleFeedback = (index: number, feedbackType: "like" | "dislike") => {
-    console.log(`Feedback: ${feedbackType} for message at index: ${index}`);
+  const handleFeedback = (
+    message_id: string,
+    feedbackType: "like" | "dislike"
+  ) => {
+    console.log(
+      `Feedback: ${feedbackType} for message at index: ${message_id}`
+    );
   };
 
-  const handleRetry = (index: number) => {
-    console.log(`Retrying message at index: ${index}`);
+  const handleRetry = (message_id: string) => {
+    console.log(`Retrying message at index: ${message_id}`);
   };
 
   const userPhoto = photoURL || "/images/person-image.png";

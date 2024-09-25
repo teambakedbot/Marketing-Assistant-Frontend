@@ -52,3 +52,39 @@ export const deleteChat = async (token: string, chatId: string) => {
   });
   return response.data;
 };
+
+export const recordFeedback = async (
+  token: string,
+  message_id: string,
+  feedback_type: string
+) => {
+  const response = await axios.post(
+    `${BASE_URL}/feedback`,
+    { message_id, feedback_type },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};
+
+export const retryMessage = async (token: string, message_id: string) => {
+  const response = await axios.post(
+    `${BASE_URL}/retry`,
+    { message_id },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};
+
+export const checkout = async (
+  token: string,
+  checkoutData: {
+    name: string;
+    contact_info: { email?: string; phone?: string };
+    cart: Record<string, { quantity: number }>;
+  }
+) => {
+  const response = await axios.post(`${BASE_URL}/checkout`, checkoutData, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
