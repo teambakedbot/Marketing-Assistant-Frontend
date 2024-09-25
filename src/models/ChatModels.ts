@@ -1,4 +1,5 @@
 export type ChatEntry = {
+  id: string;
   role: string;
   content: string;
 };

@@ -28,6 +28,7 @@ function Home() {
   const [chats, setChats] = useState<Chats[]>([]);
   const [chatHistory, setChatHistory] = useState<ChatEntry[]>([
     {
+      id: "1",
       role: "assistant",
       content:
         voiceType === "normal"
@@ -47,7 +48,7 @@ function Home() {
     async (id: string) => {
       if (!id) return;
       setChatHistory([
-        { role: "assistant", content: "Loading chat history..." },
+        { id: "1", role: "assistant", content: "Loading chat history..." },
       ]);
       try {
         setLoading(true);
@@ -109,8 +110,8 @@ function Home() {
     if (!prompts || loading) return;
     setChatHistory((prevHistory) => [
       ...prevHistory,
-      { role: "user", content: prompts },
-      { role: "assistant", content: "loading" },
+      { id: "1", role: "user", content: prompts },
+      { id: "2", role: "assistant", content: "loading" },
     ]);
     setPrompts("");
     setLoading(true);
@@ -219,7 +220,11 @@ function Home() {
         if (done) break;
         setChatHistory((prev) => [
           ...prev,
-          { role: "AI", content: decoder.decode(value, { stream: true }) },
+          {
+            id: "3",
+            role: "AI",
+            content: decoder.decode(value, { stream: true }),
+          },
         ]);
       }
     }
@@ -361,6 +366,7 @@ function Home() {
                 setVoiceType(e.target.value);
                 setChatHistory([
                   {
+                    id: "1",
                     role: "assistant",
                     content:
                       e.target.value === "normal"
