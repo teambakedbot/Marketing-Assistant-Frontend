@@ -84,9 +84,6 @@ export const ChatWidget: React.FC = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isNewChat, setIsNewChat] = useState(true);
-  // const [currentView, setCurrentView] = useState<
-  //   "chat" | "store" | "product" | "settings" | "cart" | "checkOut"
-  // >("chat");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState<any[]>([]); // Add state for products
   const [searchQuery, setSearchQuery] = useState(""); // Add state for search query
@@ -111,6 +108,9 @@ export const ChatWidget: React.FC = () => {
     | "settings"
     | "cart"
     | "checkOut";
+
+  const [currentView, setCurrentView] = useState<Windows>("chat");
+  const [previousView, setPreviousView] = useState<Windows | null>(null);
 
   const [settings, setSettings] = useState<ThemeSettings>({
     primaryColor: "#00A67D",
@@ -242,34 +242,26 @@ export const ChatWidget: React.FC = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  // Add a navigation stack to keep track of previous views
-  const [navigationStack, setNavigationStack] = useState<Windows[]>([]);
-
-  // Modify the toggleMenu function to act as a back button
-  const toggleMenu = () => {
-    if (isMenuOpen) {
-      console.log("CLOSE MENU");
-      // If the menu is open, close it
-      setIsMenuOpen(false);
-    } else {
-      console.log({ navigationStack });
-      if (navigationStack.length > 0) {
-        console.log("GO BACK");
-        // If there is a previous view, navigate back
-        // const previousView: any = navigationStack[navigationStack.length - 1];
-        setNavigationStack((prevStack) => prevStack.slice(0, -1));
-      } else {
-        console.log("OPEN MENU");
-        // If no previous view, you can decide what to do (e.g., open the menu)
-        setIsMenuOpen(true);
-      }
+  const navigateTo = (newView: Windows) => {
+    if (newView !== currentView) {
+      setPreviousView(currentView);
+      setCurrentView(newView);
     }
   };
 
-  // Update functions that change the currentView to push the current view onto the stack
-  const navigateTo = (newView: Windows) => {
-    console.log("goto", newView);
-    setNavigationStack((prevStack) => [...prevStack, newView]);
+  const toggleMenu = () => {
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    } else if (currentView !== "chat") {
+      if (previousView) {
+        setCurrentView(previousView);
+        setPreviousView("chat");
+      } else {
+        setCurrentView("chat");
+      }
+    } else {
+      setIsMenuOpen(true);
+    }
   };
 
   const handleViewStore = () => {
@@ -896,7 +888,6 @@ export const ChatWidget: React.FC = () => {
     );
   };
 
-  const currentView = navigationStack[navigationStack.length - 1] || "chat";
   return (
     <div className="bb-sm-chat-widget bb-sm-body">
       <button className="border-none outline-0" onClick={handleModalBox}>
@@ -908,26 +899,29 @@ export const ChatWidget: React.FC = () => {
             <div className="md:flex md:flex-row flex-col gap-3 h-full max-h-full lg:min-w-[500px]">
               {/* Chat area */}
               <div className="h-full w-full md:w-4/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden bb-sm-main-area">
-                <div className="bb-sm-chat-header">
-                  <div className="flex flex-row gap-5 w-15">
+                <div className="bb-sm-chat-header flex items-center justify-between">
+                  <div className="flex-1">
                     <button
                       className={`bb-sm-hamburger-menu ${
                         isMenuOpen || currentView !== "chat" ? "bb-sm-open" : ""
                       }`}
                       onClick={toggleMenu}
                     >
-                      <>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                      </>
+                      {currentView !== "chat" ? (
+                        <FaArrowLeft />
+                      ) : (
+                        <>
+                          <div></div>
+                          <div></div>
+                          <div></div>
+                        </>
+                      )}
                     </button>
-                    <div className="w-5"> </div>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-center">
+                  <p className="text-lg md:text-xl font-bold text-center flex-1">
                     {capitalizeFirstLetter(currentView || "")}
                   </p>
-                  <div className="flex flex-row gap-5 w-15 justify-end items-center">
+                  <div className="flex flex-row gap-5 justify-end items-center flex-1">
                     <button
                       className="bb-sm-header-icon"
                       onClick={handleViewStore}

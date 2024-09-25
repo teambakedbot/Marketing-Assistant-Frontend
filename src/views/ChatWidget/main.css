@@ -194,8 +194,7 @@
   min-height: 64px;
 }
 
-
-.bb-sm-body input, .bb-sm body textarea {
+input, textarea , .bb-sm-body input, .bb-sm body textarea {
   outline: none;
   color: var(--text-color);
   background-color: var(--input-background);
