@@ -77,8 +77,8 @@ export const ChatWidget: React.FC = () => {
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<
-    { role: string; content: string }[]
-  >([{ role: "assistant", content: "Hey, how can I help?" }]);
+    { role: string; content: string; id: string }[]
+  >([{ role: "assistant", content: "Hey, how can I help?", id: "1" }]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
@@ -206,7 +206,7 @@ export const ChatWidget: React.FC = () => {
         setActiveChatId(null);
         setCurrentChatId(null);
         setChatHistory([
-          { role: "assistant", content: "Hey, how can I help?" },
+          { role: "assistant", content: "Hey, how can I help?", id: "1" },
         ]);
       } else {
         setIsNewChat(false);
@@ -286,8 +286,8 @@ export const ChatWidget: React.FC = () => {
     setIsNewChat(false);
     setChatHistory((prevHistory) => [
       ...prevHistory,
-      { role: "user", content: prompts },
-      { role: "assistant", content: "loading" },
+      { role: "user", content: prompts, id: "2" },
+      { role: "assistant", content: "loading", id: "3" },
     ]);
     setPrompts("");
     setLoading(true);
@@ -531,6 +531,42 @@ export const ChatWidget: React.FC = () => {
     }
   };
 
+  const handleFeedback = async (
+    index: number,
+    feedbackType: "like" | "dislike"
+  ) => {
+    try {
+      const token = await user!.getIdToken();
+      // Implement API call to record feedback
+      // For example:
+      // await recordFeedback(token, messageId, feedbackType);
+      console.log(`Feedback recorded: ${feedbackType} for message ${index}`);
+    } catch (error) {
+      console.error("Error recording feedback:", error);
+    }
+  };
+
+  const handleRetry = async (index: number) => {
+    try {
+      // Find the user message that preceded this bot message
+      const messageIndex = chatHistory.findIndex(
+        (msg: any) => msg.id === index
+      );
+      if (messageIndex > 0 && messageIndex < chatHistory.length) {
+        const userMessage = chatHistory[messageIndex - 1];
+
+        // Remove the bot message and all subsequent messages
+        setChatHistory((prevHistory) => prevHistory.slice(0, messageIndex));
+
+        // Resend the user message
+        setPrompts(userMessage.content);
+        await playHandler();
+      }
+    } catch (error) {
+      console.error("Error retrying message:", error);
+    }
+  };
+
   const CartView = () => (
     <div className="bb-sm-cart-view  p-4">
       <h2 className="text-xl font-bold mb-4">Your Cart</h2>
@@ -541,7 +577,7 @@ export const ChatWidget: React.FC = () => {
           {Object.entries(cart).map(([productId, { product, quantity }]) => (
             <div
               key={productId}
-              className="bb-sm-cart-item flex items-center justify-between py-3 border-b border-gray-700"
+              className="bb-sm-cart-item flex items-center justify-between py-3 border-b border-gray-700 text-md"
             >
               <span
                 className="flex-grow truncate pr-2"
@@ -754,19 +790,19 @@ export const ChatWidget: React.FC = () => {
                   <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
                   <p className="text-sm mt-2">{product.description}</p>
                   {cart[product.id] ? (
-                    <div className="bb-sm-quantity-selector">
+                    <div className="bb-sm-quantity-selector text-md">
                       <button
                         onClick={() => updateQuantity(product.id, -1)}
                         className="bb-sm-quantity-button"
                       >
-                        <FaMinus size={12} />
+                        <FaMinus size={10} />
                       </button>
                       <span className="mx-2">{cart[product.id].quantity}</span>
                       <button
                         onClick={() => updateQuantity(product.id, 1)}
                         className="bb-sm-quantity-button"
                       >
-                        <FaPlus size={12} />
+                        <FaPlus size={10} />
                       </button>
                     </div>
                   ) : (
@@ -1032,6 +1068,8 @@ export const ChatWidget: React.FC = () => {
                           chatHistory={chatHistory}
                           loading={loading}
                           chatEndRef={chatEndRef}
+                          onFeedback={handleFeedback}
+                          onRetry={handleRetry}
                         />
                       </div>
                     )}
