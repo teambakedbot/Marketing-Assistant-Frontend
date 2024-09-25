@@ -68,7 +68,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                   </ReactMarkdown>
                 )}
               </div>
-              {isBot && !isLoading && (
+              {index > 1 && isBot && !isLoading && (
                 <div className="bb-sm-feedback-buttons">
                   <div className="bb-sm-left-buttons">
                     <button
