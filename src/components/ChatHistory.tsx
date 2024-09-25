@@ -80,12 +80,12 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                     </button>
                   </div>
                   <div className="bb-sm-right-buttons">
-                    <button
+                    {/* <button
                       onClick={() => onRetry(message.message_id)}
                       className="bb-sm-feedback-button"
                     >
                       <FaRedo size={12} />
-                    </button>
+                    </button> */}
                     <button
                       onClick={() => handleFeedback(message.message_id, "like")}
                       className={`bb-sm-feedback-button ${
