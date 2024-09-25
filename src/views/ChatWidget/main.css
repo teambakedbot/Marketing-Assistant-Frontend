@@ -512,7 +512,58 @@ input, textarea , .bb-sm-body input, .bb-sm body textarea {
 /* New chat view styles */
 .bb-sm-new-chat-view {
   background-color: var(--background-color);
-  padding: 2rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Add a new class for the content wrapper */
+.bb-sm-new-chat-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+}
+
+/* Update the existing classes */
+.bb-sm-new-chat-title {
+  color: var(--text-color);
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.bb-sm-new-chat-description {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.bb-sm-new-chat-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.bb-sm-new-chat-button {
+  background-color: var(--button-color);
+  color: var(--text-secondary-color);
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  text-align: center;
+  transition: background-color 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -520,46 +571,32 @@ input, textarea , .bb-sm-body input, .bb-sm body textarea {
   height: 100%;
 }
 
-.bb-sm-new-chat-title {
-  color: var(--text-color);
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+.bb-sm-new-chat-button-icon {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
 }
 
-.bb-sm-new-chat-description {
-  color: var(--text-color);
-  font-size: 0.9rem;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.bb-sm-new-chat-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  width: 100%;
-  max-width: 400px;
-}
-
-.bb-sm-new-chat-button {
-  background-color: var(--button-color);
-  color: var(--text-secondary-color);
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  text-align: center;
-  transition: background-color 0.3s ease;
+/* Ensure the chat container takes full height */
+.bb-sm-chat-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  height: 100%;
 }
 
-.bb-sm-new-chat-button-icon {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+/* Adjust the main area to take remaining space */
+.bb-sm-main-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
+
+/* Ensure the chat messages area takes remaining space */
+.bb-sm-chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
 .bb-sm-send-button {
   background-color: var(--button-color);
   border: none;

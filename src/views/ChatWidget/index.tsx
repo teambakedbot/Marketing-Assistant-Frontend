@@ -1002,71 +1002,75 @@ export const ChatWidget: React.FC = () => {
                 {currentView === "chat" && (
                   <>
                     {isNewChat && (
-                      <div className="bb-sm-new-chat-view flex-grow overflow-y-auto">
-                        <img
-                          src={bluntSmokey}
-                          alt="Smokey Robot"
-                          className="w-32 h-auto mb-4"
-                        />
-                        <h2 className="bb-sm-new-chat-title">
-                          What's up, bud?
-                        </h2>
-                        <p className="bb-sm-new-chat-description">
-                          I'm Smokey, your AI budtender. I'm here to help you
-                          find the right strain for you.
-                        </p>
-                        <div className="bb-sm-new-chat-buttons">
-                          <button
-                            className="bb-sm-new-chat-button"
-                            onMouseDown={() =>
-                              setPrompts("Show me new products")
-                            }
-                            onClick={() => playHandler()}
-                          >
-                            <span className="bb-sm-new-chat-button-icon">
-                              📦
-                            </span>
-                            See new products
-                          </button>
-                          <button
-                            className="bb-sm-new-chat-button"
-                            onMouseDown={() =>
-                              setPrompts("Find a new location")
-                            }
-                            onClick={() => playHandler()}
-                          >
-                            <span className="bb-sm-new-chat-button-icon">
-                              📍
-                            </span>
-                            Find new location
-                          </button>
-                          <button
-                            className="bb-sm-new-chat-button"
-                            onMouseDown={() =>
-                              setPrompts("Recommend a relaxing strain")
-                            }
-                            onClick={() => playHandler()}
-                          >
-                            <span className="bb-sm-new-chat-button-icon">
-                              🧘
-                            </span>
-                            Relaxing strain
-                          </button>
-                          <button
-                            className="bb-sm-new-chat-button"
-                            onMouseDown={() => setPrompts("Tell me about CBD")}
-                            onClick={() => playHandler()}
-                          >
-                            <span className="bb-sm-new-chat-button-icon">
-                              🌿
-                            </span>
-                            Learn about CBD
-                          </button>
+                      <div className="bb-sm-new-chat-view">
+                        <div className="bb-sm-new-chat-content">
+                          <img
+                            src={bluntSmokey}
+                            alt="Smokey Robot"
+                            className="w-24 h-auto mb-2"
+                          />
+                          <h2 className="bb-sm-new-chat-title">
+                            What's up, bud?
+                          </h2>
+                          <p className="bb-sm-new-chat-description">
+                            I'm Smokey, your AI budtender. I'm here to help you
+                            find the right strain for you.
+                          </p>
+                          <div className="bb-sm-new-chat-buttons">
+                            <button
+                              className="bb-sm-new-chat-button"
+                              onMouseDown={() =>
+                                setPrompts("Show me new products")
+                              }
+                              onClick={() => playHandler()}
+                            >
+                              <span className="bb-sm-new-chat-button-icon">
+                                📦
+                              </span>
+                              See new products
+                            </button>
+                            <button
+                              className="bb-sm-new-chat-button"
+                              onMouseDown={() =>
+                                setPrompts("Find a new location")
+                              }
+                              onClick={() => playHandler()}
+                            >
+                              <span className="bb-sm-new-chat-button-icon">
+                                📍
+                              </span>
+                              Find new location
+                            </button>
+                            <button
+                              className="bb-sm-new-chat-button"
+                              onMouseDown={() =>
+                                setPrompts("Recommend a relaxing strain")
+                              }
+                              onClick={() => playHandler()}
+                            >
+                              <span className="bb-sm-new-chat-button-icon">
+                                🧘
+                              </span>
+                              Relaxing strain
+                            </button>
+                            <button
+                              className="bb-sm-new-chat-button"
+                              onMouseDown={() =>
+                                setPrompts("Tell me about CBD")
+                              }
+                              onClick={() => playHandler()}
+                            >
+                              <span className="bb-sm-new-chat-button-icon">
+                                🌿
+                              </span>
+                              Learn about CBD
+                            </button>
+                          </div>
                         </div>
                       </div>
                     )}
                     {!isNewChat && (
-                      <div className="bb-sm-chat-messages flex-grow overflow-y-auto">
+                      <div className="bb-sm-chat-messages">
                         <ChatHistory
                           chatHistory={chatHistory}
                           loading={loading}
