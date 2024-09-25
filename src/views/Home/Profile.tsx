@@ -4,7 +4,8 @@ import { useRef } from "react";
 import useAuth from "../../hooks/useAuth";
 import { DocumentUpload } from "iconsax-react";
 import { Chats } from "../../models/ChatModels";
-
+import { useState, useEffect } from "react";
+import { memo } from "react";
 interface ProfileProps {
   onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   chats: any[];
@@ -12,7 +13,7 @@ interface ProfileProps {
   activeChatId: string | null;
 }
 
-function Profile({
+const Profile = memo(function Profile({
   onFileUpload,
   chats,
   loadChatHistory,
@@ -20,6 +21,15 @@ function Profile({
 }: ProfileProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { displayName, photoURL, user } = useAuth();
+  const [userPhoto, setUserPhoto] = useState<string>(
+    "/images/person-image.png"
+  );
+
+  useEffect(() => {
+    if (photoURL) {
+      setUserPhoto(photoURL);
+    }
+  }, [photoURL]);
 
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -70,6 +80,6 @@ function Profile({
       </div>
     </div>
   );
-}
+});
 
 export default Profile;

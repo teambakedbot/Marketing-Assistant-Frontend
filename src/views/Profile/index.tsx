@@ -1,7 +1,8 @@
 import React from "react";
 import useAuth from "../../hooks/useAuth";
+import { memo } from "react";
 
-const Profile = () => {
+const Profile = memo(function Profile() {
   const { displayName, photoURL, user } = useAuth();
 
   return (
@@ -22,6 +23,6 @@ const Profile = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Profile;

@@ -74,6 +74,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   };
 
   useEffect(() => {
+    if (!user) return;
     const fetchThemeSettings = async () => {
       const token = await user!.getIdToken();
       const settings = await getThemeSettings(token);
