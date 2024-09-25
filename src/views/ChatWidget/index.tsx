@@ -127,6 +127,7 @@ export const ChatWidget: React.FC = () => {
     root.style.setProperty("--background-color", theme.backgroundColor);
     root.style.setProperty("--header-color", theme.headerColor);
     root.style.setProperty("--text-color", theme.textColor);
+    root.style.setProperty("--text-secondary-color", theme.textSecondaryColor);
     root.style.setProperty(
       "--footer-text-color",
       isLightColor(theme.backgroundColor) ? "#333333" : "#CCCCCC"
@@ -363,26 +364,26 @@ export const ChatWidget: React.FC = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
-          className="bb-sm-login-input p-3 rounded bg-gray-700 text-white text-lg"
+          className="bb-sm-login-input p-3 rounded bg-gray-700 text-lg"
         />
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
-          className="bb-sm-login-input p-3 rounded bg-gray-700 text-white text-lg"
+          className="bb-sm-login-input p-3 rounded bg-gray-700 text-lg"
         />
         <button
           type="submit"
-          className="bb-sm-login-button border-2 border-white rounded-md text-white p-3 text-lg hover:bg-white hover:text-gray-800 transition-colors"
+          className="bb-sm-login-button border-2 border-white rounded-md p-3 text-lg hover:bg-white hover:text-gray-800 transition-colors"
         >
           Login
         </button>
-        <div className="text-center text-white my-4 text-lg">or</div>
+        <div className="text-center my-4 text-lg">or</div>
         <button
           type="button"
           onClick={handleGoogleSignIn}
-          className="bb-sm-google-login-button border-2 border-white rounded-md text-white p-3 text-lg flex items-center justify-center hover:bg-white hover:text-gray-800 transition-colors"
+          className="bb-sm-google-login-button border-2 border-white rounded-md p-3 text-lg flex items-center justify-center hover:bg-white hover:text-gray-800 transition-colors"
         >
           <img
             src="/images/google-icon.png"
@@ -865,7 +866,7 @@ export const ChatWidget: React.FC = () => {
 
   const currentView = navigationStack[navigationStack.length - 1] || "chat";
   return (
-    <div className="bb-sm-chat-widget">
+    <div className="bb-sm-chat-widget bb-sm-body">
       <button className="border-none outline-0" onClick={handleModalBox}>
         <img src={bottom} className="w-10" alt="Open Chatbot" />
       </button>
@@ -1140,7 +1141,7 @@ export const ChatWidget: React.FC = () => {
                                   className="bb-sm-chat-options-button"
                                   onClick={(e) => handleContextMenu(e, chat_id)}
                                 >
-                                  <FaEllipsisV />
+                                  <FaEllipsisV className="text-secondary-color" />
                                 </button>
                               </div>
                             )}
@@ -1154,9 +1155,7 @@ export const ChatWidget: React.FC = () => {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full w-full p-4">
-                      <h2 className="text-2xl font-bold mb-6 text-white">
-                        Login to Chat
-                      </h2>
+                      <h2 className="text-2xl font-bold mb-6">Login to Chat</h2>
                       <LoginForm onLogin={() => setIsLoggedIn(true)} />
                     </div>
                   )}

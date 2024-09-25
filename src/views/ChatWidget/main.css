@@ -18,6 +18,13 @@
 @tailwind components;
 @tailwind utilities;
 
+.text-color{
+  color: var(--text-color);
+}
+.text-secondary-color{
+  color: var(--text-secondary-color);
+}
+
 /* Simplebar styles */
 .simplebar-track.simplebar-vertical,
 .simplebar-track.simplebar-horizontal {
@@ -349,6 +356,7 @@ input, textarea {
 .bb-sm-menu-item.bb-sm-active,
 .bb-sm-menu-item:hover {
   background-color: var(--secondary-color);
+  color: var(--text-secondary-color);
 }
 
 .bb-sm-side-menu-footer {
@@ -534,7 +542,6 @@ input, textarea {
   justify-content: center;
 }
 
-
 .bb-sm-new-chat-button-icon {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
@@ -645,11 +652,13 @@ input, textarea {
 }
 
 .bb-sm-product-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Ensure space between items */
+  height: 100%; /* Allow the item to take full height */
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px;
-  display: flex;
-  flex-direction: column;
 }
 
 .bb-sm-product-item img {
@@ -657,6 +666,10 @@ input, textarea {
   height: 100px;
   object-fit: cover;
   border-radius: 4px;
+}
+
+.bb-sm-add-to-cart-button {
+  margin-top: auto; /* Push the button to the bottom */
 }
 
 .bb-sm-pagination-button {

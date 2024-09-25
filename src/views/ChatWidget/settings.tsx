@@ -33,7 +33,7 @@ const presetThemes: { [key: string]: ThemeSettings } = {
     backgroundColor: "#FFFFFF",
     headerColor: "#F0F0F0",
     textColor: "#000000",
-    textSecondaryColor: "#555555",
+    textSecondaryColor: "#FFFFFF",
   },
 };
 
@@ -92,10 +92,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   };
 
   const themeSettingsOrder: (keyof ThemeSettings)[] = [
-    "primaryColor",
-    "secondaryColor",
     "backgroundColor",
     "headerColor",
+    "primaryColor",
+    "secondaryColor",
     "textColor",
     "textSecondaryColor",
   ];
@@ -136,7 +136,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             <button
               key={name}
               onClick={() => handlePresetSelect(name, preset)}
-              className={`bb-sm-preset-theme-button p-3 rounded-lg text-center transition-all ${
+              className={`bb-sm-preset-theme-button p-1 rounded-lg text-center transition-all ${
                 activePreset === name ? "ring-2 ring-blue-500" : ""
               }`}
               style={{
