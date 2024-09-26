@@ -930,7 +930,7 @@ export const ChatWidget: React.FC = () => {
   return (
     <div className="bb-sm-chat-widget bb-sm-body">
       <button className="border-none outline-0" onClick={handleModalBox}>
-        <img src={bottom} className="w-10" alt="Open Chatbot" />
+        <img src={bluntSmokey} className="w-20" alt="Open Chatbot" />
       </button>
       {isModalOpen && (
         <div className="absolute right-2 bottom-14 flex justify-center items-center z-50 bb-sm-animate-open">
