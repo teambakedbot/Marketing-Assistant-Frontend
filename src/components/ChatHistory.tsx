@@ -71,13 +71,13 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
               {index > 0 && isBot && !isLoading && (
                 <div className="bb-sm-feedback-buttons">
                   <div className="bb-sm-left-buttons">
-                    <button
+                    {/* <button
                       onClick={() => handleCopy(message.content)}
                       className="bb-sm-feedback-button text-xs flex items-center gap-1"
                     >
                       <FaCopy size={12} />
                       Copy
-                    </button>
+                    </button> */}
                   </div>
                   <div className="bb-sm-right-buttons">
                     {/* <button
