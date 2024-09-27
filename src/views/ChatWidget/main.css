@@ -70,7 +70,6 @@
 
 .bb-sm-body {
   @apply font-roboto text-white font-normal text-3xl;
-  background-color: var(--background-color);
   color: var(--text-color);
 }
 
