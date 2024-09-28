@@ -604,7 +604,7 @@ export const ChatWidget: React.FC = () => {
                 </button>
               </div>
               <span className="w-20 text-right ml-2">
-                ${(product.latest_price * quantity).toFixed(2)}
+                ${(product.lowest_price * quantity).toFixed(2)}
               </span>
               {/* <button
                 onClick={() => removeFromCart(productId)}
@@ -620,7 +620,7 @@ export const ChatWidget: React.FC = () => {
             {Object.values(cart)
               .reduce(
                 (sum, { product, quantity }) =>
-                  sum + product.latest_price * quantity,
+                  sum + product.lowest_price * quantity,
                 0
               )
               .toFixed(2)}
@@ -661,7 +661,7 @@ export const ChatWidget: React.FC = () => {
                     <span>
                       {product.product_name} (x{quantity})
                     </span>
-                    <span>${(product.latest_price * quantity).toFixed(2)}</span>
+                    <span>${(product.lowest_price * quantity).toFixed(2)}</span>
                   </div>
                 )
               )}
@@ -673,7 +673,7 @@ export const ChatWidget: React.FC = () => {
                 {Object.values(cart)
                   .reduce(
                     (sum, { product, quantity }) =>
-                      sum + product.latest_price * quantity,
+                      sum + product.lowest_price * quantity,
                     0
                   )
                   .toFixed(2)}
@@ -790,7 +790,7 @@ export const ChatWidget: React.FC = () => {
                   >
                     {product.product_name}
                   </h3>
-                  <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
+                  <p className="text-sm">${product.lowest_price?.toFixed(2)}</p>
                   <p className="text-sm mt-2">{product.description}</p>
                   {cart[product.id] ? (
                     <div className="bb-sm-quantity-selector text-md">
@@ -850,7 +850,7 @@ export const ChatWidget: React.FC = () => {
       product_name: string;
       id: string;
       image_url: string;
-      latest_price: number;
+      lowest_price: number;
       description: string;
       thc: string;
       cbd: string;
@@ -874,7 +874,7 @@ export const ChatWidget: React.FC = () => {
         </div>
         <div className="flex flex-row justify-between gap-2 pb-2">
           <h3 className="font-bold">{product.product_name}</h3>
-          <p className="price">${product.latest_price?.toFixed(2)}</p>
+          <p className="price">${product.lowest_price?.toFixed(2)}</p>
         </div>
         <p className="pb-2">{product.description}</p>
 
