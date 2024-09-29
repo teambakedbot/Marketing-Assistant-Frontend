@@ -447,9 +447,10 @@ export const ChatWidget: React.FC = () => {
   const userPhoto = photoURL || "/images/person-image.png";
 
   useEffect(() => {
+    //this keeps getting called over and over again
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     fetchChatMessages();
-  }, [chatHistory, loading, fetchChatMessages]);
+  }, []);
 
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);

@@ -137,6 +137,7 @@
   max-width: 70%;
   word-wrap: break-word;
   margin-bottom: 8px;
+  overflow-x: auto;
 }
 
 .bb-sm-user-message {
