@@ -69,6 +69,63 @@ const Spinner: React.FC = () => (
   </div>
 );
 
+// Add this helper function at the top of your file, outside the component
+const getStateAbbreviation = (state: string): string => {
+  const stateAbbreviations: { [key: string]: string } = {
+    Alabama: "AL",
+    Alaska: "AK",
+    Arizona: "AZ",
+    Arkansas: "AR",
+    California: "CA",
+    Colorado: "CO",
+    Connecticut: "CT",
+    Delaware: "DE",
+    Florida: "FL",
+    Georgia: "GA",
+    Hawaii: "HI",
+    Idaho: "ID",
+    Illinois: "IL",
+    Indiana: "IN",
+    Iowa: "IA",
+    Kansas: "KS",
+    Kentucky: "KY",
+    Louisiana: "LA",
+    Maine: "ME",
+    Maryland: "MD",
+    Massachusetts: "MA",
+    Michigan: "MI",
+    Minnesota: "MN",
+    Mississippi: "MS",
+    Missouri: "MO",
+    Montana: "MT",
+    Nebraska: "NE",
+    Nevada: "NV",
+    "New Hampshire": "NH",
+    "New Jersey": "NJ",
+    "New Mexico": "NM",
+    "New York": "NY",
+    "North Carolina": "NC",
+    "North Dakota": "ND",
+    Ohio: "OH",
+    Oklahoma: "OK",
+    Oregon: "OR",
+    Pennsylvania: "PA",
+    "Rhode Island": "RI",
+    "South Carolina": "SC",
+    "South Dakota": "SD",
+    Tennessee: "TN",
+    Texas: "TX",
+    Utah: "UT",
+    Vermont: "VT",
+    Virginia: "VA",
+    Washington: "WA",
+    "West Virginia": "WV",
+    Wisconsin: "WI",
+    Wyoming: "WY",
+  };
+  return stateAbbreviations[state] || state;
+};
+
 export const ChatWidget: React.FC = () => {
   const { displayName, photoURL, user } = useAuth();
   const { cart, addToCart, updateQuantity, removeFromCart, handleCheckout } =
@@ -102,6 +159,10 @@ export const ChatWidget: React.FC = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userLocation, setUserLocation] =
+    useState<GeolocationCoordinates | null>(null);
+  const [userCity, setUserCity] = useState<string | null>(null);
+  const [userState, setUserState] = useState<string | null>(null);
 
   type Windows =
     | "chat"
@@ -287,12 +348,69 @@ export const ChatWidget: React.FC = () => {
     fetchThemeSettings();
   }, [user]);
 
+  const getUserLocation = useCallback(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          setUserLocation(position.coords);
+          try {
+            const response = await axios.get(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`
+            );
+            const city =
+              response.data.address.city ||
+              response.data.address.town ||
+              response.data.address.village;
+            const state = response.data.address.state;
+            setUserCity(city);
+            setUserState(state ? getStateAbbreviation(state) : null);
+          } catch (error) {
+            console.error("Error getting location details:", error);
+          }
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+          // ... existing error handling code ...
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+      Swal.fire(
+        "Error",
+        "Geolocation is not supported by your browser.",
+        "error"
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    getUserLocation();
+  }, [getUserLocation]);
+
   const playHandler = async () => {
     if (!prompts || loading) return;
     setIsNewChat(false);
+
+    let messageContent = prompts;
+    if (
+      prompts.toLowerCase().includes("find new location") &&
+      userCity &&
+      userState
+    ) {
+      messageContent = `Find a new location in ${userCity}, ${userState}`;
+    } else if (
+      prompts.toLowerCase().includes("find my location") &&
+      userLocation
+    ) {
+      messageContent += ` (User's location: Latitude ${userLocation.latitude}, Longitude ${userLocation.longitude})`;
+      if (userCity && userState) {
+        messageContent += `, City: ${userCity}, State: ${userState}`;
+      }
+    }
+
     setChatHistory((prevHistory) => [
       ...prevHistory,
-      { role: "user", content: prompts, message_id: "2" },
+      { role: "user", content: messageContent, message_id: "2" },
       { role: "assistant", content: "loading", message_id: "3" },
     ]);
     setPrompts("");
@@ -301,7 +419,7 @@ export const ChatWidget: React.FC = () => {
       const token = await user!.getIdToken();
       const response = await sendMessage(
         token,
-        prompts,
+        messageContent,
         "voiceType",
         currentChatId
       );
@@ -1032,14 +1150,22 @@ export const ChatWidget: React.FC = () => {
                             <button
                               className="bb-sm-new-chat-button"
                               onMouseDown={() =>
-                                setPrompts("Find a new location")
+                                setPrompts("Find new location")
                               }
                               onClick={() => playHandler()}
                             >
                               <span className="bb-sm-new-chat-button-icon">
                                 📍
                               </span>
-                              Find new location
+                              <span className="bb-sm-new-chat-button-text">
+                                Find new location
+                                {userCity && userState && (
+                                  <span className="bb-sm-new-chat-button-location text-sm">
+                                    <br />
+                                    {userCity}, {userState}
+                                  </span>
+                                )}
+                              </span>
                             </button>
                             <button
                               className="bb-sm-new-chat-button"
