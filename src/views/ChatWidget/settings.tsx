@@ -5,7 +5,7 @@ import { saveThemeSettings, getThemeSettings } from "./api/renameChat";
 import { Logout } from "iconsax-react";
 
 interface SettingsPageProps {
-  onClose: () => void;
+  onClose: (signOut?: boolean) => void;
   onSave: (settings: ThemeSettings) => void;
   initialSettings: ThemeSettings;
 }
@@ -166,7 +166,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           Save Changes
         </button>
         <button
-          onClick={() => Logout().then(() => onClose())}
+          onClick={() => Logout().then(() => onClose(true))}
           className="bb-sm-revert-button bg-red-600 font-bold py-2 px-4 rounded transition-colors"
         >
           Logout

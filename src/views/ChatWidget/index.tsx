@@ -259,7 +259,10 @@ export const ChatWidget: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  const handleSettingsClose = () => {
+  const handleSettingsClose = (signOut?: boolean) => {
+    if (signOut) {
+      loadChatHistory(null);
+    }
     navigateTo("chat");
   };
 
