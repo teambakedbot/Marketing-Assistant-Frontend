@@ -279,8 +279,8 @@ export const ChatWidget: React.FC = () => {
   const fetchChatMessages = useCallback(async () => {
     if (!currentChatId || chatHistory.length > 0) return;
     try {
-      const token = await user!.getIdToken();
-      const messages = await getChatMessages(token, currentChatId);
+      const token = await user?.getIdToken();
+      const messages = await getChatMessages(currentChatId, token);
       setChatHistory(messages);
     } catch (error) {
       console.error("Error fetching chat messages:", error);
@@ -289,6 +289,7 @@ export const ChatWidget: React.FC = () => {
 
   const fetchUserChats = useCallback(async () => {
     try {
+      if (!user) return;
       const token = await user!.getIdToken();
       const fetchedChats = await getChats(token);
       if (fetchedChats.length > 0) {
@@ -324,8 +325,8 @@ export const ChatWidget: React.FC = () => {
         setActiveChatId(chatId);
         setCurrentChatId(chatId);
         try {
-          const token = await user!.getIdToken();
-          const messages = await getChatMessages(token, chatId);
+          const token = await user?.getIdToken();
+          const messages = await getChatMessages(chatId, token);
           setChatHistory(messages);
         } catch (error) {
           console.error("Error loading chat history:", error);
@@ -460,12 +461,12 @@ export const ChatWidget: React.FC = () => {
     setPrompts("");
     setLoading(true);
     try {
-      const token = await user!.getIdToken();
+      const token = await user?.getIdToken();
       const response = await sendMessage(
-        token,
         messageContent,
         "voiceType",
-        currentChatId
+        currentChatId,
+        token
       );
       setChatHistory((prevHistory) => {
         const updatedHistory = [...prevHistory];
@@ -666,8 +667,8 @@ export const ChatWidget: React.FC = () => {
 
   const handleDeleteChat = async (chatId: string) => {
     try {
-      const token = await user!.getIdToken();
-      deleteChat(token, chatId);
+      const token = await user?.getIdToken();
+      deleteChat(chatId, token);
       setChats(chats.filter((chat: any) => chat.chat_id !== chatId));
       setContextMenu(null);
     } catch (error) {
@@ -678,8 +679,8 @@ export const ChatWidget: React.FC = () => {
   const handleSaveRename = async () => {
     if (!editingChatId || !newChatName.trim()) return;
     try {
-      const token = await user!.getIdToken();
-      renameChat(token, editingChatId, newChatName);
+      const token = await user?.getIdToken();
+      renameChat(editingChatId, newChatName, token);
       setChats(
         chats.map((chat: any) =>
           chat.chat_id === editingChatId ? { ...chat, name: newChatName } : chat
@@ -706,6 +707,7 @@ export const ChatWidget: React.FC = () => {
     feedbackType: "like" | "dislike"
   ) => {
     try {
+      if (!user) return;
       const token = await user!.getIdToken();
       const response = await recordFeedback(token, message_id, feedbackType);
       if (!response.ok) {
@@ -721,8 +723,8 @@ export const ChatWidget: React.FC = () => {
 
   const handleRetry = async (message_id: string) => {
     try {
-      const token = await user!.getIdToken();
-      const response = await retryMessage(token, message_id);
+      const token = await user?.getIdToken();
+      const response = await retryMessage(message_id, token);
       if (!response.ok) {
         throw new Error("Failed to retry message");
       }

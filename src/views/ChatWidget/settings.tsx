@@ -68,7 +68,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   };
 
   const handleSave = async () => {
-    const token = await user!.getIdToken();
+    if (!user) return;
+    const token = await user.getIdToken();
     saveThemeSettings(token, themeSettings);
     onSave(themeSettings);
   };

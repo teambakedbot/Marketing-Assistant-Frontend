@@ -9,46 +9,44 @@ export const getChats = async (token: string) => {
   return response.data.chats;
 };
 
-export const getChatMessages = async (token: string, chatId: string) => {
+export const getChatMessages = async (chatId: string, token?: string) => {
   const response = await axios.get(
     `${BASE_URL}/chat/messages?chat_id=${chatId}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
+    token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
   );
   return response.data.messages;
 };
 
 export const sendMessage = async (
-  token: string,
   message: string,
   voiceType: string,
-  chatId: string | null
+  chatId: string | null,
+  token?: string
 ) => {
   const response = await axios.post(
     `${BASE_URL}/chat`,
     { message, voice_type: voiceType, chat_id: chatId },
-    { headers: { Authorization: `Bearer ${token}` } }
+    token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
   );
   return response.data;
 };
 
 export const renameChat = async (
-  token: string,
   chatId: string,
-  newName: string
+  newName: string,
+  token?: string
 ) => {
   const response = await axios.put(
     `${BASE_URL}/chat/rename?chat_id=${chatId}&new_name=${newName}`,
     {},
-    { headers: { Authorization: `Bearer ${token}` } }
+    token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
   );
   return response.data;
 };
 
-export const deleteChat = async (token: string, chatId: string) => {
+export const deleteChat = async (chatId: string, token?: string) => {
   const response = await axios.delete(`${BASE_URL}/chat/${chatId}`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });
   return response.data;
 };
@@ -66,11 +64,11 @@ export const recordFeedback = async (
   return response.data;
 };
 
-export const retryMessage = async (token: string, message_id: string) => {
+export const retryMessage = async (message_id: string, token?: string) => {
   const response = await axios.post(
     `${BASE_URL}/retry`,
     { message_id },
-    { headers: { Authorization: `Bearer ${token}` } }
+    token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
   );
   return response.data;
 };
