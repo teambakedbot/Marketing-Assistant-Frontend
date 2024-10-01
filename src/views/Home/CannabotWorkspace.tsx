@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import SimpleBar from "simplebar-react";
 import ReactMarkdown from "react-markdown";
 import "simplebar-react/dist/simplebar.min.css";
@@ -8,6 +8,8 @@ import "../../styles/theme.css";
 import ChatHistory from "../../components/ChatHistory";
 import useAuth from "../../hooks/useAuth";
 import loadingIcon from "/images/loading-spinner-white.gif";
+import { CartContext } from "../ChatWidget/CartContext";
+import { Product } from "../ChatWidget/api/renameChat";
 
 interface CannabotWorkspaceProps {
   chatHistory: { role: string; content: string; message_id: string }[];
@@ -22,7 +24,8 @@ function CannabotWorkspace({
 }: CannabotWorkspaceProps) {
   const [activeTab, setActiveTab] = useState("Chat");
   const { displayName, photoURL, user } = useAuth();
-
+  const { cart, addToCart, updateQuantity, removeFromCart, handleCheckout } =
+    useContext(CartContext)!;
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -42,6 +45,10 @@ function CannabotWorkspace({
     console.log(`Retrying message at index: ${message_id}`);
   };
 
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+  };
+
   const userPhoto = photoURL || "/images/person-image.png";
   const renderContent = () => {
     switch (activeTab) {
@@ -49,6 +56,9 @@ function CannabotWorkspace({
         return (
           <div className="text-[#110F0F] text-xl font-istok-web max-h-[55vh] w-full overflow-y-auto">
             <ChatHistory
+              cart={cart}
+              updateQuantity={updateQuantity}
+              onAddToCart={handleAddToCart}
               chatHistory={chatHistory}
               loading={loading}
               onFeedback={handleFeedback}
