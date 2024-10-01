@@ -11,8 +11,8 @@ function Layout() {
       <div>
         <Navigation />
         <div className="ml-[110px] min-h-screen">
-          <Outlet />
           <CartProvider>
+            <Outlet />
             <ChatWidget />
           </CartProvider>
         </div>
