@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, User, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../config/firebase-config";
 
@@ -17,7 +17,7 @@ const useAuth = () => {
       setDisplayName(currentUser?.displayName || null);
       setPhotoURL(currentUser?.photoURL || null);
       setIsLoading(false);
-      if (!currentUser) {
+      if (!currentUser && !window.location.pathname.includes("/widget")) {
         navigate("/login");
       }
     });
@@ -25,7 +25,12 @@ const useAuth = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  return { isAuthenticated, isLoading, user, displayName, photoURL };
+  const Logout = async () => {
+    console.log("Logging out");
+    await signOut(auth);
+  };
+
+  return { isAuthenticated, isLoading, user, displayName, photoURL, Logout };
 };
 
 export default useAuth;

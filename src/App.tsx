@@ -14,6 +14,8 @@ import Settings from "./views/Settings";
 import Profile from "./views/Profile";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
+import ChatWidget from "./views/ChatWidget";
+import { CartProvider } from "./views/ChatWidget/CartContext";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -28,6 +30,15 @@ function App() {
 
   return (
     <Routes>
+      <Route
+        path="widget/:customerID"
+        element={
+          <CartProvider>
+            <ChatWidget />
+          </CartProvider>
+        }
+      />
+
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/" element={<Layout />}>

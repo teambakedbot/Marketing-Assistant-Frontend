@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaCheck } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 import { saveThemeSettings, getThemeSettings } from "./api/renameChat";
+import { Logout } from "iconsax-react";
 
 interface SettingsPageProps {
   onClose: () => void;
@@ -46,7 +47,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     useState<ThemeSettings>(initialSettings);
   const [activePreset, setActivePreset] = useState<string | null>(null);
 
-  const { user } = useAuth();
+  const { user, Logout } = useAuth();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setThemeSettings((prev) => ({
@@ -74,14 +75,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
   useEffect(() => {
     const fetchThemeSettings = async () => {
-      const token = await user!.getIdToken();
+      if (!user) return;
+      const token = await user?.getIdToken();
       const settings = await getThemeSettings(token);
       if (settings) {
         setThemeSettings(settings);
       }
     };
     fetchThemeSettings();
-  }, []);
+  }, [user]);
 
   const formatLabel = (key: string) => {
     return key
@@ -155,12 +157,18 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         </div>
       </div>
 
-      <div className="bb-sm-settings-footer flex justify-between">
+      <div className="bb-sm-settings-footer flex justify-between gap-4">
         <button
           onClick={handleSave}
           className="bb-sm-save-button bg-blue-600 font-bold py-2 px-4 rounded transition-colors"
         >
           Save Changes
+        </button>
+        <button
+          onClick={() => Logout().then(() => onClose())}
+          className="bb-sm-revert-button bg-red-600 font-bold py-2 px-4 rounded transition-colors"
+        >
+          Logout
         </button>
       </div>
     </div>

@@ -52,6 +52,7 @@ import SettingsPage from "./settings";
 import { getThemeSettings } from "./api/renameChat";
 import { CartContext } from "./CartContext";
 import { Product } from "./api/renameChat";
+import { useParams } from "react-router-dom";
 
 interface ThemeSettings {
   primaryColor: string;
@@ -128,6 +129,48 @@ const getStateAbbreviation = (state: string): string => {
 };
 
 export const ChatWidget: React.FC = () => {
+  const { customerID } = useParams<{ customerID: string }>();
+  const [isAllowed, setIsAllowed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const verifyOrigin = async () => {
+      if (!customerID) {
+        console.error("No customerID provided in URL.");
+        setIsAllowed(false);
+        return;
+      }
+
+      try {
+        //call API to get customer data
+        const customerData = { allowedOrigins: ["*"] };
+        if (customerData) {
+          const allowedOrigins: string[] = customerData.allowedOrigins || [];
+          const currentOrigin = window.location.origin;
+
+          if (
+            allowedOrigins.includes(currentOrigin) ||
+            allowedOrigins.includes("*")
+          ) {
+            setIsAllowed(true);
+          } else {
+            console.warn(
+              `Origin ${currentOrigin} is not allowed for customerID ${customerID}`
+            );
+            setIsAllowed(false);
+          }
+        } else {
+          console.warn(`No customer found with ID: ${customerID}`);
+          setIsAllowed(false);
+        }
+      } catch (error) {
+        console.error("Error fetching customer data:", error);
+        setIsAllowed(false);
+      }
+    };
+
+    verifyOrigin();
+  }, [customerID]);
+
   const { displayName, photoURL, user } = useAuth();
   const { cart, addToCart, updateQuantity, removeFromCart, handleCheckout } =
     useContext(CartContext)!;
@@ -1041,6 +1084,18 @@ export const ChatWidget: React.FC = () => {
   const handleAddToCart = (product: Product) => {
     addToCart(product);
   };
+
+  if (isAllowed === null) {
+    return <div>Loading...</div>;
+  }
+
+  // if (!isAllowed) {
+  //   return (
+  //     <div>
+  //       Show the login screen for admin to allow this orgin
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="bb-sm-chat-widget bb-sm-body">
