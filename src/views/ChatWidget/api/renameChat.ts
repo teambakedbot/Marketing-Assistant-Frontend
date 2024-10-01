@@ -2,6 +2,24 @@ import axios from "axios";
 import { BASE_URL } from "../../../utils/api";
 import { ThemeSettings } from "../SettingsPage";
 
+export interface Product {
+  id: string;
+  product_name: string;
+  brand: string | null;
+  category: string;
+  image_url: string;
+  description: string | null;
+  price: number;
+  thc: string;
+  cbd: string;
+  strain_type: string | null;
+  effects: string[] | null;
+  flavors: string[] | null;
+  variations: string;
+  display_weight: string;
+  brand_name: string;
+}
+
 export const renameChat = async (
   token: string,
   chatId: string,

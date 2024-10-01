@@ -2,13 +2,35 @@ import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import loadingIcon from "/images/loading-spinner-white.gif";
 import { FaThumbsUp, FaThumbsDown, FaRedo, FaCopy } from "react-icons/fa";
+import ProductCard from "./ProductCard";
+
+interface Product {
+  id: string;
+  product_name: string;
+  brand: string | null;
+  category: string;
+  image_url: string;
+  description: string | null;
+  price: number;
+  thc: string;
+  cbd: string;
+  strain_type: string | null;
+  effects: string[] | null;
+  flavors: string[] | null;
+  variations: string;
+  display_weight: string;
+  brand_name: string;
+}
 
 interface ChatHistoryProps {
-  chatHistory: { role: string; content: string; message_id: string }[];
+  chatHistory: any[];
   loading: boolean;
+  cart: { [key: string]: { quantity: number } };
+  updateQuantity: (productId: string, quantity: number) => void;
   chatEndRef: React.RefObject<HTMLDivElement>;
   onFeedback: (message_id: string, feedbackType: "like" | "dislike") => void;
   onRetry: (message_id: string) => void;
+  onAddToCart: (product: Product) => void;
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
@@ -17,6 +39,9 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   chatEndRef,
   onFeedback,
   onRetry,
+  onAddToCart,
+  cart,
+  updateQuantity,
 }) => {
   const [feedbackGiven, setFeedbackGiven] = useState<{
     [key: string]: "like" | "dislike" | null;
@@ -42,11 +67,10 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
         const isBot = message.role === "assistant";
         const isLoading = loading && isBot && index === chatHistory.length - 1;
         const messageClass = isBot ? "bb-sm-bot-message" : "bb-sm-user-message";
-
         return (
           <div
             className={`flex ${isBot ? "justify-start" : "justify-end"} mb-4`}
-            key={`chat-message-${message.message_id}`}
+            key={message.message_id + index}
           >
             <div
               className={`bb-sm-message-container ${
@@ -63,9 +87,26 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                     />
                   </div>
                 ) : (
-                  <ReactMarkdown className="text-sm md:text-base bb-sm-prose bb-sm-prose-invert">
-                    {message.content}
-                  </ReactMarkdown>
+                  <>
+                    <ReactMarkdown className="text-sm md:text-base bb-sm-prose bb-sm-prose-invert">
+                      {message.content}
+                    </ReactMarkdown>
+                    {message.data && message.data.products && (
+                      <div className="bb-sm-product-grid mt-4">
+                        {message.data.products.map(
+                          (product: Product, productIndex: number) => (
+                            <ProductCard
+                              key={`${product.product_name}-${productIndex}`}
+                              product={product}
+                              cart={cart}
+                              updateQuantity={updateQuantity}
+                              onAddToCart={onAddToCart}
+                            />
+                          )
+                        )}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
               {index > 0 && isBot && !isLoading && (

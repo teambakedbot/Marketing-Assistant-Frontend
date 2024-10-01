@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { checkout } from "../../utils/api";
+import { Product } from "./api/renameChat";
 
 interface CartItem {
   product: any;
@@ -17,7 +18,6 @@ interface CartData {
     [key: string]: CartItem;
   };
 }
-
 const buildCartData = (
   email: string,
   phone: string,
@@ -36,7 +36,7 @@ const buildCartData = (
 
 interface CartContextProps {
   cart: { [key: string]: CartItem };
-  addToCart: (product: any) => void;
+  addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, delta: number) => void;
   handleCheckout: (
@@ -57,8 +57,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({
   const [cart, setCart] = useState<{ [key: string]: CartItem }>({});
   const { user } = useAuth();
 
-  const addToCart = async (product: any) => {
-    // Use cartData in your API call
+  const addToCart = async (product: Product) => {
     setCart((prevCart) => {
       const newCart = { ...prevCart };
       if (newCart[product.id]) {

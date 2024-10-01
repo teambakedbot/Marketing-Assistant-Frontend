@@ -131,8 +131,7 @@ function Home() {
       .then((res) => {
         setChatHistory((prevHistory) => {
           const updatedHistory = [...prevHistory];
-          updatedHistory[updatedHistory.length - 1].content =
-            res?.data?.response;
+          updatedHistory[updatedHistory.length - 1].content = res?.data;
           return updatedHistory;
         });
         if (res?.data?.chat_id) {

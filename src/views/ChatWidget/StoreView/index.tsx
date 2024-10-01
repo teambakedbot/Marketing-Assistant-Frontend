@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-}
+import { Product } from "../api/renameChat";
 
 const StoreView: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -15,15 +9,11 @@ const StoreView: React.FC = () => {
   useEffect(() => {
     // Fetch products from API
     // For now, we'll use dummy data
-    setProducts([
-      { id: "1", name: "Product 1", price: 19.99, image: "product1.jpg" },
-      { id: "2", name: "Product 2", price: 29.99, image: "product2.jpg" },
-      // Add more products...
-    ]);
+    setProducts([]);
   }, []);
 
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    product.product_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -42,8 +32,8 @@ const StoreView: React.FC = () => {
       <div className="bb-sm-product-grid">
         {filteredProducts.map((product) => (
           <div key={product.id} className="bb-sm-product-item">
-            <img src={product.image} alt={product.name} />
-            <h3>{product.name}</h3>
+            <img src={product.image_url} alt={product.product_name} />
+            <h3>{product.product_name}</h3>
             <p>${product.price.toFixed(2)}</p>
           </div>
         ))}

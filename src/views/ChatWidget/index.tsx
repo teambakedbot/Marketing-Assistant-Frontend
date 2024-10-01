@@ -51,6 +51,7 @@ import { BASE_URL } from "../../utils/api";
 import SettingsPage from "./settings";
 import { getThemeSettings } from "./api/renameChat";
 import { CartContext } from "./CartContext";
+import { Product } from "./api/renameChat";
 
 interface ThemeSettings {
   primaryColor: string;
@@ -425,7 +426,8 @@ export const ChatWidget: React.FC = () => {
       );
       setChatHistory((prevHistory) => {
         const updatedHistory = [...prevHistory];
-        updatedHistory[updatedHistory.length - 1].content = response.response;
+        updatedHistory[updatedHistory.length - 1] = response;
+
         return updatedHistory;
       });
       if (response.chat_id) {
@@ -965,17 +967,7 @@ export const ChatWidget: React.FC = () => {
     );
   });
   interface ProductDetailProps {
-    product?: {
-      product_name: string;
-      id: string;
-      image_url: string;
-      lowest_price: number;
-      description: string;
-      thc: string;
-      cbd: string;
-      potency: string;
-      effects: string[];
-    } | null;
+    product?: Product | null;
   }
 
   const ProductDetailView: React.FC<ProductDetailProps> = ({ product }) => {
@@ -993,7 +985,7 @@ export const ChatWidget: React.FC = () => {
         </div>
         <div className="flex flex-row justify-between gap-2 pb-2">
           <h3 className="font-bold">{product.product_name}</h3>
-          <p className="price">${product.lowest_price?.toFixed(2)}</p>
+          <p className="price">${product.price?.toFixed(2)}</p>
         </div>
         <p className="pb-2">{product.description}</p>
 
@@ -1010,10 +1002,10 @@ export const ChatWidget: React.FC = () => {
               <span className="text-md">{product.cbd}</span>
             </div>
           )}
-          {product.potency && (
+          {product.effects && (
             <div className="flex flex-col justify-between gap-2 pb-2 text-center">
-              <span className="font-bold">Potency</span>
-              <span className="text-md">{product.potency}</span>
+              <span className="font-bold">Effects</span>
+              <span className="text-md">{product.effects?.join(", ")}</span>
             </div>
           )}
         </div>
@@ -1044,6 +1036,10 @@ export const ChatWidget: React.FC = () => {
         )}
       </div>
     );
+  };
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
   };
 
   return (
@@ -1201,9 +1197,12 @@ export const ChatWidget: React.FC = () => {
                         <ChatHistory
                           chatHistory={chatHistory}
                           loading={loading}
+                          cart={cart}
+                          updateQuantity={updateQuantity}
                           chatEndRef={chatEndRef}
                           onFeedback={handleFeedback}
                           onRetry={handleRetry}
+                          onAddToCart={handleAddToCart}
                         />
                       </div>
                     )}
