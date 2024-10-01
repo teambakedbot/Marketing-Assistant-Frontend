@@ -4,6 +4,7 @@ import { Product } from "../views/ChatWidget/api/renameChat";
 
 interface ProductCardProps {
   product: Product;
+  allowCart?: boolean;
   onAddToCart: (product: Product) => void;
   cart: { [key: string]: { quantity: number } };
   updateQuantity: (productId: string, quantity: number) => void;
@@ -12,6 +13,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
   onAddToCart,
+  allowCart,
   cart,
   updateQuantity,
 }) => {
@@ -40,30 +42,31 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </p>
         )}
       </div>
-      {cart[product.id] ? (
-        <div className="bb-sm-quantity-selector text-md">
+      {allowCart &&
+        (cart[product.id] ? (
+          <div className="bb-sm-quantity-selector text-md">
+            <button
+              onClick={() => updateQuantity(product.id, -1)}
+              className="bb-sm-quantity-button"
+            >
+              <FaMinus size={10} />
+            </button>
+            <span className="mx-2">{cart[product.id].quantity}</span>
+            <button
+              onClick={() => updateQuantity(product.id, 1)}
+              className="bb-sm-quantity-button"
+            >
+              <FaPlus size={10} />
+            </button>
+          </div>
+        ) : (
           <button
-            onClick={() => updateQuantity(product.id, -1)}
-            className="bb-sm-quantity-button"
+            className="text-md bb-sm-add-to-cart-button p-1 mt-2 align-end"
+            onClick={() => onAddToCart(product)}
           >
-            <FaMinus size={10} />
+            Add to cart
           </button>
-          <span className="mx-2">{cart[product.id].quantity}</span>
-          <button
-            onClick={() => updateQuantity(product.id, 1)}
-            className="bb-sm-quantity-button"
-          >
-            <FaPlus size={10} />
-          </button>
-        </div>
-      ) : (
-        <button
-          className="text-md bb-sm-add-to-cart-button p-1 mt-2 align-end"
-          onClick={() => onAddToCart(product)}
-        >
-          Add to cart
-        </button>
-      )}
+        ))}
     </div>
   );
 };

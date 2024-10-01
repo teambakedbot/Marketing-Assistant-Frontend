@@ -1195,6 +1195,7 @@ export const ChatWidget: React.FC = () => {
                     {!isNewChat && (
                       <div className="bb-sm-chat-messages">
                         <ChatHistory
+                          allowCart={true}
                           chatHistory={chatHistory}
                           loading={loading}
                           cart={cart}

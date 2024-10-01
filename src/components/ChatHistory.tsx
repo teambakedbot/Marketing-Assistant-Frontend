@@ -31,6 +31,7 @@ interface ChatHistoryProps {
   onFeedback: (message_id: string, feedbackType: "like" | "dislike") => void;
   onRetry: (message_id: string) => void;
   onAddToCart: (product: Product) => void;
+  allowCart?: boolean;
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
@@ -41,6 +42,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   onRetry,
   onAddToCart,
   cart,
+  allowCart,
   updateQuantity,
 }) => {
   const [feedbackGiven, setFeedbackGiven] = useState<{
@@ -96,6 +98,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                         {message.data.products.map(
                           (product: Product, productIndex: number) => (
                             <ProductCard
+                              allowCart={allowCart}
                               key={`${product.product_name}-${productIndex}`}
                               product={product}
                               cart={cart}
