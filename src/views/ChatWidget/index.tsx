@@ -782,7 +782,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 </button>
               </div>
               <span className="w-20 text-right ml-2">
-                ${(product.lowest_price * quantity).toFixed(2)}
+                ${(product.price * quantity).toFixed(2)}
               </span>
               {/* <button
                 onClick={() => removeFromCart(productId)}
@@ -797,8 +797,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             Total: $
             {Object.values(cart)
               .reduce(
-                (sum, { product, quantity }) =>
-                  sum + product.lowest_price * quantity,
+                (sum, { product, quantity }) => sum + product.price * quantity,
                 0
               )
               .toFixed(2)}
@@ -839,7 +838,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     <span>
                       {product.product_name} (x{quantity})
                     </span>
-                    <span>${(product.lowest_price * quantity).toFixed(2)}</span>
+                    <span>${(product.price * quantity).toFixed(2)}</span>
                   </div>
                 )
               )}
@@ -851,7 +850,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 {Object.values(cart)
                   .reduce(
                     (sum, { product, quantity }) =>
-                      sum + product.lowest_price * quantity,
+                      sum + product.price * quantity,
                     0
                   )
                   .toFixed(2)}
@@ -968,7 +967,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   >
                     {product.product_name}
                   </h3>
-                  <p className="text-sm">${product.lowest_price?.toFixed(2)}</p>
+                  <p className="text-sm">${product.price?.toFixed(2)}</p>
                   <p className="text-sm mt-2">{product.description}</p>
                   {cart[product.id] ? (
                     <div className="bb-sm-quantity-selector text-md">
