@@ -128,7 +128,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   skipVerify = false,
 }) => {
   const { customerID } = useParams<{ customerID: string }>();
-  const [isAllowed, setIsAllowed] = useState<boolean | null>(null);
+  const [isAllowed, setIsAllowed] = useState<boolean | null>(true);
 
   useEffect(() => {
     const verifyOrigin = async () => {

@@ -34,7 +34,7 @@ function App() {
         path="widget/:customerID"
         element={
           <CartProvider>
-            <ChatWidget />
+            <ChatWidget skipVerify />
           </CartProvider>
         }
       />
