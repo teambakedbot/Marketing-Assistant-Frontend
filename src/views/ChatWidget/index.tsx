@@ -53,16 +53,7 @@ import { getThemeSettings } from "./api/renameChat";
 import { CartContext } from "./CartContext";
 import { Product } from "./api/renameChat";
 import { useParams } from "react-router-dom";
-
-interface ThemeSettings {
-  primaryColor: string;
-  secondaryColor: string;
-  backgroundColor: string;
-  headerColor: string;
-  textColor: string;
-  textSecondaryColor: string;
-}
-
+import { ThemeSettings } from "./settings";
 const Spinner: React.FC = () => (
   <div className="bb-sm-spinner">
     <div className="bb-sm-bounce1"></div>
@@ -134,6 +125,7 @@ export const ChatWidget: React.FC = () => {
 
   useEffect(() => {
     const verifyOrigin = async () => {
+      const customerID = "d";
       if (!customerID) {
         console.error("No customerID provided in URL.");
         setIsAllowed(false);
@@ -151,6 +143,7 @@ export const ChatWidget: React.FC = () => {
             allowedOrigins.includes(currentOrigin) ||
             allowedOrigins.includes("*")
           ) {
+            console.log("Origin is allowed");
             setIsAllowed(true);
           } else {
             console.warn(
@@ -220,12 +213,18 @@ export const ChatWidget: React.FC = () => {
   const [previousView, setPreviousView] = useState<Windows | null>(null);
 
   const [settings, setSettings] = useState<ThemeSettings>({
-    primaryColor: "#00A67D",
-    secondaryColor: "#00766D",
-    backgroundColor: "#1E1E1E",
-    headerColor: "#2C2C2C",
-    textColor: "#FFFFFF",
-    textSecondaryColor: "#FFFFFF",
+    defaultTheme: "custom",
+    botVoice: "male",
+    allowedSites: [],
+    defaultLanguage: "english",
+    colors: {
+      primaryColor: "#00A67D",
+      secondaryColor: "#00766D",
+      backgroundColor: "#1E1E1E",
+      headerColor: "#2C2C2C",
+      textColor: "#FFFFFF",
+      textSecondaryColor: "#FFFFFF",
+    },
   });
   function isLightColor(color: string): boolean {
     const hex = color.replace("#", "");
@@ -238,15 +237,18 @@ export const ChatWidget: React.FC = () => {
 
   const applyTheme = (theme: ThemeSettings) => {
     const root = document.documentElement;
-    root.style.setProperty("--primary-color", theme.primaryColor);
-    root.style.setProperty("--secondary-color", theme.secondaryColor);
-    root.style.setProperty("--background-color", theme.backgroundColor);
-    root.style.setProperty("--header-color", theme.headerColor);
-    root.style.setProperty("--text-color", theme.textColor);
-    root.style.setProperty("--text-secondary-color", theme.textSecondaryColor);
+    root.style.setProperty("--primary-color", theme.colors.primaryColor);
+    root.style.setProperty("--secondary-color", theme.colors.secondaryColor);
+    root.style.setProperty("--background-color", theme.colors.backgroundColor);
+    root.style.setProperty("--header-color", theme.colors.headerColor);
+    root.style.setProperty("--text-color", theme.colors.textColor);
+    root.style.setProperty(
+      "--text-secondary-color",
+      theme.colors.textSecondaryColor
+    );
     root.style.setProperty(
       "--footer-text-color",
-      isLightColor(theme.backgroundColor) ? "#333333" : "#CCCCCC"
+      isLightColor(theme.colors.backgroundColor) ? "#333333" : "#CCCCCC"
     );
   };
 
@@ -302,7 +304,7 @@ export const ChatWidget: React.FC = () => {
       console.error("Error fetching user chats:", error);
     }
   }, [user]);
-  const footerTextColor = isLightColor(settings.backgroundColor)
+  const footerTextColor = isLightColor(settings.colors.backgroundColor)
     ? "#333333"
     : "#CCCCCC";
 
@@ -1094,14 +1096,6 @@ export const ChatWidget: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  // if (!isAllowed) {
-  //   return (
-  //     <div>
-  //       Show the login screen for admin to allow this orgin
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="bb-sm-chat-widget bb-sm-body">
       <button className="border-none outline-0" onClick={handleModalBox}>
@@ -1174,164 +1168,174 @@ export const ChatWidget: React.FC = () => {
                 )}
                 {currentView === "cart" && <CartView />}
                 {currentView === "checkOut" && <CheckoutView />}
-                {currentView === "chat" && (
-                  <>
-                    {isNewChat && (
-                      <div className="bb-sm-new-chat-view">
-                        <div className="bb-sm-new-chat-content">
-                          <img
-                            src={bluntSmokey}
-                            alt="Smokey Robot"
-                            className="w-24 h-auto mb-2"
-                          />
-                          <h2 className="bb-sm-new-chat-title">
-                            What's up, bud?
-                          </h2>
-                          <p className="bb-sm-new-chat-description">
-                            I'm Smokey, your AI budtender. I'm here to help you
-                            find the right strain for you.
-                          </p>
-                          <div className="bb-sm-new-chat-buttons">
-                            <button
-                              className="bb-sm-new-chat-button"
-                              onMouseDown={() =>
-                                setPrompts("Show me new products")
-                              }
-                              onClick={() => playHandler()}
-                            >
-                              <span className="bb-sm-new-chat-button-icon">
-                                📦
-                              </span>
-                              See new products
-                            </button>
-                            <button
-                              className="bb-sm-new-chat-button"
-                              onMouseDown={() =>
-                                setPrompts("Find new location")
-                              }
-                              onClick={() => playHandler()}
-                            >
-                              <span className="bb-sm-new-chat-button-icon">
-                                📍
-                              </span>
-                              <span className="bb-sm-new-chat-button-text">
-                                Find new location
-                                {userCity && userState && (
-                                  <span className="bb-sm-new-chat-button-location text-sm">
-                                    <br />
-                                    {userCity}, {userState}
-                                  </span>
-                                )}
-                              </span>
-                            </button>
-                            <button
-                              className="bb-sm-new-chat-button"
-                              onMouseDown={() =>
-                                setPrompts("Recommend a relaxing strain")
-                              }
-                              onClick={() => playHandler()}
-                            >
-                              <span className="bb-sm-new-chat-button-icon">
-                                🧘
-                              </span>
-                              Relaxing strain
-                            </button>
-                            <button
-                              className="bb-sm-new-chat-button"
-                              onMouseDown={() =>
-                                setPrompts("Tell me about CBD")
-                              }
-                              onClick={() => playHandler()}
-                            >
-                              <span className="bb-sm-new-chat-button-icon">
-                                🌿
-                              </span>
-                              Learn about CBD
-                            </button>
+                {currentView === "chat" &&
+                  (!isAllowed ? (
+                    //cnter this veritcal and horizontal
+                    <div className="flex justify-center items-center h-full flex-col">
+                      <h1 className="text-2xl font-bold">
+                        This widget is not allowed on this site.
+                      </h1>
+                      <p>Login to add this site to your whitelist.</p>
+                    </div>
+                  ) : (
+                    <>
+                      {isNewChat && (
+                        <div className="bb-sm-new-chat-view">
+                          <div className="bb-sm-new-chat-content">
+                            <img
+                              src={bluntSmokey}
+                              alt="Smokey Robot"
+                              className="w-24 h-auto mb-2"
+                            />
+                            <h2 className="bb-sm-new-chat-title">
+                              What's up, bud?
+                            </h2>
+                            <p className="bb-sm-new-chat-description">
+                              I'm Smokey, your AI budtender. I'm here to help
+                              you find the right strain for you.
+                            </p>
+                            <div className="bb-sm-new-chat-buttons">
+                              <button
+                                className="bb-sm-new-chat-button"
+                                onMouseDown={() =>
+                                  setPrompts("Show me new products")
+                                }
+                                onClick={() => playHandler()}
+                              >
+                                <span className="bb-sm-new-chat-button-icon">
+                                  📦
+                                </span>
+                                See new products
+                              </button>
+                              <button
+                                className="bb-sm-new-chat-button"
+                                onMouseDown={() =>
+                                  setPrompts("Find new location")
+                                }
+                                onClick={() => playHandler()}
+                              >
+                                <span className="bb-sm-new-chat-button-icon">
+                                  📍
+                                </span>
+                                <span className="bb-sm-new-chat-button-text">
+                                  Find new location
+                                  {userCity && userState && (
+                                    <span className="bb-sm-new-chat-button-location text-sm">
+                                      <br />
+                                      {userCity}, {userState}
+                                    </span>
+                                  )}
+                                </span>
+                              </button>
+                              <button
+                                className="bb-sm-new-chat-button"
+                                onMouseDown={() =>
+                                  setPrompts("Recommend a relaxing strain")
+                                }
+                                onClick={() => playHandler()}
+                              >
+                                <span className="bb-sm-new-chat-button-icon">
+                                  🧘
+                                </span>
+                                Relaxing strain
+                              </button>
+                              <button
+                                className="bb-sm-new-chat-button"
+                                onMouseDown={() =>
+                                  setPrompts("Tell me about CBD")
+                                }
+                                onClick={() => playHandler()}
+                              >
+                                <span className="bb-sm-new-chat-button-icon">
+                                  🌿
+                                </span>
+                                Learn about CBD
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                    {!isNewChat && (
-                      <div className="bb-sm-chat-messages">
-                        <ChatHistory
-                          allowCart={true}
-                          chatHistory={chatHistory}
-                          loading={loading}
-                          cart={cart}
-                          updateQuantity={updateQuantity}
-                          chatEndRef={chatEndRef}
-                          onFeedback={handleFeedback}
-                          onRetry={handleRetry}
-                          onAddToCart={handleAddToCart}
-                        />
-                      </div>
-                    )}
-                  </>
-                )}
+                      )}
+                      {!isNewChat && (
+                        <div className="bb-sm-chat-messages">
+                          <ChatHistory
+                            allowCart={true}
+                            chatHistory={chatHistory}
+                            loading={loading}
+                            cart={cart}
+                            updateQuantity={updateQuantity}
+                            chatEndRef={chatEndRef}
+                            onFeedback={handleFeedback}
+                            onRetry={handleRetry}
+                            onAddToCart={handleAddToCart}
+                          />
+                        </div>
+                      )}
+                    </>
+                  ))}
 
-                {(currentView == "store" || currentView == "chat") && (
-                  <div className="bb-sm-chat-input">
-                    <textarea
-                      className="resize-none w-full placeholder-gray-200  p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
+                {(currentView == "store" || currentView == "chat") &&
+                  isAllowed && (
+                    <div className="bb-sm-chat-input">
+                      <textarea
+                        className="resize-none w-full placeholder-gray-200  p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            if (currentView === "chat") {
+                              e.preventDefault();
+                              playHandler();
+                            }
+                            if (currentView === "store") {
+                              e.preventDefault();
+                              handleSearch();
+                            }
+                          }
+                        }}
+                        placeholder={
+                          currentView === "chat"
+                            ? "Ask me anything..."
+                            : "Search here..."
+                        }
+                        value={currentView === "chat" ? prompts : searchQuery}
+                        onChange={(e) => {
                           if (currentView === "chat") {
-                            e.preventDefault();
-                            playHandler();
+                            setPrompts(e.target.value);
+                            const target = e.target as HTMLTextAreaElement;
+                            target.style.height = "40px";
+                            const newHeight = Math.min(
+                              Math.max(target.scrollHeight, 40),
+                              120
+                            );
+                            target.style.height = `${newHeight}px`;
+                            const chatInput = target.closest(
+                              ".bb-sm-chat-input"
+                            ) as HTMLElement;
+                            if (chatInput) {
+                              chatInput.style.minHeight = `${newHeight + 24}px`; // 24px for padding
+                            }
                           }
                           if (currentView === "store") {
-                            e.preventDefault();
-                            handleSearch();
+                            setSearchQuery(e.target.value);
                           }
-                        }
-                      }}
-                      placeholder={
-                        currentView === "chat"
-                          ? "Ask me anything..."
-                          : "Search here..."
-                      }
-                      value={currentView === "chat" ? prompts : searchQuery}
-                      onChange={(e) => {
-                        if (currentView === "chat") {
-                          setPrompts(e.target.value);
-                          const target = e.target as HTMLTextAreaElement;
-                          target.style.height = "40px";
-                          const newHeight = Math.min(
-                            Math.max(target.scrollHeight, 40),
-                            120
-                          );
-                          target.style.height = `${newHeight}px`;
-                          const chatInput = target.closest(
-                            ".bb-sm-chat-input"
-                          ) as HTMLElement;
-                          if (chatInput) {
-                            chatInput.style.minHeight = `${newHeight + 24}px`; // 24px for padding
-                          }
-                        }
-                        if (currentView === "store") {
-                          setSearchQuery(e.target.value);
-                        }
-                      }}
-                      rows={1}
-                    />
-                    <button
-                      onClick={playHandler}
-                      disabled={loading}
-                      className="bb-sm-send-button"
-                    >
-                      {loading ? (
-                        <img
-                          src={loadingIcon}
-                          className="w-5 h-5"
-                          alt="Loading"
-                        />
-                      ) : (
-                        <FaPaperPlane />
-                      )}
-                    </button>
-                  </div>
-                )}
+                        }}
+                        rows={1}
+                      />
+                      <button
+                        onClick={playHandler}
+                        disabled={loading}
+                        className="bb-sm-send-button"
+                      >
+                        {loading ? (
+                          <img
+                            src={loadingIcon}
+                            className="w-5 h-5"
+                            alt="Loading"
+                          />
+                        ) : (
+                          <FaPaperPlane />
+                        )}
+                      </button>
+                    </div>
+                  )}
               </div>
 
               {/* Side menu */}

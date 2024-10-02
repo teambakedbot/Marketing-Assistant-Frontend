@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "../../../utils/api";
-import { ThemeSettings } from "../SettingsPage";
+import { ThemeSettings } from "../settings";
 
 export interface Product {
   id: string;
