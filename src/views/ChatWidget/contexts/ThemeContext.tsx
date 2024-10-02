@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { ThemeSettings } from "../SettingsPage";
-
+import { ThemeSettings } from "../settings";
 interface ThemeContextType {
   theme: ThemeSettings;
   updateTheme: (newTheme: ThemeSettings) => void;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaCheck } from "react-icons/fa";
 import useAuth from "../../../hooks/useAuth";
 import { saveThemeSettings, getThemeSettings } from "../api/renameChat";
+import { ThemeSettings, ThemeColors } from "../settings";
 
 interface SettingsPageProps {
   onClose: () => void;
@@ -9,16 +10,7 @@ interface SettingsPageProps {
   initialSettings: ThemeSettings;
 }
 
-export interface ThemeSettings {
-  primaryColor: string; //buttons color,  user message color
-  secondaryColor: string; // robot message color, highlight color for active buttons,
-  backgroundColor: string; //window background color
-  headerColor: string; //header color, text input background color
-  textColor: string; //text color, icon color
-  textSecondaryColor: string; //text and button hover color
-}
-
-export const presetThemes: { [key: string]: ThemeSettings } = {
+const presetThemes: { [key: string]: ThemeColors } = {
   default: {
     primaryColor: "#22AD85",
     secondaryColor: "#23504A",
@@ -33,7 +25,7 @@ export const presetThemes: { [key: string]: ThemeSettings } = {
     backgroundColor: "#FFFFFF",
     headerColor: "#F0F0F0",
     textColor: "#000000",
-    textSecondaryColor: "#555555",
+    textSecondaryColor: "#FFFFFF",
   },
 };
 
@@ -93,19 +85,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
       .join(" ");
   };
 
-  const themeSettingsOrder: (keyof ThemeSettings)[] = [
-    "primaryColor",
-    "secondaryColor",
-    "backgroundColor",
-    "headerColor",
-    "textColor",
-    "textSecondaryColor",
-  ];
-
   return (
     <div className="bb-sm-settings-page bg-gray-900 text-white p-6 max-w-2xl mx-auto">
       <div className="bb-sm-settings-content grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {themeSettingsOrder.map((key) => (
+        {Object.keys(themeSettings.colors).map((key) => (
           <div key={key} className="bb-sm-setting-item">
             <label htmlFor={key} className="block mb-2 font-medium">
               {formatLabel(key)}
@@ -134,7 +117,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
       <div className="bb-sm-preset-themes mb-8">
         <h3 className="text-xl font-bold mb-4">Preset Themes</h3>
         <div className="grid grid-cols-3 gap-4">
-          {Object.entries(presetThemes).map(([name, preset]) => (
+          {Object.entries(presetThemes).map(([name, preset]: any) => (
             <button
               key={name}
               onClick={() => handlePresetSelect(name, preset)}

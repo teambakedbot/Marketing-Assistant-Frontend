@@ -119,7 +119,14 @@ const getStateAbbreviation = (state: string): string => {
   return stateAbbreviations[state] || state;
 };
 
-export const ChatWidget: React.FC = () => {
+//add props
+interface ChatWidgetProps {
+  skipVerify?: boolean;
+}
+
+export const ChatWidget: React.FC<ChatWidgetProps> = ({
+  skipVerify = false,
+}) => {
   const { customerID } = useParams<{ customerID: string }>();
   const [isAllowed, setIsAllowed] = useState<boolean | null>(null);
 
@@ -161,7 +168,7 @@ export const ChatWidget: React.FC = () => {
       }
     };
 
-    verifyOrigin();
+    skipVerify && verifyOrigin();
   }, [customerID]);
 
   const { displayName, photoURL, user } = useAuth();

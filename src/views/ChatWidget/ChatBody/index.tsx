@@ -4,7 +4,7 @@ import ProductDetailView from "../ProductDetailView/index.tsx";
 import SettingsPage from "../SettingsPage/index.tsx";
 import ChatHistory from "../ChatHistory/index.tsx";
 import NewChatView from "../NewChatView/index.tsx";
-import { ThemeSettings } from "../SettingsPage";
+import { ThemeSettings } from "../settings";
 
 interface ChatBodyProps {
   currentView: "chat" | "store" | "product" | "settings";
