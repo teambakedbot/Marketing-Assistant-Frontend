@@ -168,7 +168,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       }
     };
 
-    skipVerify && verifyOrigin();
+    !skipVerify && verifyOrigin();
   }, [customerID]);
 
   const { displayName, photoURL, user } = useAuth();
