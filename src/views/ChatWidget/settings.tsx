@@ -216,7 +216,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
               <div className="bb-sm-setting-item mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-lg font-medium self-end">
-                    Site Settings
+                    Widget Visibility
                   </label>
                   <div className="bb-sm-toggle-container flex items-center">
                     <span
