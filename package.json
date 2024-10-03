@@ -11,6 +11,7 @@
     "start": "serve -s dist"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.9",
     "@kinde-oss/kinde-auth-react": "^4.0.1",
     "axios": "^1.6.8",
     "firebase": "^10.13.0",

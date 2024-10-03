@@ -140,7 +140,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       }
 
       try {
-        //call API to get customer data
         const customerData = { allowedOrigins: ["*"] };
         if (customerData) {
           const allowedOrigins: string[] = customerData.allowedOrigins || [];
