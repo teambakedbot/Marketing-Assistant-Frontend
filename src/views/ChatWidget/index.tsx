@@ -749,7 +749,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   const CartView = () => (
     <div className="bb-sm-cart-view overflow-y-auto h-full">
-      <h2 className="text-xl font-bold mb-4 px-4 pt-4">Order summary</h2>
       {Object.keys(cart).length === 0 ? (
         <p className="px-4">Your cart is empty.</p>
       ) : (
