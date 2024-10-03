@@ -748,17 +748,17 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   };
 
   const CartView = () => (
-    <div className="bb-sm-cart-view p-4">
-      <h2 className="text-xl font-bold mb-4">Order summary</h2>
+    <div className="bb-sm-cart-view overflow-y-auto h-full">
+      <h2 className="text-xl font-bold mb-4 px-4 pt-4">Order summary</h2>
       {Object.keys(cart).length === 0 ? (
-        <p>Your cart is empty.</p>
+        <p className="px-4">Your cart is empty.</p>
       ) : (
         <>
-          <div className="bb-sm-cart-items space-y-4">
+          <div className="bb-sm-cart-items px-4 pb-4">
             {Object.entries(cart).map(([productId, { product, quantity }]) => (
               <div
                 key={productId}
-                className="bb-sm-cart-item flex items-center space-x-3"
+                className="bb-sm-cart-item flex items-center space-x-3 mb-4"
               >
                 <img
                   src={product.image_url}
@@ -770,16 +770,37 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   <p className="text-sm text-gray-400">
                     THC: {product.thc} | CBD: {product.cbd}
                   </p>
-                  <p className="text-sm">Quantity: {quantity}</p>
+                  <div className="flex items-center mt-2">
+                    <button
+                      onClick={() => updateQuantity(productId, -1)}
+                      className="bb-sm-quantity-button"
+                    >
+                      <FaMinus size={10} />
+                    </button>
+                    <span className="mx-2">{quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(productId, 1)}
+                      className="bb-sm-quantity-button"
+                    >
+                      <FaPlus size={10} />
+                    </button>
+                  </div>
                 </div>
-                <span className="text-right">
-                  ${(product.price * quantity).toFixed(2)}
-                </span>
+                <div className="text-right">
+                  <span>${(product.price * quantity).toFixed(2)}</span>
+                  <button
+                    onClick={() => removeFromCart(productId)}
+                    className="bb-sm-remove-button ml-2"
+                    aria-label="Remove item"
+                  >
+                    <FaTrash size={14} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
-          <div className="bb-sm-cart-summary mt-6 space-y-2">
-            <div className="flex justify-between">
+          <div className="bb-sm-cart-summary px-4 py-4 border-t border-gray-700">
+            <div className="flex justify-between mb-2">
               <span>Subtotal</span>
               <span>
                 $
@@ -792,30 +813,30 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   .toFixed(2)}
               </span>
             </div>
-            <div className="flex justify-between text-gray-400">
+            {/* <div className="flex justify-between mb-2 text-gray-400">
               <span>Discount</span>
               <span>-$6.89</span>
-            </div>
-            <div className="flex justify-between font-bold text-lg">
+            </div> */}
+            <div className="flex justify-between font-bold text-lg mb-4">
               <span>Total</span>
               <span>
                 $
-                {(
-                  Object.values(cart).reduce(
+                {Object.values(cart)
+                  .reduce(
                     (sum, { product, quantity }) =>
                       sum + product.price * quantity,
                     0
-                  ) - 6.89
-                ).toFixed(2)}
+                  )
+                  .toFixed(2)}
               </span>
             </div>
+            <button
+              onClick={() => navigateTo("checkOut")}
+              className="bb-sm-checkout-button w-full py-3 rounded text-lg font-semibold"
+            >
+              Checkout
+            </button>
           </div>
-          <button
-            onClick={() => navigateTo("checkOut")}
-            className="bb-sm-checkout-button mt-6 w-full py-3 rounded text-lg font-semibold"
-          >
-            Checkout
-          </button>
         </>
       )}
     </div>
@@ -837,113 +858,89 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
     return (
       <div className="bb-sm-checkout-view p-4">
-        <h2 className="text-xl font-bold mb-4">Order summary</h2>
-        <div className="bb-sm-cart-items space-y-4 mb-6">
-          {Object.entries(cart).map(([productId, { product, quantity }]) => (
-            <div
-              key={productId}
-              className="bb-sm-cart-item flex items-center space-x-3"
-            >
-              <img
-                src={product.image_url}
-                alt={product.product_name}
-                className="w-12 h-12 object-cover rounded"
-              />
-              <div className="flex-grow">
-                <h3 className="font-semibold">{product.product_name}</h3>
-                <p className="text-sm text-gray-400">
-                  THC: {product.thc} | CBD: {product.cbd}
-                </p>
-                <p className="text-sm">Quantity: {quantity}</p>
-              </div>
-              <span className="text-right">
-                ${(product.price * quantity).toFixed(2)}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <h3 className="font-bold mb-2">Order Summary</h3>
+            <div className="space-y-2 mb-4">
+              {Object.entries(cart).map(
+                ([productId, { product, quantity }]: any) => (
+                  <div key={productId} className="flex justify-between text-sm">
+                    <span>
+                      {product.product_name} (x{quantity})
+                    </span>
+                    <span>${(product.price * quantity).toFixed(2)}</span>
+                  </div>
+                )
+              )}
+            </div>
+            <div className="flex justify-between font-bold">
+              <span>Total:</span>
+              <span>
+                $
+                {Object.values(cart)
+                  .reduce(
+                    (sum, { product, quantity }) =>
+                      sum + product.price * quantity,
+                    0
+                  )
+                  .toFixed(2)}
               </span>
             </div>
-          ))}
-        </div>
-        <div className="bb-sm-cart-summary space-y-2 mb-6">
-          <div className="flex justify-between">
-            <span>Subtotal</span>
-            <span>
-              $
-              {Object.values(cart)
-                .reduce(
-                  (sum, { product, quantity }) =>
-                    sum + product.price * quantity,
-                  0
-                )
-                .toFixed(2)}
-            </span>
           </div>
-          <div className="flex justify-between text-gray-400">
-            <span>Discount</span>
-            <span>-$6.89</span>
+          <div className="flex justify-between mb-2">
+            <label></label>
+            <div>
+              <button
+                type="button"
+                onClick={() => setContactMethod("email")}
+                className={`mr-2 px-3 py-1 rounded text-md ${
+                  contactMethod === "email"
+                    ? "bg-primary-color text-secondary-color"
+                    : "bg-secondary-color text-secondary-color opacity-70 hover:opacity-100"
+                }`}
+              >
+                Email
+              </button>
+              <button
+                type="button"
+                onClick={() => setContactMethod("phone")}
+                className={`px-3 py-1 rounded text-md ${
+                  contactMethod === "phone"
+                    ? "bg-primary-color text-secondary-color"
+                    : "bg-secondary-color text-secondary-color opacity-70 hover:opacity-100"
+                }`}
+              >
+                Phone
+              </button>
+            </div>
           </div>
-          <div className="flex justify-between font-bold text-lg">
-            <span>Total</span>
-            <span>
-              $
-              {(
-                Object.values(cart).reduce(
-                  (sum, { product, quantity }) =>
-                    sum + product.price * quantity,
-                  0
-                ) - 6.89
-              ).toFixed(2)}
-            </span>
-          </div>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <input
-              type="text"
-              id="name"
-              placeholder="Enter your name"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              required
-              className="w-full p-3 border rounded bg-gray-700 text-white"
-            />
-          </div>
-          <div className="flex space-x-2">
-            <button
-              type="button"
-              onClick={() => setContactMethod("email")}
-              className={`flex-1 py-2 rounded ${
-                contactMethod === "email"
-                  ? "bg-primary-color text-white"
-                  : "bg-gray-700 text-gray-300"
-              }`}
-            >
-              Email
-            </button>
-            <button
-              type="button"
-              onClick={() => setContactMethod("phone")}
-              className={`flex-1 py-2 rounded ${
-                contactMethod === "phone"
-                  ? "bg-primary-color text-white"
-                  : "bg-gray-700 text-gray-300"
-              }`}
-            >
-              Phone
-            </button>
-          </div>
-          <div>
-            <input
-              type={contactMethod === "email" ? "email" : "tel"}
-              id="contact"
-              placeholder={`Enter your ${contactMethod}`}
-              value={contactValue}
-              onChange={(e) => setContactValue(e.target.value)}
-              required
-              className="w-full p-3 border rounded bg-gray-700 text-white"
-            />
+          <div className="flex space-x-4">
+            <div className="flex-1">
+              <input
+                type="text"
+                id="name"
+                placeholder="Enter your name"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div className="flex-1">
+              <input
+                type={contactMethod === "email" ? "email" : "tel"}
+                id="contact"
+                placeholder={`Enter your ${contactMethod}`}
+                value={contactValue}
+                onChange={(e) => setContactValue(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+              />
+            </div>
           </div>
           <button
             type="submit"
-            className="bb-sm-place-order-button w-full py-3 rounded text-lg font-semibold"
+            className="bb-sm-place-order-button w-full py-2 rounded mt-10 pb-2"
           >
             Place Order
           </button>

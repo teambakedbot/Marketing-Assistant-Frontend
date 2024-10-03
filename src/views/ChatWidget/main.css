@@ -1046,7 +1046,6 @@
 
 .bb-sm-cart-item {
   padding: 0.5rem;
-  border-bottom: 1px solid #ccc;
 }
 
 .bb-sm-remove-from-cart-button,
@@ -1066,6 +1065,26 @@
   background-color: var(--secondary-color);
 }
 
+.bb-sm-quantity-button {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.bb-sm-remove-button {
+  color: var(--text-secondary-color);
+  cursor: pointer;
+}
+
+.bb-sm-remove-button:hover {
+  color: var(--primary-color);
+}
 
 .bb-sm-quantity-selector {
   display: flex;
