@@ -1421,7 +1421,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       )}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center h-full w-full p-4">
+                    <div className="flex flex-col items-center justify-center h-full w-full">
                       <h2 className="text-2xl font-bold mb-6">Login to Chat</h2>
                       <LoginForm onLogin={() => setIsLoggedIn(true)} />
                     </div>
