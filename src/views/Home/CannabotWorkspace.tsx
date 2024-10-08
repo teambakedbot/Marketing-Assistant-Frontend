@@ -12,7 +12,7 @@ import { CartContext } from "../ChatWidget/CartContext";
 import { Product } from "../ChatWidget/api/renameChat";
 
 interface CannabotWorkspaceProps {
-  chatHistory: { type: string; content: string; message_id: string }[];
+  chatHistory: { role: string; content: string; message_id: string }[];
   voiceType: string;
   loading: boolean;
 }

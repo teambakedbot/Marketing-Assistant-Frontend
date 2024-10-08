@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import loadingIcon from "/images/loading-spinner-white.gif";
 import { FaThumbsUp, FaThumbsDown, FaRedo, FaCopy } from "react-icons/fa";
@@ -45,8 +45,6 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   allowCart,
   updateQuantity,
 }) => {
-  const [isAtBottom, setIsAtBottom] = useState(true);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const [feedbackGiven, setFeedbackGiven] = useState<{
     [key: string]: "like" | "dislike" | null;
   }>({});
@@ -65,45 +63,16 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
     });
   };
 
-  const checkIfAtBottom = useCallback(() => {
-    const chatContainer = chatContainerRef.current;
-    if (chatContainer) {
-      const { scrollTop, scrollHeight, clientHeight } = chatContainer;
-      const newIsAtBottom =
-        Math.abs(scrollHeight - scrollTop - clientHeight) < 1;
-      setIsAtBottom(newIsAtBottom);
-    }
-  }, []);
-
-  useEffect(() => {
-    const chatContainer = chatContainerRef.current;
-    if (chatContainer) {
-      chatContainer.addEventListener("scroll", checkIfAtBottom);
-      return () => chatContainer.removeEventListener("scroll", checkIfAtBottom);
-    }
-  }, [checkIfAtBottom]);
-
-  useEffect(() => {
-    checkIfAtBottom();
-  }, [chatHistory, checkIfAtBottom]);
-
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
-    <div
-      className="bb-sm-chat-messages flex-1 overflow-y-auto mb-2"
-      ref={chatContainerRef}
-    >
+    <div className="bb-sm-chat-messages flex-1 overflow-y-auto mb-2">
       {chatHistory?.map((message, index) => {
-        const isBot = message.type === "ai" || message.role === "ai";
+        const isBot = message.role === "assistant";
         const isLoading = loading && isBot && index === chatHistory.length - 1;
         const messageClass = isBot ? "bb-sm-bot-message" : "bb-sm-user-message";
         return (
           <div
             className={`flex ${isBot ? "justify-start" : "justify-end"} mb-4`}
-            key={index}
+            key={message.message_id + index}
           >
             <div
               className={`bb-sm-message-container ${
@@ -193,11 +162,6 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
         );
       })}
       <div ref={chatEndRef} />
-      {/* {!isAtBottom && (
-        <button className="bb-sm-scroll-to-bottom" onClick={scrollToBottom}>
-          ↓
-        </button>
-      )} */}
     </div>
   );
 };
