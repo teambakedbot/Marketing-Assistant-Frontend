@@ -1,6 +1,6 @@
 export type ChatEntry = {
   message_id: string;
-  role: string;
+  type: string;
   content: string;
 };
 

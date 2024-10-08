@@ -179,8 +179,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<
-    { role: string; content: string; message_id: string }[]
-  >([{ role: "assistant", content: "Hey, how can I help?", message_id: "1" }]);
+    { type: string; content: string; message_id: string }[]
+  >([{ type: "ai", content: "Hey, how can I help?", message_id: "1" }]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
@@ -326,7 +326,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         setCurrentChatId(null);
         setChatHistory([
           {
-            role: "assistant",
+            type: "ai",
             content: "Hey, how can I help?",
             message_id: "1",
           },
@@ -466,8 +466,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
     setChatHistory((prevHistory) => [
       ...prevHistory,
-      { role: "user", content: messageContent, message_id: "2" },
-      { role: "assistant", content: "loading", message_id: "3" },
+      { type: "human", content: messageContent, message_id: "2" },
+      { type: "ai", content: "loading", message_id: "3" },
     ]);
     setPrompts("");
     setLoading(true);
@@ -504,10 +504,15 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const userPhoto = photoURL || "/images/person-image.png";
 
   useEffect(() => {
-    //this keeps getting called over and over again
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     fetchChatMessages();
   }, []);
+
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatHistory]);
 
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
