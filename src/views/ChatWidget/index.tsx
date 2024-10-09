@@ -416,7 +416,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               response.data.address.city ||
               response.data.address.town ||
               response.data.address.village;
-            const state = response.data.address.state;
+            const state =
+              response.data.address.state || response.data.address.country;
             setUserCity(city);
             setUserState(state ? getStateAbbreviation(state) : null);
           } catch (error) {
