@@ -9,7 +9,7 @@ import { ThemeSettings } from "../settings";
 interface ChatBodyProps {
   currentView: "chat" | "store" | "product" | "settings";
   isNewChat: boolean;
-  chatHistory: { role: string; content: string }[];
+  chatHistory: { type: string; content: string }[];
   loading: boolean;
   selectedProduct: any;
   settings: ThemeSettings;

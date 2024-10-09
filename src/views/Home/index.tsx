@@ -29,7 +29,7 @@ function Home() {
   const [chatHistory, setChatHistory] = useState<ChatEntry[]>([
     {
       message_id: "1",
-      role: "assistant",
+      type: "ai",
       content:
         voiceType === "normal"
           ? "Hey, how can I help?"
@@ -50,7 +50,7 @@ function Home() {
       setChatHistory([
         {
           message_id: "1",
-          role: "assistant",
+          type: "ai",
           content: "Loading chat history...",
         },
       ]);
@@ -114,8 +114,8 @@ function Home() {
     if (!prompts || loading) return;
     setChatHistory((prevHistory) => [
       ...prevHistory,
-      { message_id: "1", role: "user", content: prompts },
-      { message_id: "2", role: "assistant", content: "loading" },
+      { message_id: "1", type: "human", content: prompts },
+      { message_id: "2", type: "ai", content: "loading" },
     ]);
     setPrompts("");
     setLoading(true);
@@ -225,7 +225,7 @@ function Home() {
           ...prev,
           {
             message_id: "3",
-            role: "AI",
+            type: "AI",
             content: decoder.decode(value, { stream: true }),
           },
         ]);
@@ -370,7 +370,7 @@ function Home() {
                 setChatHistory([
                   {
                     message_id: "1",
-                    role: "assistant",
+                    type: "ai",
                     content:
                       e.target.value === "normal"
                         ? "Hey, how can I help?"

@@ -1,7 +1,7 @@
 import React from "react";
 
 interface ChatHistoryProps {
-  chatHistory: { role: string; content: string }[];
+  chatHistory: { type: string; content: string }[];
   loading: boolean;
 }
 
@@ -12,7 +12,9 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ chatHistory, loading }) => {
         <div
           key={index}
           className={`bb-sm-message ${
-            message.role === "user" ? "bb-sm-user-message" : "bb-sm-bot-message"
+            message.type === "human"
+              ? "bb-sm-user-message"
+              : "bb-sm-bot-message"
           }`}
         >
           {message.content}
