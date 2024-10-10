@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Product } from "../api/renameChat";
+import ProductCard from "../../../components/ProductCard";
 
-const StoreView: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+interface StoreViewProps {
+  products: Product[];
+  onAddToCart: (product: Product) => void;
+  cart: { [key: string]: { quantity: number } };
+  updateQuantity: (productId: string, quantity: number) => void;
+}
+
+const StoreView: React.FC<StoreViewProps> = ({
+  products,
+  onAddToCart,
+  cart,
+  updateQuantity,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    // Fetch products from API
-    // For now, we'll use dummy data
-    setProducts([]);
-  }, []);
 
   const filteredProducts = products.filter((product) =>
     product.product_name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -31,11 +37,14 @@ const StoreView: React.FC = () => {
       </div>
       <div className="bb-sm-product-grid">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="bb-sm-product-item">
-            <img src={product.image_url} alt={product.product_name} />
-            <h3>{product.product_name}</h3>
-            <p>${product.price.toFixed(2)}</p>
-          </div>
+          <ProductCard
+            key={product.cann_sku_id}
+            product={product}
+            onAddToCart={onAddToCart}
+            cart={cart}
+            updateQuantity={updateQuantity}
+            allowCart={true}
+          />
         ))}
       </div>
     </div>

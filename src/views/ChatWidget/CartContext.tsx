@@ -4,7 +4,7 @@ import { checkout } from "../../utils/api";
 import { Product } from "./api/renameChat";
 
 interface CartItem {
-  product: any;
+  product: Product;
   quantity: number;
 }
 

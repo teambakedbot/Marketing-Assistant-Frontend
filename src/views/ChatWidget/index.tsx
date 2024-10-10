@@ -50,7 +50,7 @@ import {
 import { BASE_URL } from "../../utils/api";
 import SettingsPage from "./settings";
 import { CartContext } from "./CartContext";
-import { Product, getThemeSettings } from "./api/renameChat";
+import { Product, getThemeSettings, ProductResponse } from "./api/renameChat";
 import { useParams } from "react-router-dom";
 import { ThemeSettings } from "./settings";
 const Spinner: React.FC = () => (
@@ -426,7 +426,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         },
         (error) => {
           console.error("Error getting user location:", error);
-          // ... existing error handling code ...
         }
       );
     } else {
@@ -623,10 +622,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        `${BASE_URL}/products?retailers=8266&page=${page}&states=michigan`
+      const response = await axios.get<ProductResponse>(
+        `${BASE_URL}/products?page=${page}&states=michigan`
       );
-      setProducts(response.data.products);
+      console.log(response.data);
+      const productsData = response.data.products;
+      setProducts(productsData);
       setTotalPages(response.data.pagination.total_pages);
       setTotalProducts(response.data.pagination.total);
       setCurrentPage(page);
@@ -772,7 +773,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 <div className="flex-grow">
                   <h3 className="font-semibold">{product.product_name}</h3>
                   <p className="text-sm text-gray-400">
-                    THC: {product.thc} | CBD: {product.cbd}
+                    THC: {product.percentage_thc} | CBD:{" "}
+                    {product.percentage_cbd}
                   </p>
                   <div className="flex items-center mt-2">
                     <button
@@ -791,7 +793,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   </div>
                 </div>
                 <div className="text-right">
-                  <span>${(product.price * quantity).toFixed(2)}</span>
+                  <span>${(product.latest_price * quantity).toFixed(2)}</span>
                   <button
                     onClick={() => removeFromCart(productId)}
                     className="bb-sm-remove-button ml-2"
@@ -811,7 +813,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 {Object.values(cart)
                   .reduce(
                     (sum, { product, quantity }) =>
-                      sum + product.price * quantity,
+                      sum + product.latest_price * quantity,
                     0
                   )
                   .toFixed(2)}
@@ -828,7 +830,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 {Object.values(cart)
                   .reduce(
                     (sum, { product, quantity }) =>
-                      sum + product.price * quantity,
+                      sum + product.latest_price * quantity,
                     0
                   )
                   .toFixed(2)}
@@ -872,7 +874,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     <span>
                       {product.product_name} (x{quantity})
                     </span>
-                    <span>${(product.price * quantity).toFixed(2)}</span>
+                    <span>${(product.latest_price * quantity).toFixed(2)}</span>
                   </div>
                 )
               )}
@@ -884,7 +886,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 {Object.values(cart)
                   .reduce(
                     (sum, { product, quantity }) =>
-                      sum + product.price * quantity,
+                      sum + product.latest_price * quantity,
                     0
                   )
                   .toFixed(2)}
@@ -1001,7 +1003,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   >
                     {product.product_name}
                   </h3>
-                  <p className="text-sm">${product.price?.toFixed(2)}</p>
+                  <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
                   <p className="text-sm mt-2">{product.description}</p>
                   {cart[product.id] ? (
                     <div className="bb-sm-quantity-selector text-md">
@@ -1074,28 +1076,29 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           />
         </div>
         <div className="flex flex-row justify-between gap-2 pb-2">
-          <h3 className="font-bold">{product.product_name}</h3>
-          <p className="price">${product.price?.toFixed(2)}</p>
+          <h3 className="font-bold">{product.raw_product_name}</h3>
+          <p className="price">${product.latest_price?.toFixed(2)}</p>
         </div>
-        <p className="pb-2">{product.description}</p>
 
         <div className="flex flex-row justify-around gap-2 pb-2 bb-sm-data-container">
-          {product.thc && (
+          {product.percentage_thc && (
             <div className="flex flex-col justify-between gap-2 pb-2 text-center">
               <span className="font-bold">THC</span>
-              <span className="text-md">{product.thc}</span>
+              <span className="text-md">{product.percentage_thc}</span>
             </div>
           )}
-          {product.cbd && (
+          {product.percentage_cbd && (
             <div className="flex flex-col justify-between gap-2 pb-2 text-center">
               <span className="font-bold">CBD</span>
-              <span className="text-md">{product.cbd}</span>
+              <span className="text-md">{product.percentage_cbd}</span>
             </div>
           )}
-          {product.effects && (
+          {product.product_tags && (
             <div className="flex flex-col justify-between gap-2 pb-2 text-center">
               <span className="font-bold">Effects</span>
-              <span className="text-md">{product.effects?.join(", ")}</span>
+              <span className="text-md">
+                {product.product_tags?.join(", ")}
+              </span>
             </div>
           )}
         </div>

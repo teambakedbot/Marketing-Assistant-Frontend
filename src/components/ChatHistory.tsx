@@ -3,24 +3,7 @@ import ReactMarkdown from "react-markdown";
 import loadingIcon from "/images/loading-spinner-white.gif";
 import { FaThumbsUp, FaThumbsDown, FaRedo, FaCopy } from "react-icons/fa";
 import ProductCard from "./ProductCard";
-
-interface Product {
-  id: string;
-  product_name: string;
-  brand: string | null;
-  category: string;
-  image_url: string;
-  description: string | null;
-  price: number;
-  thc: string;
-  cbd: string;
-  strain_type: string | null;
-  effects: string[] | null;
-  flavors: string[] | null;
-  variations: string;
-  display_weight: string;
-  brand_name: string;
-}
+import { Product } from "../views/ChatWidget/api/renameChat";
 
 interface ChatHistoryProps {
   chatHistory: any[];

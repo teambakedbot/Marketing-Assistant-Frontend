@@ -4,20 +4,41 @@ import { ThemeSettings } from "../settings";
 
 export interface Product {
   id: string;
-  product_name: string;
-  brand: string | null;
-  category: string;
-  image_url: string;
-  description: string | null;
-  price: number;
-  thc: string;
-  cbd: string;
-  strain_type: string | null;
-  effects: string[] | null;
-  flavors: string[] | null;
-  variations: string;
-  display_weight: string;
+  cann_sku_id: string;
   brand_name: string;
+  brand_id: number;
+  url: string;
+  image_url: string;
+  raw_product_name: string;
+  product_name: string;
+  raw_weight_string: string;
+  display_weight: string;
+  raw_product_category: string;
+  category: string;
+  raw_subcategory: string;
+  subcategory: string;
+  product_tags: string[];
+  percentage_thc: number;
+  percentage_cbd: number;
+  mg_thc: number;
+  mg_cbd: number;
+  quantity_per_package: number;
+  medical: boolean;
+  recreational: boolean;
+  latest_price: number;
+  menu_provider: string;
+}
+
+export interface ProductResponse {
+  products: Product[];
+  pagination: {
+    total: number;
+    current_page: number;
+    total_pages: number;
+    per_page: number;
+    next_page?: number;
+    prev_page?: number;
+  };
 }
 
 export const renameChat = async (

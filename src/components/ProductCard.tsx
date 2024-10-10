@@ -27,33 +27,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <div className="bb-sm-product-info">
         <h3 className="bb-sm-product-name">{product.product_name}</h3>
         <p className="bb-sm-product-category">{product.category}</p>
-        {product.brand_name && (
-          <p className="bb-sm-product-brand">{product.brand_name}</p>
-        )}
-        <p className="bb-sm-product-price">${product.price.toFixed(2)}</p>
-        {product.display_weight && (
-          <p className="bb-sm-product-weight">{product.display_weight}</p>
-        )}
-        {(product.thc || product.cbd) && (
-          <p className="bb-sm-product-cannabinoids">
-            {product.thc && `THC: ${product.thc}`}
-            {product.thc && product.cbd && " | "}
-            {product.cbd && `CBD: ${product.cbd}`}
-          </p>
-        )}
+        <p className="bb-sm-product-brand">{product.brand_name}</p>
+        <p className="bb-sm-product-price">
+          ${product.latest_price.toFixed(2)}
+        </p>
+        <p className="bb-sm-product-weight">{product.display_weight}</p>
+        <p className="bb-sm-product-cannabinoids">
+          THC: {product.percentage_thc.toFixed(2)}% | CBD:{" "}
+          {product.percentage_cbd.toFixed(2)}%
+        </p>
       </div>
       {allowCart &&
-        (cart[product.id] ? (
+        (cart[product.cann_sku_id] ? (
           <div className="bb-sm-quantity-selector text-md">
             <button
-              onClick={() => updateQuantity(product.id, -1)}
+              onClick={() => updateQuantity(product.cann_sku_id, -1)}
               className="bb-sm-quantity-button"
             >
               <FaMinus size={10} />
             </button>
-            <span className="mx-2">{cart[product.id].quantity}</span>
+            <span className="mx-2">{cart[product.cann_sku_id].quantity}</span>
             <button
-              onClick={() => updateQuantity(product.id, 1)}
+              onClick={() => updateQuantity(product.cann_sku_id, 1)}
               className="bb-sm-quantity-button"
             >
               <FaPlus size={10} />

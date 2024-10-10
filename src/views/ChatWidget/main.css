@@ -698,6 +698,7 @@
 
 .bb-sm-product-grid {
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .bb-sm-product-item {
