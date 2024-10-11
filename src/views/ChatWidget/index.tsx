@@ -625,8 +625,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       const response = await axios.get<ProductResponse>(
         `${BASE_URL}/products?page=${page}&states=michigan`
       );
-      console.log(response.data);
-      const productsData = response.data.products;
+      const productsData = response.data.products.flatMap(
+        (item) => item.products
+      );
       setProducts(productsData);
       setTotalPages(response.data.pagination.total_pages);
       setTotalProducts(response.data.pagination.total);
@@ -651,7 +652,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       const response = await axios.get(
         `${BASE_URL}/products/search?query=${searchQuery}&states=michigan`
       );
-      setProducts(response.data.products);
+      const productsData = response.data.products.flatMap(
+        (item) => item.products
+      );
+      setProducts(productsData);
       setTotalPages(response.data.pagination.total_pages);
       setTotalProducts(response.data.pagination.total);
       setCurrentPage(page);

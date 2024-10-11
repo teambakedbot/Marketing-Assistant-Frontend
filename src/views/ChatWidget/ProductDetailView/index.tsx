@@ -21,11 +21,12 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product }) => {
       </p>
       <p className="bb-sm-product-weight">{product.display_weight}</p>
       <p className="bb-sm-product-cannabinoids">
-        THC: {product.percentage_thc.toFixed(2)}% | CBD:{" "}
-        {product.percentage_cbd.toFixed(2)}%
+        {product.percentage_thc && `THC: ${product.percentage_thc.toFixed(2)}%`}
+        {product.percentage_thc && product.percentage_cbd && " | "}
+        {product.percentage_cbd && `CBD: ${product.percentage_cbd.toFixed(2)}%`}
       </p>
       <p className="bb-sm-product-tags">
-        Tags: {product.product_tags.join(", ")}
+        Tags: {product.product_tags?.join(", ")}
       </p>
       <a href={product.url} target="_blank" rel="noopener noreferrer">
         View on website
