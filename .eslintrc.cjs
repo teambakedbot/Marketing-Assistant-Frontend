@@ -17,5 +17,6 @@ module.exports = {
       { allowConstantExport: true },
     ],
     "no-unused-vars": "off",
+    "no-trailing-spaces": "off",
   },
 };

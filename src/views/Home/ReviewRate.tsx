@@ -1,11 +1,6 @@
 /* eslint-disable prefer-const */
 
-interface ReviewRateProps {
-   icon: string;
-   value: string;
-   content: string;
-   color?: "success" | "primary" | "error" | "dark" | "info";
-}
+import { ReviewRateProps } from "../../models/ReviewRateModel";
 function ReviewRate(props: ReviewRateProps) {
    const {icon, value, content, color = "success"} = props;
 

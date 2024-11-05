@@ -1,14 +1,35 @@
 import { Link } from "react-router-dom";
 import Conversations from "./Conversations";
 import { useRef } from "react";
+import useAuth from "../../hooks/useAuth";
 import { DocumentUpload } from "iconsax-react";
-
+import { Chats } from "../../models/ChatModels";
+import { useState, useEffect } from "react";
+import { memo } from "react";
 interface ProfileProps {
   onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  chats: any[];
+  loadChatHistory: (chatId: string) => void;
+  activeChatId: string | null;
 }
 
-function Profile({ onFileUpload }: ProfileProps) {
+const Profile = memo(function Profile({
+  onFileUpload,
+  chats,
+  loadChatHistory,
+  activeChatId,
+}: ProfileProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { displayName, photoURL, user } = useAuth();
+  const [userPhoto, setUserPhoto] = useState<string>(
+    "/images/person-image.png"
+  );
+
+  useEffect(() => {
+    if (photoURL) {
+      setUserPhoto(photoURL);
+    }
+  }, [photoURL]);
 
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -23,14 +44,18 @@ function Profile({ onFileUpload }: ProfileProps) {
         <img
           className="w-[120px] md:w-[150px]"
           src="/images/bakedBot_logo.png"
-          alt=""
+          alt="BakedBot Logo"
         />
       </Link>
       <div className="text-center my-[15px] md:mb-[50px] font-playfair-display font-bold">
         Cultivating Unforgettable Experiences
       </div>
 
-      <Conversations />
+      <Conversations
+        chats={chats}
+        loadChatHistory={loadChatHistory}
+        activeChatId={activeChatId}
+      />
       {/* <p className="medium-gray font-istok-web text-base text-center font-semibold py-1 rounded-2xl">
         Calling Smokey to send an SMS
       </p> */}
@@ -55,6 +80,6 @@ function Profile({ onFileUpload }: ProfileProps) {
       </div>
     </div>
   );
-}
+});
 
 export default Profile;

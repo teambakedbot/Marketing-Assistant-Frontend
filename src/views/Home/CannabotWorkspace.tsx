@@ -1,53 +1,70 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import SimpleBar from "simplebar-react";
 import ReactMarkdown from "react-markdown";
 import "simplebar-react/dist/simplebar.min.css";
-import receiverIcon from "/images/receiver.jpeg";
+import botIcon from "/images/receiver.jpeg";
 import receiverIcon2 from "/images/receiver2.jpeg";
 import "../../styles/theme.css";
+import ChatHistory from "../../components/ChatHistory";
 import useAuth from "../../hooks/useAuth";
+import loadingIcon from "/images/loading-spinner-white.gif";
+import { CartContext } from "../ChatWidget/CartContext";
+import { Product } from "../ChatWidget/api/renameChat";
 
 interface CannabotWorkspaceProps {
-  chatHistory: string[];
+  chatHistory: { type: string; content: string; message_id: string }[];
   voiceType: string;
+  loading: boolean;
 }
 
-function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
+function CannabotWorkspace({
+  chatHistory,
+  voiceType,
+  loading,
+}: CannabotWorkspaceProps) {
   const [activeTab, setActiveTab] = useState("Chat");
   const { displayName, photoURL, user } = useAuth();
-
+  const { cart, addToCart, updateQuantity, removeFromCart, handleCheckout } =
+    useContext(CartContext)!;
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+  const handleFeedback = (
+    message_id: string,
+    feedbackType: "like" | "dislike"
+  ) => {
+    console.log(
+      `Feedback: ${feedbackType} for message at index: ${message_id}`
+    );
+  };
+
+  const handleRetry = (message_id: string) => {
+    console.log(`Retrying message at index: ${message_id}`);
+  };
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+  };
 
   const userPhoto = photoURL || "/images/person-image.png";
   const renderContent = () => {
     switch (activeTab) {
       case "Chat":
         return (
-          <div className="text-[#110F0F] text-xl font-istok-web max-h-[55vh] overflow-y-auto">
-            {chatHistory.map((message, index) => (
-              <div className="flex gap-2 mb-4" key={`chat-message-${index}`}>
-                <img
-                  src={index % 2 === 0 ? receiverIcon : userPhoto}
-                  className="w-8 h-8 rounded-full md:w-10 md:h-10"
-                  alt={index % 2 === 0 ? "Receiver Icon" : "BakedBot Icon"}
-                />
-                <div
-                  className={`${
-                    index % 2 === 0 ? "bg-[#22AD89]" : "bg-[#23504A]"
-                  } rounded-md py-2 px-4`}
-                >
-                  <p className="text-white text-base md:text-lg">
-                    <ReactMarkdown>{message}</ReactMarkdown>
-                  </p>
-                </div>
-              </div>
-            ))}
-            <div ref={chatEndRef} />
+          <div className="text-[#110F0F] text-xl font-istok-web max-h-[55vh] w-full overflow-y-auto">
+            <ChatHistory
+              cart={cart}
+              updateQuantity={updateQuantity}
+              onAddToCart={handleAddToCart}
+              chatHistory={chatHistory}
+              loading={loading}
+              onFeedback={handleFeedback}
+              onRetry={handleRetry}
+              chatEndRef={chatEndRef}
+            />
           </div>
         );
       case "Goals":
@@ -83,7 +100,7 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatHistory]);
+  }, [chatHistory, loading]);
 
   return (
     <div className="h-full">
@@ -108,7 +125,7 @@ function CannabotWorkspace({ chatHistory, voiceType }: CannabotWorkspaceProps) {
             </button>
             <button
               onClick={() => handleTabClick("SMS")}
-              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm vibrant-green"
+              className="flex-1 py-2 lg:py-2 lg:text-lg text-sm vibrant-green-background"
             >
               SMS
             </button>

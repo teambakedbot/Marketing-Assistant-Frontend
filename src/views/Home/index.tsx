@@ -1,65 +1,19 @@
-import { IoStopOutline } from "react-icons/io5";
-import { LuPlay } from "react-icons/lu";
+import { useRef, useState, useEffect, useCallback } from "react";
 import CannabotWorkspace from "./CannabotWorkspace";
-import { useRef, useState, useEffect } from "react";
+import Profile from "./Profile";
+import Swal from "sweetalert2";
 import Papa from "papaparse";
+import axios from "axios";
+import useAuth from "../../hooks/useAuth";
+import { Customer } from "../../models/CustomerModel";
+import { ChatEntry, Chats } from "../../models/ChatModels";
 import "../../styles/main.css";
 import "../../styles/theme.css";
-import Profile from "./Profile";
-import axios from "axios";
-import Swal from "sweetalert2";
-
-const marketingSite = [
-  {
-    icon: "/images/image-logo.png",
-    title: "Start",
-    type: "sms",
-    content: (
-      <>
-        SMS <br /> Marketing
-      </>
-    ),
-  },
-  {
-    icon: "/images/image-logo.png",
-    title: "Start",
-    type: "email",
-    content: (
-      <>
-        Email <br /> Marketing
-      </>
-    ),
-  },
-  {
-    icon: "/images/image-logo.png",
-    title: "Create",
-    type: "blog",
-    content: (
-      <>
-        Marketing <br /> Content
-      </>
-    ),
-  },
-  {
-    icon: "/images/image-logo.png",
-    title: "Launch",
-    type: "",
-    content: (
-      <>
-        Integrated <br /> Campaign
-      </>
-    ),
-    popup: "Coming Soon!",
-  },
-];
-
-interface Customer {
-  "Customer Name": string;
-  [key: string]: unknown;
-}
+import { BASE_URL } from "../../utils/api";
 
 function Home() {
   const [prompts, setPrompts] = useState<string>("");
+  const { displayName, photoURL, user } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [voiceType, setVoiceType] = useState<string>("pops");
   const promptsRow = prompts.split("\n").length;
@@ -69,29 +23,125 @@ function Home() {
   const [messages, setMessages] = useState<string[]>([
     "Hi, Brandon. Welcome Back",
   ]);
-  const [chatHistory, setChatHistory] = useState<string[]>([
-    voiceType === "normal"
-      ? "Hey, how can I help?"
-      : `Whassup, whassup! It's ${capitalizeFirstLetter(
-          voiceType
-        )}, baby! How can I help you today?`,
+  const [chatId, setChatId] = useState<string>("");
+  const [chatName, setChatName] = useState<string>("");
+  const [chats, setChats] = useState<Chats[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatEntry[]>([
+    {
+      message_id: "1",
+      type: "ai",
+      content:
+        voiceType === "normal"
+          ? "Hey, how can I help?"
+          : `Whassup, whassup! It's ${capitalizeFirstLetter(
+              voiceType
+            )}, baby! How can I help you today?`,
+    },
   ]);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
 
   const setAllCustomerSelected = () => {
     setCustomerSelected(customers);
   };
 
-  function playHandler() {
-    if (!prompts) return;
-    setLoading(true);
+  const loadChatHistory = useCallback(
+    async (id: string) => {
+      if (!id) return;
+      setChatHistory([
+        {
+          message_id: "1",
+          type: "ai",
+          content: "Loading chat history...",
+        },
+      ]);
+      try {
+        setLoading(true);
+        const token = await user?.getIdToken();
+        if (!token) {
+          console.error("Token is not available.");
+          return;
+        }
+        const response = await axios.get(
+          `${BASE_URL}/chat/messages?chat_id=${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const sortedMessages = response.data.messages.sort((a, b) => {
+          const dateA = new Date(a.timestamp);
+          const dateB = new Date(b.timestamp);
+          return dateA.getTime() - dateB.getTime();
+        });
+        setChatHistory(sortedMessages);
+        setChatId(id);
+        setActiveChatId(id);
+      } catch (error) {
+        console.error("Error fetching chat messages:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user]
+  );
+
+  const fetchUserChats = useCallback(async () => {
+    try {
+      const token = await user?.getIdToken();
+      const response = await axios.get(`${BASE_URL}/user/chats`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.chats) {
+        const chats = response.data.chats;
+        if (chats.length > 0) {
+          setChats(chats);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user chats:", error);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserChats();
+    }
+  }, [user, fetchUserChats]);
+  async function playHandler() {
+    if (!prompts || loading) return;
+    setChatHistory((prevHistory) => [
+      ...prevHistory,
+      { message_id: "1", type: "human", content: prompts },
+      { message_id: "2", type: "ai", content: "loading" },
+    ]);
     setPrompts("");
+    setLoading(true);
+    const token = await user?.getIdToken();
     axios
       .post(
-        "https://cannabis-marketing-chatbot-224bde0578da.herokuapp.com/chat",
-        { message: prompts, voice_type: voiceType }
+        `${BASE_URL}/chat`,
+        { message: prompts, voice_type: voiceType, chat_id: chatId },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
       )
       .then((res) => {
-        setChatHistory((prev) => [...prev, prompts, res?.data?.response]);
+        setChatHistory((prevHistory) => {
+          const updatedHistory = [...prevHistory];
+          updatedHistory[updatedHistory.length - 1] = res?.data;
+          return updatedHistory;
+        });
+        if (res?.data?.chat_id) {
+          if (!chatId) {
+            setChatId(res?.data?.chat_id);
+            fetchUserChats();
+          } else if (chatId !== res?.data?.chat_id) {
+            setChatId(res?.data?.chat_id);
+          }
+        }
       })
       .catch((err) => {
         Swal.fire({
@@ -100,7 +150,6 @@ function Home() {
         });
       })
       .finally(() => {
-        // setMessages([...messages, prompts]);
         setLoading(false);
       });
   }
@@ -174,7 +223,11 @@ function Home() {
         if (done) break;
         setChatHistory((prev) => [
           ...prev,
-          decoder.decode(value, { stream: true }),
+          {
+            message_id: "3",
+            type: "AI",
+            content: decoder.decode(value, { stream: true }),
+          },
         ]);
       }
     }
@@ -192,9 +245,14 @@ function Home() {
   };
 
   return (
-    <div className="lg:flex">
+    <div className="lg:flex h-screen overflow-hidden">
       <div className="dark-green-background-2 px-4 pt-14 pb-5 min-h-screen overflow-y-auto w-full lg:w-[20%] hidden sm:block">
-        <Profile onFileUpload={showCustomers} />
+        <Profile
+          onFileUpload={showCustomers}
+          chats={chats}
+          loadChatHistory={loadChatHistory}
+          activeChatId={activeChatId}
+        />
       </div>
       <div className="dark-green-background-3 min-h-screen w-full overflow-hidden">
         <div className="xl:h-[75%] lg:grid grid-cols-1 lg:grid-cols-2 flex-grow gap-3 py-9 px-3">
@@ -210,7 +268,7 @@ function Home() {
                 </button>
                 <button
                   onClick={() => typeBtnClick("sms")}
-                  className="vibrant-green px-3 py-2 font-istok-web font-medium lg:text-lg text-sm rounded-lg "
+                  className="vibrant-green-background px-3 py-2 font-istok-web font-medium lg:text-lg text-sm rounded-lg "
                 >
                   Run SMS
                 </button>
@@ -251,12 +309,12 @@ function Home() {
                   </p>
                 </div>
               ))}
-              {loading && <p>Loading...</p>}
             </div>
           </div>
           {/* right panel */}
           <div id="right_panel" className="max-h-[70vh] mt-5 md:m-0 box-border">
             <CannabotWorkspace
+              loading={loading}
               chatHistory={chatHistory}
               voiceType={voiceType}
             />
@@ -284,21 +342,17 @@ function Home() {
           </div> */}
           <div className="flex w-[100%] mt-20 lg:w-[80%] [@media(min-width:600px)]:flex-row flex-col items-center [@media(min-width:600px)]:gap-5 gap-3 px-4 [@media(min-width:1440px)]:px-11 mb-7 flex-grow">
             <textarea
-              disabled={loading}
-              placeholder={
-                loading
-                  ? "Loading..."
-                  : `Chat with ${
-                      voiceType === "normal"
-                        ? "BakedBot"
-                        : capitalizeFirstLetter(voiceType)
-                    } or Enter your goal`
-              }
+              placeholder={`Chat with ${
+                voiceType === "normal"
+                  ? "BakedBot"
+                  : capitalizeFirstLetter(voiceType)
+              } or Enter your goal`}
               className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web placeholder-white dark-green-background-4 rounded-lg flex-grow focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 placeholder:text-left resize-none"
               onChange={(e) => {
                 setPrompts(e.target.value);
-                e.target.style.height = "auto";
-                e.target.style.height = `${e.target.scrollHeight}px`;
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = "auto";
+                target.style.height = `${target.scrollHeight}px`;
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -314,11 +368,16 @@ function Home() {
               onChange={(e) => {
                 setVoiceType(e.target.value);
                 setChatHistory([
-                  e.target.value === "normal"
-                    ? "Hey, how can i help?"
-                    : `Whassup, whassup! It's ${capitalizeFirstLetter(
-                        e.target.value
-                      )}, baby! How can I help you today?`,
+                  {
+                    message_id: "1",
+                    type: "ai",
+                    content:
+                      e.target.value === "normal"
+                        ? "Hey, how can I help?"
+                        : `Whassup, whassup! It's ${capitalizeFirstLetter(
+                            e.target.value
+                          )}, baby! How can I help you today?`,
+                  },
                 ]);
               }}
               className="text-xl md:py-[20px] lg:py-[20px] py-1 lg:py-0 italic font-istok-web dark-green-background-4 white rounded-lg focus:outline-0 [@media(min-width:600px)]:w-auto w-full px-4 appearance-none"
@@ -329,7 +388,7 @@ function Home() {
             </select>
             <button
               onClick={playHandler}
-              className="text-[20px] font-istok-web italic dark-green-background-1 white py-3 px-11 rounded-lg [@media(min-width:600px)]:w-auto w-full"
+              className="text-[20px] font-istok-web italic vibrant-green-background white py-3 px-11 rounded-lg [@media(min-width:600px)]:w-auto w-full"
             >
               Send
             </button>
