@@ -1,62 +1,351 @@
 {
-  "products": {
-    "data": [
-      {
-        "retailer_id": "1234",
-        "meta_sku": "SKU-12345",
-        "products": [
-          {
-            "cann_sku_id": "123456",
-            "brand_name": "Brand X",
-            "raw_product_name": "Product X",
-            "product_name": "Product X",
-            "raw_weight_string": "1g",
-            "display_weight": "1g",
-            "raw_product_category": "Premium",
-            "category": "Grade A",
-            "raw_subcategory": "Type A",
-            "subcategory": "Premium",
-            "product_tags": ["Premium", "Best Seller"],
-            "percentage_thc": 20.5,
-            "percentage_cbd": 0.5,
-            "mg_thc": 205,
-            "mg_cbd": 5,
-            "quantity_per_package": 1,
-            "medical": true,
-            "recreational": false,
-            "latest_price": 10.99,
-            "menu_provider": "Provider A"
-          },
-          {
-            "cann_sku_id": "123457",
-            "brand_name": "Brand Y",
-            "raw_product_name": "Product Y",
-            "product_name": "Product Y",
-            "raw_weight_string": "3.5g",
-            "display_weight": "3.5g",
-            "raw_product_category": "Standard",
-            "category": "Grade B",
-            "raw_subcategory": "Type B",
-            "subcategory": "Standard",
-            "product_tags": ["Standard", "New"],
-            "percentage_thc": 18.5,
-            "percentage_cbd": 1.0,
-            "mg_thc": 185,
-            "mg_cbd": 10,
-            "quantity_per_package": 1,
-            "medical": true,
-            "recreational": true,
-            "latest_price": 25.99,
-            "menu_provider": "Provider B"
-          }
-        ]
-      }
+    "products": [
+        {
+            "meta_sku": "sample-meta-sku-1",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-1a",
+                    "brand_name": "Sample Brand A",
+                    "url": "https://example.com/product-a",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product A - 5g",
+                    "product_name": "Sample Product A",
+                    "display_weight": "5.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag1", "Tag2"],
+                    "latest_price": 10.0,
+                    "medical": false,
+                    "recreational": true
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-1b",
+                    "brand_name": "Sample Brand A",
+                    "url": "https://example.com/product-a",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product A - 10g",
+                    "product_name": "Sample Product A",
+                    "display_weight": "10.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag1"],
+                    "latest_price": 18.0,
+                    "medical": false,
+                    "recreational": true
+                }
+            ]
+        },
+        {
+            "meta_sku": "sample-meta-sku-2",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-2a",
+                    "brand_name": "Sample Brand B",
+                    "url": "https://example.com/product-b",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product B - 3.5g",
+                    "product_name": "Sample Product B",
+                    "display_weight": "3.5g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag2"],
+                    "latest_price": 12.0,
+                    "medical": true,
+                    "recreational": false
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-2b",
+                    "brand_name": "Sample Brand B",
+                    "url": "https://example.com/product-b",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product B - 7g",
+                    "product_name": "Sample Product B",
+                    "display_weight": "7.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag2", "Tag3"],
+                    "latest_price": 20.0,
+                    "medical": true,
+                    "recreational": false
+                }
+            ]
+        },
+        {
+            "meta_sku": "sample-meta-sku-3",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-3a",
+                    "brand_name": "Sample Brand C",
+                    "url": "https://example.com/product-c",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product C - 1g",
+                    "product_name": "Sample Product C",
+                    "display_weight": "1.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag1"],
+                    "latest_price": 5.0,
+                    "medical": false,
+                    "recreational": true
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-3b",
+                    "brand_name": "Sample Brand C",
+                    "url": "https://example.com/product-c",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product C - 2g",
+                    "product_name": "Sample Product C",
+                    "display_weight": "2.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag1", "Tag4"],
+                    "latest_price": 9.0,
+                    "medical": false,
+                    "recreational": true
+                }
+            ]
+        },
+        {
+            "meta_sku": "sample-meta-sku-4",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-4a",
+                    "brand_name": "Sample Brand D",
+                    "url": "https://example.com/product-d",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product D - 6g",
+                    "product_name": "Sample Product D",
+                    "display_weight": "6.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag3"],
+                    "latest_price": 15.0,
+                    "medical": false,
+                    "recreational": true
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-4b",
+                    "brand_name": "Sample Brand D",
+                    "url": "https://example.com/product-d",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product D - 12g",
+                    "product_name": "Sample Product D",
+                    "display_weight": "12.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag3", "Tag5"],
+                    "latest_price": 25.0,
+                    "medical": false,
+                    "recreational": true
+                }
+            ]
+        },
+        {
+            "meta_sku": "sample-meta-sku-5",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-5a",
+                    "brand_name": "Sample Brand E",
+                    "url": "https://example.com/product-e",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product E - 4g",
+                    "product_name": "Sample Product E",
+                    "display_weight": "4.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag1"],
+                    "latest_price": 8.0,
+                    "medical": true,
+                    "recreational": false
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-5b",
+                    "brand_name": "Sample Brand E",
+                    "url": "https://example.com/product-e",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product E - 8g",
+                    "product_name": "Sample Product E",
+                    "display_weight": "8.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag1", "Tag6"],
+                    "latest_price": 14.0,
+                    "medical": true,
+                    "recreational": false
+                }
+            ]
+        },
+        {
+            "meta_sku": "sample-meta-sku-6",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-6a",
+                    "brand_name": "Sample Brand F",
+                    "url": "https://example.com/product-f",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product F - 9g",
+                    "product_name": "Sample Product F",
+                    "display_weight": "9.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag4"],
+                    "latest_price": 22.0,
+                    "medical": false,
+                    "recreational": true
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-6b",
+                    "brand_name": "Sample Brand F",
+                    "url": "https://example.com/product-f",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product F - 15g",
+                    "product_name": "Sample Product F",
+                    "display_weight": "15.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag4", "Tag5"],
+                    "latest_price": 30.0,
+                    "medical": false,
+                    "recreational": true
+                }
+            ]
+        },
+        {
+            "meta_sku": "sample-meta-sku-7",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-7a",
+                    "brand_name": "Sample Brand G",
+                    "url": "https://example.com/product-g",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product G - 2g",
+                    "product_name": "Sample Product G",
+                    "display_weight": "2.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag2"],
+                    "latest_price": 7.0,
+                    "medical": false,
+                    "recreational": true
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-7b",
+                    "brand_name": "Sample Brand G",
+                    "url": "https://example.com/product-g",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product G - 5g",
+                    "product_name": "Sample Product G",
+                    "display_weight": "5.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag2", "Tag3"],
+                    "latest_price": 12.0,
+                    "medical": false,
+                    "recreational": true
+                }
+            ]
+        },
+        {
+            "meta_sku": "sample-meta-sku-8",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-8a",
+                    "brand_name": "Sample Brand H",
+                    "url": "https://example.com/product-h",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product H - 1g",
+                    "product_name": "Sample Product H",
+                    "display_weight": "1.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag3"],
+                    "latest_price": 4.0,
+                    "medical": true,
+                    "recreational": false
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-8b",
+                    "brand_name": "Sample Brand H",
+                    "url": "https://example.com/product-h",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product H - 3g",
+                    "product_name": "Sample Product H",
+                    "display_weight": "3.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag3", "Tag4"],
+                    "latest_price": 9.0,
+                    "medical": true,
+                    "recreational": false
+                }
+            ]
+        },
+        {
+            "meta_sku": "sample-meta-sku-9",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-9a",
+                    "brand_name": "Sample Brand I",
+                    "url": "https://example.com/product-i",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product I - 7g",
+                    "product_name": "Sample Product I",
+                    "display_weight": "7.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag5"],
+                    "latest_price": 19.0,
+                    "medical": false,
+                    "recreational": true
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-9b",
+                    "brand_name": "Sample Brand I",
+                    "url": "https://example.com/product-i",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product I - 14g",
+                    "product_name": "Sample Product I",
+                    "display_weight": "14.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag5", "Tag6"],
+                    "latest_price": 35.0,
+                    "medical": false,
+                    "recreational": true
+                }
+            ]
+        },
+        {
+            "meta_sku": "sample-meta-sku-10",
+            "retailer_id": "8266",
+            "products": [
+                {
+                    "cann_sku_id": "sample-cann-sku-10a",
+                    "brand_name": "Sample Brand J",
+                    "url": "https://example.com/product-j",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product J - 10g",
+                    "product_name": "Sample Product J",
+                    "display_weight": "10.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag6"],
+                    "latest_price": 23.0,
+                    "medical": true,
+                    "recreational": false
+                },
+                {
+                    "cann_sku_id": "sample-cann-sku-10b",
+                    "brand_name": "Sample Brand J",
+                    "url": "https://example.com/product-j",
+                    "image_url": "https://via.placeholder.com/150",
+                    "raw_product_name": "Sample Product J - 20g",
+                    "product_name": "Sample Product J",
+                    "display_weight": "20.0g",
+                    "category": "Sample Category",
+                    "product_tags": ["Tag6", "Tag7"],
+                    "latest_price": 45.0,
+                    "medical": true,
+                    "recreational": false
+                }
+            ]
+        }
     ],
     "pagination": {
-      "total_records": 1000,
-      "current_page": 1,
-      "total_pages": 10,
-      "next_page": 2
+        "total": 100,
+        "count": 20,
+        "per_page": 10,
+        "current_page": 1,
+        "total_pages": 10
     }
-  }
 }
