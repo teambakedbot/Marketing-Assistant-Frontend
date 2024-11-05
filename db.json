@@ -179,72 +179,11 @@
                     "id": "sample-cann-sku-3b"
                 }
             ]
-        },
-        {
-            "meta_sku": "sample-meta-sku-4",
-            "retailer_id": "8266",
-            "products": [
-                {
-                    "cann_sku_id": "sample-cann-sku-4a",
-                    "brand_name": "Sample Brand D",
-                    "brand_id": 4,
-                    "url": "https://example.com/product-d",
-                    "image_url": "https://via.placeholder.com/150",
-                    "raw_product_name": "Sample Product D - 6g",
-                    "product_name": "Sample Product D",
-                    "raw_weight_string": "6g",
-                    "display_weight": "6.0g",
-                    "raw_product_category": "Sample Category",
-                    "category": "Sample Category",
-                    "raw_subcategory": "Sample Subcategory",
-                    "subcategory": null,
-                    "product_tags": ["Tag3"],
-                    "percentage_thc": 23.0,
-                    "percentage_cbd": 0.1,
-                    "mg_thc": 138,
-                    "mg_cbd": 6,
-                    "quantity_per_package": 1,
-                    "medical": false,
-                    "recreational": true,
-                    "latest_price": 15.0,
-                    "menu_provider": "Weedmaps",
-                    "updated_at": "2024-10-10T21:25:24.227000Z",
-                    "id": "sample-cann-sku-4a"
-                },
-                {
-                    "cann_sku_id": "sample-cann-sku-4b",
-                    "brand_name": "Sample Brand D",
-                    "brand_id": 4,
-                    "url": "https://example.com/product-d",
-                    "image_url": "https://via.placeholder.com/150",
-                    "raw_product_name": "Sample Product D - 12g",
-                    "product_name": "Sample Product D",
-                    "raw_weight_string": "12g",
-                    "display_weight": "12.0g",
-                    "raw_product_category": "Sample Category",
-                    "category": "Sample Category",
-                    "raw_subcategory": "Sample Subcategory",
-                    "subcategory": null,
-                    "product_tags": ["Tag3", "Tag5"],
-                    "percentage_thc": 21.5,
-                    "percentage_cbd": 0.0,
-                    "mg_thc": 258,
-                    "mg_cbd": 0,
-                    "quantity_per_package": 1,
-                    "medical": false,
-                    "recreational": true,
-                    "latest_price": 25.0,
-                    "menu_provider": "Weedmaps",
-                    "updated_at": "2024-10-10T21:25:24.227000Z",
-                    "id": "sample-cann-sku-4b"
-                }
-            ]
-        },
-        
+        }
     ],
     "pagination": {
         "total": 100,
-        "count": 20,
+        "count": 3,
         "per_page": 10,
         "current_page": 1,
         "total_pages": 10
