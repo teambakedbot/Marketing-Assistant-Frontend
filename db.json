@@ -1,0 +1,62 @@
+{
+  "products": {
+    "data": [
+      {
+        "retailer_id": "1234",
+        "meta_sku": "SKU-12345",
+        "products": [
+          {
+            "cann_sku_id": "123456",
+            "brand_name": "Brand X",
+            "raw_product_name": "Product X",
+            "product_name": "Product X",
+            "raw_weight_string": "1g",
+            "display_weight": "1g",
+            "raw_product_category": "Premium",
+            "category": "Grade A",
+            "raw_subcategory": "Type A",
+            "subcategory": "Premium",
+            "product_tags": ["Premium", "Best Seller"],
+            "percentage_thc": 20.5,
+            "percentage_cbd": 0.5,
+            "mg_thc": 205,
+            "mg_cbd": 5,
+            "quantity_per_package": 1,
+            "medical": true,
+            "recreational": false,
+            "latest_price": 10.99,
+            "menu_provider": "Provider A"
+          },
+          {
+            "cann_sku_id": "123457",
+            "brand_name": "Brand Y",
+            "raw_product_name": "Product Y",
+            "product_name": "Product Y",
+            "raw_weight_string": "3.5g",
+            "display_weight": "3.5g",
+            "raw_product_category": "Standard",
+            "category": "Grade B",
+            "raw_subcategory": "Type B",
+            "subcategory": "Standard",
+            "product_tags": ["Standard", "New"],
+            "percentage_thc": 18.5,
+            "percentage_cbd": 1.0,
+            "mg_thc": 185,
+            "mg_cbd": 10,
+            "quantity_per_package": 1,
+            "medical": true,
+            "recreational": true,
+            "latest_price": 25.99,
+            "menu_provider": "Provider B"
+          }
+        ]
+      }
+    ],
+    "pagination": {
+      "total_records": 1000,
+      "current_page": 1,
+      "total_pages": 10,
+      "next_page": 2
+    }
+  }
+}
