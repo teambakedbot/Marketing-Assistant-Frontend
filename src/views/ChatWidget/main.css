@@ -610,7 +610,7 @@
 }
 .bb-sm-bot-message h3,
 .bb-sm-bot-message strong {
-  color: var(--primary-color);
+  color: var(--text-secondary-color);
   font-weight: bold;
   font-size: 1.1em;
 }
