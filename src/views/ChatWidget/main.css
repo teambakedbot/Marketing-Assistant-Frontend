@@ -697,8 +697,13 @@
 }
 
 .bb-sm-product-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  --grid-cols: 2;
+}
+
+@media (min-width: 768px) {
+  .bb-sm-product-grid {
+    --grid-cols: 3;
+  }
 }
 
 .bb-sm-product-item {
@@ -723,7 +728,7 @@
 }
 
 .bb-sm-pagination-button {
-  background-color: var(--surface-color);
+  background-color: var(--primary-color);
   color: var(--text-color);
   border: none;
   border-radius: 50%;
@@ -1064,7 +1069,7 @@
 }
 
 .bb-sm-quantity-button {
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
   color: var(--text-color);
   width: 20px;
   height: 20px;
@@ -1349,4 +1354,8 @@
 
 .bb-sm-scroll-to-bottom:hover {
   opacity: 1;
+}
+.bb-sm-product-card{
+  width: 100%;
+  padding: 0.4rem;
 }

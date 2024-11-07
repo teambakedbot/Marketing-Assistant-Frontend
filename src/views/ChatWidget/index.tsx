@@ -856,16 +856,22 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     const [customerName, setCustomerName] = useState("");
     const [contactMethod, setContactMethod] = useState("email");
     const [contactValue, setContactValue] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
+      setIsLoading(true);
       const contactInfo = {
         [contactMethod]: contactValue,
       };
+
       await handleCheckout(customerName, contactInfo);
+      setIsLoading(false);
       navigateTo("chat");
     };
 
+    const isFormValid =
+      customerName.trim() !== "" && contactValue.trim() !== "";
     return (
       <div className="bb-sm-checkout-view p-4">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -950,9 +956,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           </div>
           <button
             type="submit"
-            className="bb-sm-place-order-button w-full py-2 rounded mt-10 pb-2"
+            disabled={isLoading || !isFormValid}
+            className="bb-sm-place-order-button w-full py-2 rounded mt-10 pb-2 disabled:opacity-50"
           >
-            Place Order
+            {isLoading ? "Placing order..." : "Place Order"}
           </button>
         </form>
       </div>
@@ -960,15 +967,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   };
   const StoreView: React.FC<any> = memo(() => {
     return (
-      <div className="bb-sm-store-view">
-        {/* <div className="bb-sm-filters pt-2 pb-2 color-black">
-        <button className="text-sm">Happy</button>
-        <button className="text-sm">$100-$500</button>
-        <button className="text-sm">All types</button>
-      </div> */}
-        <div className="bb-sm-results-header p-2">
-          <h2>Showing results "{totalProducts}"</h2>
+      <div className="bb-sm-store-view h-full flex flex-col overflow-hidden">
+        <div className="bb-sm-results-header flex justify-between items-center p-4 border-b border-gray-700">
+          <h2 className="text-lg">Showing results "{totalProducts}"</h2>
           <button
+            className="text-sm hover:opacity-80"
             onClick={() => {
               setSearchQuery("");
               fetchProducts();
@@ -977,88 +980,102 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             See all
           </button>
         </div>
+
         {error && (
-          <div
-            className="bb-sm-error-message border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-            role="alert"
-          >
+          <div className="bb-sm-error-message border border-red-400 text-red-700 px-4 py-3 rounded relative m-4">
             <strong className="font-bold">Error:</strong>
             <span className="block sm:inline"> {error}</span>
           </div>
         )}
+
         {isLoading ? (
           <div className="bb-sm-loading-container flex justify-center items-center h-64">
             <Spinner />
           </div>
         ) : (
-          <>
-            <div className="bb-sm-product-grid">
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-3 gap-4">
               {products?.map((product) => (
-                <div className="bb-sm-product-item" key={product.id}>
-                  <img
-                    src={product.image_url}
-                    alt={product.product_name}
-                    className="pb-1 cursor-pointer"
-                    onClick={() => handleProductClick(product)}
-                  />
-                  <h3
-                    className="text-md font-semibold cursor-pointer mt-2"
-                    onClick={() => handleProductClick(product)}
-                  >
-                    {product.product_name}
-                  </h3>
-                  <p className="text-sm">${product.latest_price?.toFixed(2)}</p>
-                  <p className="text-sm mt-2">{product.description}</p>
-                  {cart[product.id] ? (
-                    <div className="bb-sm-quantity-selector text-md">
-                      <button
-                        onClick={() => updateQuantity(product.id, -1)}
-                        className="bb-sm-quantity-button"
-                      >
-                        <FaMinus size={10} />
-                      </button>
-                      <span className="mx-2">{cart[product.id].quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(product.id, 1)}
-                        className="bb-sm-quantity-button"
-                      >
-                        <FaPlus size={10} />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      className="text-md bb-sm-add-to-cart-button p-1 mt-2 align-end"
-                      onClick={() => addToCart(product)}
+                <div
+                  key={product.id}
+                  className="bb-sm-product-item flex flex-col rounded-lg overflow-hidden"
+                >
+                  <div className="relative pt-[100%]">
+                    <img
+                      src={product.image_url}
+                      alt={product.product_name}
+                      className="absolute top-0 left-0 w-full h-full object-cover cursor-pointer"
+                      onClick={() => handleProductClick(product)}
+                    />
+                  </div>
+                  <div className="p-3 flex flex-col flex-1">
+                    <h3
+                      className="text-md font-semibold cursor-pointer mb-1 line-clamp-2"
+                      onClick={() => handleProductClick(product)}
                     >
-                      Add to cart
-                    </button>
-                  )}
+                      {product.product_name}
+                    </h3>
+                    <p className="text-lg font-bold mb-2">
+                      ${product.latest_price?.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-400 mb-3 line-clamp-2">
+                      {product.description}
+                    </p>
+
+                    {cart[product.id] ? (
+                      <div className="bb-sm-quantity-selector flex items-center justify-center gap-3 mt-auto">
+                        <button
+                          onClick={() => updateQuantity(product.id, -1)}
+                          className="bb-sm-quantity-button w-8 h-8 rounded-full flex items-center justify-center"
+                        >
+                          <FaMinus size={10} />
+                        </button>
+                        <span className="text-lg">
+                          {cart[product.id].quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(product.id, 1)}
+                          className="bb-sm-quantity-button w-8 h-8 rounded-full flex items-center justify-center"
+                        >
+                          <FaPlus size={10} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        className="bb-sm-add-to-cart-button w-full py-2 rounded-md mt-auto"
+                        onClick={() => addToCart(product)}
+                      >
+                        Add to cart
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
-            <div className="bb-sm-pagination flex justify-center items-center mt-4">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1 || isLoading}
-                className="bb-sm-pagination-button"
-                aria-label="Previous page"
-              >
-                <FaChevronLeft />
-              </button>
-              <span className="mx-4">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages || isLoading}
-                className="bb-sm-pagination-button"
-                aria-label="Next page"
-              >
-                <FaChevronRight />
-              </button>
-            </div>
-          </>
+          </div>
         )}
+
+        <div className="bb-sm-pagination flex justify-center items-center gap-4 p-4 border-t border-gray-700">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1 || isLoading}
+            className="bb-sm-pagination-button w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-50"
+            aria-label="Previous page"
+          >
+            <FaChevronLeft />
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages || isLoading}
+            className="bb-sm-pagination-button w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-50"
+            aria-label="Next page"
+          >
+            <FaChevronRight />
+          </button>
+        </div>
       </div>
     );
   });
@@ -1125,7 +1142,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           </div>
         ) : (
           <button
-            className="bb-sm-add-to-cart-button p-2 mt-10"
+            className="bb-sm-add-to-cart-button p-2 mt-10 "
             onClick={() => addToCart(product)}
           >
             Add To Cart

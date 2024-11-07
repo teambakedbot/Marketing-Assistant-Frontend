@@ -36,7 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {product.display_weight && (
           <p className="bb-sm-product-weight">{product.display_weight}</p>
         )}
-        {(product.percentage_thc || product.percentage_cbd) && (
+        {/* {(product.percentage_thc || product.percentage_cbd) && (
           <p className="bb-sm-product-cannabinoids">
             {product.percentage_thc &&
               `THC: ${product.percentage_thc.toFixed(2)}%`}
@@ -44,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {product.percentage_cbd &&
               `CBD: ${product.percentage_cbd.toFixed(2)}%`}
           </p>
-        )}
+        )} */}
       </div>
       {allowCart &&
         (cart[product.cann_sku_id] ? (
