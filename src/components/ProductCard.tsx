@@ -12,65 +12,62 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
-  onAddToCart,
   allowCart,
+  onAddToCart,
   cart,
   updateQuantity,
 }) => {
   return (
-    <div className="bb-sm-product-card">
-      <img
-        src={product.image_url}
-        alt={product.product_name}
-        className="bb-sm-product-image"
-      />
-      <div className="bb-sm-product-info">
+    <div className="bb-sm-product-item">
+      <img src={product.image_url} alt={product.product_name} />
+      <div className="bb-sm-product-item-content">
+        {/* {product.brand_name && (
+          <p className="bb-sm-product-brand">{product.brand_name}</p>
+        )} */}
         <h3 className="bb-sm-product-name">{product.product_name}</h3>
         <p className="bb-sm-product-category">{product.category}</p>
-        {product.brand_name && (
-          <p className="bb-sm-product-brand">{product.brand_name}</p>
+
+        <div className="bb-sm-price-weight">
+          <span className="bb-sm-product-price">
+            ${product.latest_price?.toFixed(2)}
+          </span>
+          {product.display_weight && (
+            <span className="bb-sm-product-weight">
+              {" "}
+              • {product.display_weight}
+            </span>
+          )}
+        </div>
+
+        {allowCart && (
+          <>
+            {cart[product.id] ? (
+              <div className="bb-sm-quantity-selector">
+                <button
+                  onClick={() => updateQuantity(product.id, -1)}
+                  className="bb-sm-quantity-button"
+                >
+                  <FaMinus size={8} />
+                </button>
+                <span className="text-sm">{cart[product.id].quantity}</span>
+                <button
+                  onClick={() => updateQuantity(product.id, 1)}
+                  className="bb-sm-quantity-button"
+                >
+                  <FaPlus size={8} />
+                </button>
+              </div>
+            ) : (
+              <button
+                className="bb-sm-add-to-cart-button"
+                onClick={() => onAddToCart(product)}
+              >
+                Add to cart
+              </button>
+            )}
+          </>
         )}
-        <p className="bb-sm-product-price">
-          ${product.latest_price.toFixed(2)}
-        </p>
-        {product.display_weight && (
-          <p className="bb-sm-product-weight">{product.display_weight}</p>
-        )}
-        {/* {(product.percentage_thc || product.percentage_cbd) && (
-          <p className="bb-sm-product-cannabinoids">
-            {product.percentage_thc &&
-              `THC: ${product.percentage_thc.toFixed(2)}%`}
-            {product.percentage_thc && product.percentage_cbd && " | "}
-            {product.percentage_cbd &&
-              `CBD: ${product.percentage_cbd.toFixed(2)}%`}
-          </p>
-        )} */}
       </div>
-      {allowCart &&
-        (cart[product.cann_sku_id] ? (
-          <div className="bb-sm-quantity-selector text-md">
-            <button
-              onClick={() => updateQuantity(product.cann_sku_id, -1)}
-              className="bb-sm-quantity-button"
-            >
-              <FaMinus size={10} />
-            </button>
-            <span className="mx-2">{cart[product.cann_sku_id].quantity}</span>
-            <button
-              onClick={() => updateQuantity(product.cann_sku_id, 1)}
-              className="bb-sm-quantity-button"
-            >
-              <FaPlus size={10} />
-            </button>
-          </div>
-        ) : (
-          <button
-            className="text-md bb-sm-add-to-cart-button p-1 mt-2 align-end"
-            onClick={() => onAddToCart(product)}
-          >
-            Add to cart
-          </button>
-        ))}
     </div>
   );
 };

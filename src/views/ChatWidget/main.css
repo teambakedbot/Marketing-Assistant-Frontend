@@ -707,6 +707,7 @@
 }
 
 .bb-sm-product-item {
+  font-size: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between; /* Ensure space between items */
@@ -1358,4 +1359,71 @@
 .bb-sm-product-card{
   width: 100%;
   padding: 0.4rem;
+}
+
+/* Product grid within chat messages */
+.bb-sm-chat-messages .bb-sm-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.bb-sm-chat-messages .bb-sm-product-item {
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bb-sm-chat-messages .bb-sm-product-item img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+}
+
+.bb-sm-chat-messages .bb-sm-product-item-content {
+  padding: 6px;
+}
+
+.bb-sm-chat-messages .bb-sm-product-name {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bb-sm-chat-messages .bb-sm-product-price,
+.bb-sm-chat-messages .bb-sm-product-weight {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.bb-sm-chat-messages .bb-sm-quantity-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.bb-sm-chat-messages .bb-sm-quantity-button {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--primary-color);
+}
+
+.bb-sm-chat-messages .bb-sm-add-to-cart-button {
+  width: 100%;
+  padding: 4px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: var(--primary-color);
 }
