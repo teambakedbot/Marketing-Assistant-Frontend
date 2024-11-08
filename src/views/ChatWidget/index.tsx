@@ -1162,10 +1162,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   return (
     <div className="bb-sm-chat-widget bb-sm-body">
-      <button className="border-none outline-0" onClick={handleModalBox}>
+      {/* <button className="border-none outline-0" onClick={handleModalBox}>
         <img src={bluntSmokey} className="w-20" alt="Open Chatbot" />
-      </button>
-      {isModalOpen && (
+      </button> */}
+      {true && (
         <div className="absolute right-2 bottom-14 flex justify-center items-center z-50 bb-sm-animate-open">
           <div className="bb-sm-chat-container p-0 pb-2 rounded-lg shadow-lg relative max-h-[calc(100vh-4rem)] overflow-hidden">
             <div className="md:flex md:flex-row flex-col gap-3 h-full max-h-full lg:min-w-[500px]">
