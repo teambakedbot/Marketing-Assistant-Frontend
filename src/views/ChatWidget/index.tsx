@@ -1213,10 +1213,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                         )}
                       </button>
                     </div>
-                    <button
+                    {/* <button
                       className="bb-sm-close-button bb-sm-header-icon"
                       onClick={handleModalBox}
-                    ></button>
+                    ></button> */}
                   </div>
                 </div>
                 {currentView === "store" && <StoreView />}
