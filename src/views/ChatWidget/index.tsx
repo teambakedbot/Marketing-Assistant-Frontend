@@ -994,13 +994,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto p-4">
-            <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-2 gap-4">
               {products?.map((product) => (
                 <div
                   key={product.id}
                   className="bb-sm-product-item flex flex-col rounded-lg overflow-hidden"
                 >
-                  <div className="relative pt-[100%]">
+                  <div className="relative pt-[50%]">
                     <img
                       src={product.image_url}
                       alt={product.product_name}
