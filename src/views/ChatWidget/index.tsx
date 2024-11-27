@@ -1274,7 +1274,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                               <button
                                 className="bb-sm-new-chat-button"
                                 onMouseDown={() =>
-                                  setPrompts("Find new location")
+                                  setPrompts("Show me Product Deals")
                                 }
                                 onClick={() => playHandler()}
                               >
