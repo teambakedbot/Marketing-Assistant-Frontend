@@ -1279,16 +1279,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                                 onClick={() => playHandler()}
                               >
                                 <span className="bb-sm-new-chat-button-icon">
-                                  📍
+                                  💰
                                 </span>
                                 <span className="bb-sm-new-chat-button-text">
-                                  Find new location
-                                  {userCity && userState && (
-                                    <span className="bb-sm-new-chat-button-location text-sm">
-                                      <br />
-                                      {userCity}, {userState}
-                                    </span>
-                                  )}
+                                  NEW DEALS!
                                 </span>
                               </button>
                               <button
