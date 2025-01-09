@@ -8,6 +8,7 @@ interface ProductCardProps {
   onAddToCart: (product: Product) => void;
   cart: { [key: string]: { quantity: number } };
   updateQuantity: (productId: string, quantity: number) => void;
+  onProductClick?: (product: Product) => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -16,15 +17,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onAddToCart,
   cart,
   updateQuantity,
+  onProductClick,
 }) => {
   return (
     <div className="bb-sm-product-item">
-      <img src={product.image_url} alt={product.product_name} />
+      <img
+        src={product.image_url}
+        alt={product.product_name}
+        onClick={() => onProductClick?.(product)}
+        className="cursor-pointer"
+      />
       <div className="bb-sm-product-item-content">
         {/* {product.brand_name && (
           <p className="bb-sm-product-brand">{product.brand_name}</p>
         )} */}
-        <h3 className="bb-sm-product-name">{product.product_name}</h3>
+        <h3
+          className="bb-sm-product-name cursor-pointer"
+          onClick={() => onProductClick?.(product)}
+        >
+          {product.product_name}
+        </h3>
         <p className="bb-sm-product-category">{product.category}</p>
 
         <div className="bb-sm-price-weight">

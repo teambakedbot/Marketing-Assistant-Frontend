@@ -16,6 +16,7 @@ interface ChatHistoryProps {
   onRetry: (message_id: string) => void;
   onAddToCart: (product: Product) => void;
   allowCart?: boolean;
+  onProductClick?: (product: Product) => void;
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
@@ -28,6 +29,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   cart,
   allowCart = false,
   updateQuantity,
+  onProductClick,
 }) => {
   const [isAtBottom, setIsAtBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -92,7 +94,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
 
         <div className="bb-sm-message-data">
           {message.data.products && message.data.products.length > 0 && (
-            <div className="bb-sm-products-grid">
+            <div className="bb-sm-products-grid grid grid-cols-2 gap-4">
               {message.data.products.map((product: any, index: number) => (
                 <ProductCard
                   allowCart={allowCart}
@@ -101,6 +103,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                   cart={cart}
                   updateQuantity={updateQuantity}
                   onAddToCart={onAddToCart}
+                  onProductClick={onProductClick}
                 />
               ))}
             </div>

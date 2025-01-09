@@ -185,7 +185,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isNewChat, setIsNewChat] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<any[]>([]); // Add state for products
   const [searchQuery, setSearchQuery] = useState(""); // Add state for search query
   const [contextMenu, setContextMenu] = useState<{
@@ -1234,7 +1234,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 {currentView === "checkOut" && <CheckoutView />}
                 {currentView === "chat" &&
                   (!isAllowed ? (
-                    //cnter this veritcal and horizontal
                     <div className="flex justify-center items-center h-full flex-col">
                       <h1 className="text-2xl font-bold">
                         This widget is not allowed on this site.
@@ -1325,6 +1324,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                             onFeedback={handleFeedback}
                             onRetry={handleRetry}
                             onAddToCart={handleAddToCart}
+                            onProductClick={(product) => {
+                              setSelectedProduct(product);
+                              navigateTo("product");
+                            }}
                           />
                         </div>
                       )}
