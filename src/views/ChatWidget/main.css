@@ -1427,3 +1427,61 @@
   border-radius: 4px;
   background: var(--primary-color);
 }
+
+/* Add these styles to your main.css file */
+
+.bb-sm-retailer-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--header-color);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  transition: transform 0.2s ease;
+}
+
+.bb-sm-retailer-card:hover {
+  transform: translateY(-2px);
+}
+
+.bb-sm-retailer-info {
+  flex: 1;
+}
+
+.bb-sm-retailer-name {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-color);
+}
+
+.bb-sm-retailer-location {
+  font-size: 0.9em;
+  color: var(--text-secondary-color);
+}
+
+.bb-sm-map-button {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: 12px;
+}
+
+.bb-sm-map-button:hover {
+  background-color: var(--secondary-color);
+}
+
+.bb-sm-retailers-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}

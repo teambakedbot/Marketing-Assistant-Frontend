@@ -5,7 +5,7 @@ import "simplebar-react/dist/simplebar.min.css";
 import botIcon from "/images/receiver.jpeg";
 import receiverIcon2 from "/images/receiver2.jpeg";
 import "../../styles/theme.css";
-import ChatHistory from "../../components/ChatHistory";
+import ChatHistory from "../ChatWidget/ChatHistory";
 import useAuth from "../../hooks/useAuth";
 import loadingIcon from "/images/loading-spinner-white.gif";
 import { CartContext } from "../ChatWidget/CartContext";

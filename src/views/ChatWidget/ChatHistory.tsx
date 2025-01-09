@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import loadingIcon from "/images/loading-spinner-white.gif";
 import { FaThumbsUp, FaThumbsDown, FaRedo, FaCopy } from "react-icons/fa";
-import ProductCard from "./ProductCard";
-import { Product } from "../views/ChatWidget/api/renameChat";
+import ProductCard from "../../components/ProductCard";
+import { Product } from "./api/renameChat";
+import RetailerCard from "../../components/RetailerCard";
 
 interface ChatHistoryProps {
   chatHistory: any[];
@@ -25,7 +26,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   onRetry,
   onAddToCart,
   cart,
-  allowCart,
+  allowCart = false,
   updateQuantity,
 }) => {
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -74,6 +75,56 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const renderMessageContent = (message: any) => {
+    if (!message.data) {
+      return message.content;
+    }
+
+    return (
+      <>
+        {message.content && (
+          <div className="bb-sm-message-text">
+            <ReactMarkdown className="text-sm md:text-base bb-sm-prose bb-sm-prose-invert">
+              {message.content}
+            </ReactMarkdown>
+          </div>
+        )}
+
+        <div className="bb-sm-message-data">
+          {message.data.products && message.data.products.length > 0 && (
+            <div className="bb-sm-products-grid">
+              {message.data.products.map((product: any, index: number) => (
+                <ProductCard
+                  allowCart={allowCart}
+                  key={`${product.product_name}-${index}`}
+                  product={product}
+                  cart={cart}
+                  updateQuantity={updateQuantity}
+                  onAddToCart={onAddToCart}
+                />
+              ))}
+            </div>
+          )}
+
+          {message.data.retailers && message.data.retailers.length > 0 && (
+            <div className="bb-sm-retailers-grid">
+              {message.data.retailers.map((retailer: any) => (
+                <RetailerCard
+                  key={retailer.id}
+                  name={retailer.name}
+                  city={retailer.city}
+                  state={retailer.state}
+                  latitude={retailer.latitude}
+                  longitude={retailer.longitude}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
+
   return (
     <div
       className="bb-sm-chat-messages flex-1 overflow-y-auto mb-2"
@@ -83,6 +134,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
         const isBot = message.type === "ai" || message.role === "ai";
         const isLoading = loading && isBot && index === chatHistory.length - 1;
         const messageClass = isBot ? "bb-sm-bot-message" : "bb-sm-user-message";
+
         return (
           <div
             className={`flex ${isBot ? "justify-start" : "justify-end"} mb-4`}
@@ -103,27 +155,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                     />
                   </div>
                 ) : (
-                  <>
-                    <ReactMarkdown className="text-sm md:text-base bb-sm-prose bb-sm-prose-invert">
-                      {message.content}
-                    </ReactMarkdown>
-                    {message.data && message.data.products && (
-                      <div className="bb-sm-product-grid mt-4">
-                        {message.data.products.map(
-                          (product: Product, productIndex: number) => (
-                            <ProductCard
-                              allowCart={allowCart}
-                              key={`${product.product_name}-${productIndex}`}
-                              product={product}
-                              cart={cart}
-                              updateQuantity={updateQuantity}
-                              onAddToCart={onAddToCart}
-                            />
-                          )
-                        )}
-                      </div>
-                    )}
-                  </>
+                  renderMessageContent(message)
                 )}
               </div>
               {index > 0 && isBot && !isLoading && (

@@ -14,7 +14,7 @@ import sendIcon from "/images/send.png";
 import axios from "axios";
 import loadingIcon from "/images/loading-spinner-white.gif";
 import Swal from "sweetalert2";
-import ChatHistory from "../../components/ChatHistory";
+import ChatHistory from "./ChatHistory";
 import "./main.css";
 import useAuth from "../../hooks/useAuth";
 import { Chats } from "../../models/ChatModels";
