@@ -524,7 +524,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       try {
-        // Implement your email/password login logic here
         onLogin();
       } catch (error) {
         console.error("Error signing in:", error);
@@ -1479,7 +1478,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full w-full">
                       <h2 className="text-2xl font-bold mb-6">Login to Chat</h2>
-                      <LoginForm onLogin={() => setIsLoggedIn(true)} />
+                      {/* <LoginForm onLogin={() => setIsLoggedIn(true)} /> */}
                     </div>
                   )}
                 </div>
