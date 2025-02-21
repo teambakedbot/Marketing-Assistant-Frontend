@@ -34,6 +34,7 @@
 
 body {
   @apply text-white font-normal text-3xl;
+  font-family: 'Inter', sans-serif; 
 }
 
 .li-customer-name {

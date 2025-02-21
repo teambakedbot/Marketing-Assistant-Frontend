@@ -2,16 +2,17 @@
   /* Theme settings */
   --primary-color: #22AD85;
   --secondary-color: #24504A;
-  --background-color: #1E1E1E;
-  --header-color: #2C2C2C;
-  --text-color: #FFFFFF;
-  --text-secondary-color: #FFFFFF;
+  --background-color: #FFFFFF;
+  --header-color: #FFFFFF;
+  --text-color: #2C2C2C;
+  --text-secondary-color: #1E1E1E;
+  --button-text-color: #FFFFFF;
 
   /* Derived colors */
   --button-color: var(--primary-color);
   --button-hover-color: var(--secondary-color);
   --input-background: var(--header-color);
-  --border-color: #3A3A3A;
+  --border-color: rgba(0,0,0,0.1);
 }
 
 @tailwind base;
@@ -69,7 +70,7 @@
 }
 
 .bb-sm-body {
-  @apply font-roboto text-white font-normal text-3xl;
+  @apply font-jost text-white font-normal text-3xl;
   color: var(--text-color);
 }
 
@@ -142,13 +143,13 @@
 
 .bb-sm-user-message {
   background-color: var(--primary-color);
-  color: var(--text-secondary-color);
+  color: var(--background-color);
   align-self: flex-end;
 }
 
 .bb-sm-bot-message {
   background-color: var(--secondary-color);
-  color: var(--text-secondary-color);
+  color: var(--background-color);
   align-self: flex-start;
 }
 
@@ -188,7 +189,7 @@
 
 .bb-sm-chat-input {
   background-color: var(--background-color);
-  padding: 12px;
+  /* padding: 12px; */
   display: flex;
   align-items: center;
   min-height: 64px;
@@ -199,8 +200,7 @@
   color: var(--text-color);
   background-color: var(--input-background);
   border: var(--border-color);
-  border: 1px solid !important;
-  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .bb-sm-chat-input textarea {
@@ -208,9 +208,9 @@
   color: var(--text-color);
   background-color: var(--input-background);
   border: var(--border-color);
-  border: 1px solid ;
+  border: 1px solid #E9E9E9;
   padding: 12px;
-  border-radius: 12px;
+  border-radius: 25px;
   resize: none;
   min-height: 40px;
   max-height: 120px;
@@ -227,11 +227,11 @@
 
 .bb-sm-chat-input button {
   background-color: var(--button-color);
-  color: var(--text-secondary-color);
+  color: var(--button-text-color);
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 44px;
   margin-left: 12px;
   display: flex;
   align-items: center;
@@ -289,7 +289,7 @@
   position: absolute;
   top: 0;
   left: -100%;
-  width: 100%;
+  width: auto;
   height: 100%;
   background-color: var(--header-color);
   transition: left 0.3s ease;
@@ -305,8 +305,8 @@
 
 @media (min-width: 768px) {
   .bb-sm-side-menu {
-    width: 250px;
-    left: -250px;
+    /* width: 250px; */
+    /* left: -250px; */
   }
 }
 
@@ -392,10 +392,8 @@
 
 .bb-sm-add-to-cart-button {
   background-color: var(--primary-color);
-  color: var(--text-secondary-color);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  color: var(--button-text-color);
+  border-radius: 8px;
   width: 100%;
   transition: background-color 0.2s ease;
 }
@@ -602,6 +600,7 @@
   border: none;
   text-align: center;
   transition: background-color 0.3s ease;
+  color: var(--button-text-color);
 }
 
 /* Styling for product list in bot messages */
@@ -659,6 +658,9 @@
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
+}
+.bb-sm-store-header {
+
 }
 
 .bb-sm-search-bar {
@@ -1057,7 +1059,6 @@
 .bb-sm-place-order-button {
   background-color: var(--primary-color);
   color: white;
-  padding: 0.5rem 1rem;
   border-radius: 4px;
   border: none;
   cursor: pointer;
@@ -1067,18 +1068,6 @@
 .bb-sm-checkout-button:hover,
 .bb-sm-place-order-button:hover {
   background-color: var(--secondary-color);
-}
-
-.bb-sm-quantity-button {
-  background-color: var(--primary-color);
-  color: var(--text-color);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
 }
 
 .bb-sm-remove-button {
@@ -1091,15 +1080,12 @@
 }
 
 .bb-sm-quantity-selector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin-top: 0.5rem;
+  background-color: rgba(101, 113, 95, 0.1);
 }
 
 .bb-sm-quantity-button {
-  background-color: var(--primary-color);
-  color: white;
+  color: var(--primary-color);
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -1111,7 +1097,8 @@
 }
 
 .bb-sm-quantity-button:hover {
-  background-color: var(--secondary-color);
+  background-color: var(--primary-color);
+  color: #FFFFFF;
 }
 
 .bb-sm-delete-button{
@@ -1484,4 +1471,42 @@
   flex-direction: column;
   gap: 8px;
   margin-top: 8px;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--background-color);
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: 100px;
+}
+
+.bb-sm-next-button {
+  background-color: var(--button-color);
+  border: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  color: var(--button-text-color);
+}
+
+.bb-sm-place-order-button {
+  background-color: var(--button-color);
+  border: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  color: var(--button-text-color);
+}
+
+.bb-sm-redeem-button {
+  background-color: var(--button-color);
+  border: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  color: var(--button-text-color);
 }

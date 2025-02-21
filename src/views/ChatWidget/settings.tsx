@@ -32,10 +32,10 @@ const presetThemes: { [key: string]: ThemeColors } = {
   default: {
     primaryColor: "#22AD85",
     secondaryColor: "#23504A",
-    backgroundColor: "#1E1E1E",
-    headerColor: "#2C2C2C",
-    textColor: "#FFFFFF",
-    textSecondaryColor: "#FFFFFF",
+    backgroundColor: "#FFFFFF",
+    headerColor: "#FFFFFF",
+    textColor: "#2C2C2C",
+    textSecondaryColor: "#1E1E1E",
   },
   light: {
     primaryColor: "#00A67D",

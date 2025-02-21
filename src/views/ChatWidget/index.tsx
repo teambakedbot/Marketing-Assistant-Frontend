@@ -45,14 +45,20 @@ import {
   FaShoppingCart,
   FaMinus,
   FaPlus,
-  FaTrash,
+  FaRegTrashAlt,
+  FaLongArrowAltRight 
+  
 } from "react-icons/fa"; // Import the store icon and back arrow icon
+import { HiMiniBars3CenterLeft } from "react-icons/hi2";
 import { BASE_URL } from "../../utils/api";
 import SettingsPage from "./settings";
 import { CartContext } from "./CartContext";
 import { Product, getThemeSettings, ProductResponse } from "./api/renameChat";
 import { useParams } from "react-router-dom";
 import { ThemeSettings } from "./settings";
+import Sidebar from './Sidebar';
+
+
 const Spinner: React.FC = () => (
   <div className="bb-sm-spinner">
     <div className="bb-sm-bounce1"></div>
@@ -203,6 +209,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [userLocation, setUserLocation] =
     useState<GeolocationCoordinates | null>(null);
+  const [selectedProductType, setSelectedProductType] = useState<any>('')
   const [userCity, setUserCity] = useState<string | null>(null);
   const [userState, setUserState] = useState<string | null>(null);
 
@@ -212,10 +219,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     | "product"
     | "settings"
     | "cart"
-    | "checkOut";
+    | "checkOut"
+    | "feel"
+    | "main";
 
-  const [currentView, setCurrentView] = useState<Windows>("chat");
+  const [currentView, setCurrentView] = useState<Windows>("main");
   const [previousView, setPreviousView] = useState<Windows | null>(null);
+
+  const [shouldPlay, setShouldPlay ] = useState<Boolean>(false)
 
   const [settings, setSettings] = useState<ThemeSettings>({
     defaultTheme: "custom",
@@ -223,12 +234,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     allowedSites: [],
     defaultLanguage: "english",
     colors: {
-      primaryColor: "#00A67D",
+      primaryColor: "#65715F",
       secondaryColor: "#00766D",
-      backgroundColor: "#1E1E1E",
-      headerColor: "#2C2C2C",
-      textColor: "#FFFFFF",
-      textSecondaryColor: "#FFFFFF",
+      backgroundColor: "#FFFFFF",
+      headerColor: "#FFFFFF",
+      textColor: "#2C2C2C",
+      textSecondaryColor: "#00000066",
     },
   });
   function isLightColor(color: string): boolean {
@@ -260,6 +271,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   useEffect(() => {
     applyTheme(settings);
   }, [settings]);
+
+  useEffect(() => {
+    if (shouldPlay) {
+      playHandler();
+      setShouldPlay(false);
+    }
+  }, [shouldPlay]);
 
   const handleViewSettings = () => {
     navigateTo("settings");
@@ -374,12 +392,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const toggleMenu = () => {
     if (isMenuOpen) {
       setIsMenuOpen(false);
-    } else if (currentView !== "chat") {
+    } else if (currentView !== "main") {
       if (previousView) {
         setCurrentView(previousView);
-        setPreviousView("chat");
+        setPreviousView("main");
       } else {
-        setCurrentView("chat");
+        setCurrentView("main");
       }
     } else {
       setIsMenuOpen(true);
@@ -397,7 +415,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       const token = await user!.getIdToken();
       const settings = await getThemeSettings(token);
       if (settings) {
-        setSettings(settings);
+        // setSettings(settings);
       }
     };
     fetchThemeSettings();
@@ -757,59 +775,63 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   };
 
   const CartView = () => (
-    <div className="bb-sm-cart-view overflow-y-auto h-full">
+    <div className="bb-sm-cart-view flex flex-col justify-between overflow-y-auto h-full">
       {Object.keys(cart).length === 0 ? (
         <p className="px-4">Your cart is empty.</p>
       ) : (
         <>
-          <div className="bb-sm-cart-items px-4 pb-4">
-            {Object.entries(cart).map(([productId, { product, quantity }]) => (
-              <div
-                key={productId}
-                className="bb-sm-cart-item flex items-center space-x-3 mb-4"
-              >
-                <img
-                  src={product.image_url}
-                  alt={product.product_name}
-                  className="w-12 h-12 object-cover rounded"
-                />
-                <div className="flex-grow">
-                  <h3 className="font-semibold">{product.product_name}</h3>
-                  <p className="text-sm text-gray-400">
-                    THC: {product.percentage_thc} | CBD:{" "}
-                    {product.percentage_cbd}
-                  </p>
-                  <div className="flex items-center mt-2">
+            <div className="px-4 pb-4">
+              {Object.entries(cart).map(([productId, { product, quantity }]) => (
+                <div
+                  key={productId}
+                  className="flex items-center justify-between bg-white py-3 rounded-lg shadow-md"
+                >
+                  {/* Product Image */}
+                  <img
+                    src={product.image_url}
+                    alt={product.product_name}
+                    className="w-16 h-16 object-cover rounded-lg"
+                  />
+
+                  {/* Product Details */}
+                  <div className="flex flex-col flex-grow pl-2">
+                    <h3 className="font-medium text-xl">{product.product_name}</h3>
+                    <p className="font-normal text-sm py-1 opacity-40">
+                      THC: {product.percentage_thc ?? 0} | CBD: {product.percentage_cbd ?? 0}
+                    </p>
+                    <span className="text-xl font-medium">${(product.latest_price * quantity).toFixed(2)}</span>
+                  </div>
+
+                  {/* Quantity Controls */}
+                  <div className="border rounded-lg opacity-60 border-opacity-100 flex items-center space-x-2 mr-4">
                     <button
                       onClick={() => updateQuantity(productId, -1)}
-                      className="bb-sm-quantity-button"
+                      className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
                     >
-                      <FaMinus size={10} />
+                      <FaMinus size={12} />
                     </button>
-                    <span className="mx-2">{quantity}</span>
+                    <span className="text-lg font-medium">{quantity.toString().padStart(2, '0')}</span>
                     <button
                       onClick={() => updateQuantity(productId, 1)}
-                      className="bb-sm-quantity-button"
+                      className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
                     >
-                      <FaPlus size={10} />
+                      <FaPlus size={12} />
                     </button>
                   </div>
-                </div>
-                <div className="text-right">
-                  <span>${(product.latest_price * quantity).toFixed(2)}</span>
+
+                  {/* Remove Button */}
                   <button
                     onClick={() => removeFromCart(productId)}
-                    className="bb-sm-remove-button ml-2"
+                    className="bg-red-100 p-2 rounded-lg text-red-500 hover:bg-red-200 transition"
                     aria-label="Remove item"
                   >
-                    <FaTrash size={14} />
+                    <FaRegTrashAlt size={16} />
                   </button>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div className="bb-sm-cart-summary px-4 py-4 border-t border-gray-700">
-            <div className="flex justify-between mb-2">
+              ))}
+            </div>
+          <div className="bb-sm-cart-summary py-4 border-t border-gray-7000">
+            <div className="font-normal flex justify-between mb-6 text-lg">
               <span>Subtotal</span>
               <span>
                 $
@@ -826,7 +848,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               <span>Discount</span>
               <span>-$6.89</span>
             </div> */}
-            <div className="flex justify-between font-bold text-lg mb-4">
+            <div className="flex justify-between font-semibold text-lg mb-4 text-lg">
               <span>Total</span>
               <span>
                 $
@@ -839,12 +861,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   .toFixed(2)}
               </span>
             </div>
-            <button
-              onClick={() => navigateTo("checkOut")}
-              className="bb-sm-checkout-button w-full py-3 rounded text-lg font-semibold"
-            >
-              Checkout
-            </button>
+              <button
+                onClick={() => navigateTo("checkOut")}
+                className="bb-sm-checkout-button w-full py-4 flex items-center justify-center space-x-2 rounded-lg text-lg font-semibold"
+              >
+                <span>Checkout</span>
+                <FaLongArrowAltRight />
+              </button>
           </div>
         </>
       )}
@@ -863,33 +886,39 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       const contactInfo = {
         [contactMethod]: contactValue,
       };
-
       await handleCheckout(customerName, contactInfo);
       setIsLoading(false);
-      navigateTo("chat");
+      navigateTo("main");
     };
 
     const isFormValid =
       customerName.trim() !== "" && contactValue.trim() !== "";
     return (
-      <div className="bb-sm-checkout-view p-4">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <h3 className="font-bold mb-2">Order Summary</h3>
-            <div className="space-y-2 mb-4">
+      <div className="h-full p-2">
+        <h3 className="text-[16px] font-medium mb-4">Order Summary</h3>
+        <div className="space-y-3 mb-4">
               {Object.entries(cart).map(
                 ([productId, { product, quantity }]: any) => (
-                  <div key={productId} className="flex justify-between text-sm">
-                    <span>
-                      {product.product_name} (x{quantity})
-                    </span>
-                    <span>${(product.latest_price * quantity).toFixed(2)}</span>
+                  <div key={productId} className="flex items-center justify-between text-sm">
+                    {/* Left Section: Image and Product Name */}
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={product.image_url}
+                        alt={product.product_name}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                      <span className="text-gray-800">{product.product_name} (x{quantity})</span>
+                    </div>
+
+                    {/* Right Section: Price */}
+                    <span className="font-semibold">${(product.latest_price * quantity).toFixed(2)}</span>
                   </div>
+
                 )
               )}
-            </div>
-            <div className="flex justify-between font-bold">
-              <span>Total:</span>
+        </div>
+        <div className="flex justify-between font-bold text-md mb-4">
+          <span>Total:</span>
               <span>
                 $
                 {Object.values(cart)
@@ -900,70 +929,237 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   )
                   .toFixed(2)}
               </span>
-            </div>
-          </div>
-          <div className="flex justify-between mb-2">
-            <label></label>
-            <div>
-              <button
-                type="button"
-                onClick={() => setContactMethod("email")}
-                className={`mr-2 px-3 py-1 rounded text-md ${
-                  contactMethod === "email"
-                    ? "bg-primary-color text-secondary-color"
-                    : "bg-secondary-color text-secondary-color opacity-70 hover:opacity-100"
-                }`}
-              >
-                Email
-              </button>
-              <button
-                type="button"
-                onClick={() => setContactMethod("phone")}
-                className={`px-3 py-1 rounded text-md ${
-                  contactMethod === "phone"
-                    ? "bg-primary-color text-secondary-color"
-                    : "bg-secondary-color text-secondary-color opacity-70 hover:opacity-100"
-                }`}
-              >
-                Phone
-              </button>
-            </div>
-          </div>
-          <div className="flex space-x-4">
-            <div className="flex-1">
+        </div>
+        
+        {/* Coupon Code */}
+        <div className="flex items-center border rounded-lg overflow-hidden mb-4">
+          <input
+            type="text"
+            style={{ border: "none", outline: "none" }}
+            placeholder="Coupon Code"
+            className="flex-1 p-2 placeholder:text-sm border-none focus:outline-none"
+          />
+          <button className="bb-sm-redeem-button rounded ml-2 px-4 py-2 text-sm mr-1 font-medium">Redeem</button>
+        </div>
+        
+        {/* Email & Phone Toggle */}
+        <div className="flex border-gray-300 pb-2 mb-4">
+          <span
+            className={`w-1/2 text-center cursor-pointer relative pb-2 
+      ${contactMethod === "email" ? "border-b-2 border-black font-semibold" : "text-gray-700 font-medium"}`}
+            onClick={() => setContactMethod("email")}
+          >
+            Email
+          </span>
+          <span
+            className={`w-1/2 text-center cursor-pointer relative pb-2 
+      ${contactMethod === "phone" ? "border-b-2 border-black font-semibold" : "text-gray-700 font-medium"}`}
+            onClick={() => setContactMethod("phone")}
+          >
+            Phone Number
+          </span>
+        </div>
+
+        {/* Input Fields */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4 flex flex-col">
+            <div className="flex-none">
+              <label className="text-sm font-medium">Full Name</label>
               <input
                 type="text"
-                id="name"
-                placeholder="Enter your name"
+                placeholder="Enter Full Name"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 required
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500"
               />
             </div>
-            <div className="flex-1">
+            <div className="flex-none">
+              <label className="text-sm font-medium">
+                {contactMethod === "email" ? "Email Address" : "Phone Number"}
+              </label>
               <input
                 type={contactMethod === "email" ? "email" : "tel"}
-                id="contact"
-                placeholder={`Enter your ${contactMethod}`}
+                placeholder={`Enter ${contactMethod === "email" ? "Email Address" : "Phone Number"}`}
                 value={contactValue}
                 onChange={(e) => setContactValue(e.target.value)}
                 required
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500"
               />
             </div>
           </div>
+          {/* Place Order Button */}
           <button
             type="submit"
             disabled={isLoading || !isFormValid}
-            className="bb-sm-place-order-button w-full py-2 rounded mt-10 pb-2 disabled:opacity-50"
+            className="flex-1 bb-sm-place-order-button w-full py-3 rounded-lg text-lg font-semibold flex justify-center items-center disabled:opacity-50 mt-8"
           >
-            {isLoading ? "Placing order..." : "Place Order"}
+            {isLoading ? "Placing Order..." : "Place Order"}
           </button>
         </form>
       </div>
     );
   };
+  const MainView: React.FC<any> = memo(() => {
+    const flowers = [
+      { name: 'Flower', type: 'Traditional', description: 'Traditional cannabis buds', image: '/images/productType1.png' },
+      { name: 'Pre-Roll', type: 'Pre-Roll', description: 'Ready-to-smoke joints', image: '/images/productType2.png' },
+      { name: 'Vape', type: 'Vape', description: 'Ready-to-smoke joints', image: '/images/Vape.png' },
+      { name: 'Edible', type: 'Edible', description: 'Ready-to-smoke joints', image: '/images/Edible.png' },
+    ];
+
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const itemsPerPage = 2;
+  
+    // Calculate sliced products for the current page
+    const startIndex = currentPage * itemsPerPage;
+    const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+  
+    return (
+      <>
+        <div className="bb-sm-store-view h-full flex flex-col">
+          <div className="flex rounded p-1 bg-[#F6F6F6]">
+            <img src="/images/StoreHeader.jpeg" alt="Sample Image" className="rounded-full w-[55px] h-[55px]" />
+            <div className="flex flex-col px-2">
+              <p className="text-base font-semibold py-2">Hey there! I'm Bud, your Ultra Cannabis assistant.</p>
+              <p className="text-base">Here are products matching your preferences!</p>
+            </div>
+
+          </div>
+          <div className="flex justify-between">
+            <div className="font-medium py-2">
+              Deals of the day :
+            </div>
+            {/* Pagination Controls */}
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+                disabled={currentPage === 0}
+                className="px-2 py-2 rounded disabled:opacity-50"
+              >
+                <FaChevronLeft />
+              </button>
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => (startIndex + itemsPerPage < products.length ? prev + 1 : prev))
+                }
+                disabled={startIndex + itemsPerPage >= products.length}
+                className="px-2 py-2 rounded disabled:opacity-50"
+              >
+
+                <FaChevronRight />
+              </button>
+            </div>
+          </div>
+          {error && (
+            <div className="bb-sm-error-message border border-red-400 text-red-700 px-4 py-3 rounded relative m-4">
+              <strong className="font-bold">Error:</strong>
+              <span className="block sm:inline"> {error}</span>
+            </div>
+          )}
+
+          {isLoading ? (
+            <div className="bb-sm-loading-container flex justify-center items-center h-64">
+              <Spinner />
+            </div>
+          ) : (
+            <div className="flex-1">
+              <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-2 gap-4">
+                {paginatedProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bb-sm-product-item flex flex-col rounded-lg overflow-hidden"
+                  >
+                    <div className="relative pt-[50%]">
+                      <img
+                        src={product.image_url}
+                        alt={product.product_name}
+                        className="absolute top-0 left-0 w-full h-full object-cover cursor-pointer"
+                        onClick={() => handleProductClick(product)}
+                      />
+                    </div>
+                    <div className="pt-3 flex flex-col flex-1">
+                      <p
+                        className="font-medium text-md cursor-pointer mb-1 line-clamp-2"
+                        onClick={() => handleProductClick(product)}
+                      >
+                        {product.product_name}
+                      </p>
+                      <p className="text-secondary-color mb-1">{product.category}</p>
+                      <p className="font-medium text-lg mb-2">
+                        ${product.latest_price?.toFixed(2)}&nbsp;&nbsp;{product.display_weight}
+                      </p>
+                      <p className="text-sm text-gray-400 mb-3 line-clamp-2">{product.description}</p>
+
+                      {cart[product.id] ? (
+                        <div className="py-2 bb-sm-quantity-selector flex items-center justify-between gap-3 mt-auto rounded">
+                          <button
+                            onClick={() => updateQuantity(product.id, -1)}
+                            className="bb-sm-quantity-button w-8 h-8 rounded-full flex items-center justify-center"
+                          >
+                            <FaMinus size={10} />
+                          </button>
+                          <span className="text-lg">
+                            {String(cart[product.id].quantity)?.padStart(2, "0")}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(product.id, 1)}
+                            className="bb-sm-quantity-button w-8 h-8 rounded-full flex items-center justify-center"
+                          >
+                            <FaPlus size={10} />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          className="bb-sm-add-to-cart-button w-full py-1"
+                          onClick={() => addToCart(product)}
+                        >
+                          Add to cart
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="font-medium py-2">
+            Shop by Product Type
+          </div>
+
+          <div className="flex-1">
+            <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-2 gap-4">
+              {flowers?.map((flower, index) => (
+                <div
+                  key={index}
+                  className="cursor-pointer border p-4 flex rounded-lg overflow-hidden justify-center"
+                  onClick={() => {
+                    setSelectedProductType(flower);
+                    setSelectedProductType(flower);
+                    setCurrentView('feel');
+                  }}
+                >
+
+                  <img
+                    src={flower.image}
+                    alt={flower.name}
+                    className="rounded-full w-[35px] h-[35px]"
+                  />
+                  <div className="flex px-2">
+                    <p className="text-base font-semibold py-2">{flower.name}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  });
+
+
   const StoreView: React.FC<any> = memo(() => {
     return (
       <div className="bb-sm-store-view h-full flex flex-col overflow-hidden">
@@ -1078,6 +1274,77 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       </div>
     );
   });
+
+
+  interface FeelingScreenProps {
+    selectedProductType: any | null;
+
+  }
+
+  const FeelingsScreen: React.FC<FeelingScreenProps> = memo(({
+    selectedProductType
+  }) => {
+    const feelings = [
+    { name: 'Creative', description: 'Induce happiness', image: '/images/creative.png' },
+    { name: 'Energized', description: 'Boost imagination', image: '/images/energized.png' },
+    { name: 'Focused', description: 'Increase vitality', image: '/images/focused.png' },
+    { name: 'Euphoric', description: 'Enhance Concentration', image: '/images/euorphic.png' },
+    { name: 'Giggly', description: 'Elevate mood', image: '/images/gigly.png' },
+    { name: 'Relaxed', description: 'Induce happiness', image: '/images/relaxed.png' },
+    { name: 'Tingly', description: 'Aid relaxation', image: '/images/tingly.png' },
+    { name: 'Stimulated', description: 'Aid relaxation', image: '/images/stimulated.png' }
+  ]
+  const [selectedFeelings, setSelectedFeelings] = useState<any>([]);
+console.log("SELECTED FEELINGS",shouldPlay)
+  const handleSelect = (feel) => {
+    if (selectedFeelings.includes(feel)) {
+      if (selectedFeelings.length === 1) return;
+      setSelectedFeelings(selectedFeelings.filter((f) => f !== feel));
+    } else {
+      if (selectedFeelings.length >= 2) return;
+      setSelectedFeelings([...selectedFeelings, feel]);
+    }
+  };
+
+
+
+  const handleClick = () => {
+    setCurrentView("chat");
+    setPrompts(`Show me the ${selectedProductType.name} that makes me feel ${selectedFeelings.join(" and ")}`);
+    setShouldPlay(true);
+  };
+    return (
+      <div>
+        <h3 className="py-1 text-[20px] font-medium text-center">How do you want to feel?</h3>
+        <p className="pt-1 pb-4 text-center">Select up to two effects</p>
+        <div className="flex-1 overflow-y-auto py-4 h-[365px]">
+          <div className="bb-sm-product-grid grid grid-cols-3 md:grid-cols-3 gap-4 overflow-scroll">
+              {feelings?.map((feel, index) => (
+                <div
+                  key={index}
+                  className={`border p-2 flex flex-col rounded-lg overflow-hidden cursor-pointer transition duration-300
+          ${selectedFeelings.includes(feel.name) ? "border border-[#65715F] bg-[#65715F]/10" : "border-gray-300"}`}
+                  onClick={() => handleSelect(feel.name)}
+                >
+                  <div className="relative w-full pt-[35%]">
+                    <img
+                      src={feel.image}
+                      alt={feel.name}
+                      className="h-full w-full absolute top-0 left-0 object-contain"
+                    />
+                  </div>
+                  <div className="pt-3 flex flex-col flex-1 items-center">
+                    <p>{feel.name}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        <button onClick={handleClick} disabled={selectedFeelings.length === 0} className="bb-sm-next-button w-full flex items-center justify-center space-x-2 m p-3 rounded-lg mt-2 disabled:opacity-75">Next <FaLongArrowAltRight className="ml-1" /></button>
+          <p className="text-center text-md mt-2">By using this product, you agree to our Terms & Privcy Policy</p>
+        </div>
+    )
+  })
   interface ProductDetailProps {
     product?: Product | null;
   }
@@ -1159,6 +1426,29 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     return <div>Loading...</div>;
   }
 
+  const handleLoadChatHistory = (chatId: string | null) => {
+    setActiveChatId(chatId);
+  };
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  const HeaderNames: Record<string, string> = {
+    store: "Chat",
+    cart: "Checkout",
+    feel: "Chat",
+    chat:"Chat",
+    main:"Chat",
+    checkOut: "Checkout"
+    // Add more mappings as needed
+  };
+
+  const getViewName = (view: string): string => {
+    return HeaderNames[view] || "Default View"; // Fallback if the view isn't in the mapping
+  };
+  
+
   return (
     <div className="bb-sm-chat-widget bb-sm-body">
       {/* <button className="border-none outline-0" onClick={handleModalBox}>
@@ -1167,30 +1457,26 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       {true && (
         <div className="absolute right-2 bottom-14 flex justify-center items-center z-50 bb-sm-animate-open">
           <div className="bb-sm-chat-container p-0 pb-2 rounded-lg shadow-lg relative max-h-[calc(100vh-4rem)] overflow-hidden">
-            <div className="md:flex md:flex-row flex-col gap-3 h-full max-h-full lg:min-w-[500px]">
+            <div className="md:flex md:flex-row flex-col gap-3 h-full max-h-full lg:min-w-[500px] p-4">
               {/* Chat area */}
               <div className="h-full w-full md:w-4/4 relative rounded-md p-2 flex flex-col gap-2 overflow-hidden bb-sm-main-area">
                 <div className="bb-sm-chat-header flex items-center justify-between">
-                  <div className="flex-1">
+                  <div className="flex">
                     <button
                       className={`bb-sm-hamburger-menu ${
-                        isMenuOpen || currentView !== "chat" ? "bb-sm-open" : ""
+                        isMenuOpen || currentView !== "main" ? "bb-sm-open" : ""
                       }`}
                       onClick={toggleMenu}
                     >
-                      {currentView !== "chat" ? (
+                      {currentView !== "main" ? (
                         <FaArrowLeft />
                       ) : (
-                        <>
-                          <div></div>
-                          <div></div>
-                          <div></div>
-                        </>
+                        <HiMiniBars3CenterLeft fontWeight={'bolder'} />
                       )}
                     </button>
                   </div>
-                  <p className="text-lg md:text-xl font-bold text-center flex-1">
-                    {capitalizeFirstLetter(currentView || "")}
+                  <p className="p-2 text-2xl md:text-xl font-bold flex-1">
+                    {getViewName(currentView || "")}
                   </p>
                   <div className="flex flex-row gap-5 justify-end items-center flex-1">
                     <button
@@ -1218,10 +1504,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     ></button> */}
                   </div>
                 </div>
+                {currentView === "main" && <MainView />}
                 {currentView === "store" && <StoreView />}
                 {currentView === "product" && (
                   <ProductDetailView product={selectedProduct} />
                 )}
+                {currentView === "feel" && <FeelingsScreen selectedProductType={selectedProductType} />}
                 {currentView === "settings" && (
                   <SettingsPage
                     onClose={handleSettingsClose}
@@ -1333,11 +1621,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     </>
                   ))}
 
-                {(currentView == "store" || currentView == "chat") &&
+                {(currentView == "store" || currentView == "chat" || currentView == 'feel' || currentView == 'main') &&
                   isAllowed && (
                     <div className="bb-sm-chat-input">
                       <textarea
-                        className="resize-none w-full placeholder-gray-200  p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
+                        className="resize-none w-full placeholder-text-secondary  p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && !e.shiftKey) {
                             if (currentView === "chat") {
@@ -1399,107 +1687,16 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               </div>
 
               {/* Side menu */}
-              <div
-                className={`bb-sm-side-menu ${isMenuOpen ? "bb-sm-open" : ""}`}
-              >
-                <div className="bb-sm-side-menu-header">
-                  <div className="bb-sm-robot-icon-container">
-                    <img
-                      src={isLoggedIn ? robotIcon : notLoggedInIcon}
-                      alt={isLoggedIn ? "Chat Bot" : "Not Logged In"}
-                      className="bb-sm-robot-icon"
-                    />
-                  </div>
-                  {isLoggedIn && (
-                    <h2 className="bb-sm-chat-history-title">Chat history</h2>
-                  )}
-                  <button
-                    className="bb-sm-settings-button"
-                    onClick={() => loadChatHistory(null)}
-                  >
-                    New Chat
-                  </button>
-                </div>
-
-                <div className="bb-sm-side-menu-content">
-                  {isLoggedIn ? (
-                    <div className="bb-sm-chat-history-scroll">
-                      {chats.length > 0 ? (
-                        chats.map(({ chat_id, name }: any, index) => (
-                          <div
-                            key={`${chat_id}-${index}`}
-                            className="bb-sm-chat-item-container"
-                          >
-                            {editingChatId === chat_id ? (
-                              <div className="bb-sm-chat-rename-input">
-                                <input
-                                  ref={renameInputRef}
-                                  type="text"
-                                  className="text-sm h-10"
-                                  value={newChatName}
-                                  onChange={(e) =>
-                                    setNewChatName(e.target.value)
-                                  }
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter") handleSaveRename();
-                                    if (e.key === "Escape")
-                                      setEditingChatId(null);
-                                  }}
-                                />
-                              </div>
-                            ) : (
-                              <div className="bb-sm-chat-item-wrapper">
-                                <button
-                                  onClick={() => loadChatHistory(chat_id)}
-                                  className={`bb-sm-menu-item text-md ${
-                                    activeChatId === chat_id
-                                      ? "bb-sm-active"
-                                      : ""
-                                  }`}
-                                >
-                                  {name}
-                                </button>
-                                <button
-                                  className="bb-sm-chat-options-button"
-                                  onClick={(e) => handleContextMenu(e, chat_id)}
-                                >
-                                  <FaEllipsisV className="text-secondary-color" />
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-center text-gray-500 py-4">
-                          No conversations yet.
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full w-full">
-                      <h2 className="text-2xl font-bold mb-6">Login to Chat</h2>
-                      <LoginForm onLogin={() => setIsLoggedIn(true)} />
-                    </div>
-                  )}
-                </div>
-
-                {isLoggedIn && (
-                  <div className="bb-sm-side-menu-footer flex flex-row gap-2 mb-2">
-                    <button
-                      className="bb-sm-settings-button"
-                      onClick={handleViewSettings}
-                    >
-                      Settings
-                    </button>
-                    <button
-                      className="bb-sm-settings-button"
-                      onClick={handleViewStore}
-                    >
-                      Shop
-                    </button>
-                  </div>
-                )}
-              </div>
+              <Sidebar
+                isMenuOpen={isMenuOpen} // Pass state as prop
+                isLoggedIn={isLoggedIn}
+                chats={chats}
+                activeChatId={activeChatId}
+                onLoadChatHistory={handleLoadChatHistory}
+                onLogin={handleLogin}
+                onViewSettings={handleViewSettings}
+                onViewStore={handleViewStore}
+              />
 
               {/* Right panel */}
               <div className="h-full w-full md:w-1/3 rounded-md p-2 flex flex-col justify-between gap-1 bb-sm-right-panel">

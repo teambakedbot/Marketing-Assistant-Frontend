@@ -62,6 +62,7 @@ export default {
          "reenie-beanie": ["'Reenie Beanie'", ...fontFamily.sans],
          "wendy-one": ["'Wendy One'", ...fontFamily.sans],
          inter: ["'Inter'", ...fontFamily.sans],
+         jost: ["'Jost'", ...fontFamily.sans],
       },
       backgroundImage: {
          "grey-grey": "linear-gradient(180deg, #3E3D45 0%, #202020 100%)",

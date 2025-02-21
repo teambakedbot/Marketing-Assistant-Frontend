@@ -98,7 +98,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({
     contactInfo: { email?: string; phone?: string }
   ) => {
     try {
-      const token = await user!.getIdToken();
+      const token = (await user?.getIdToken()) || "";
       const checkoutData = {
         name,
         contact_info: contactInfo,
