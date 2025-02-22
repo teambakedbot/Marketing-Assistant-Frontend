@@ -17,6 +17,7 @@ interface ChatHistoryProps {
   onAddToCart: (product: Product) => void;
   allowCart?: boolean;
   onProductClick?: (product: Product) => void;
+  onDeleteMessage?: (message_id: string) => void;
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
@@ -30,6 +31,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   allowCart = false,
   updateQuantity,
   onProductClick,
+  onDeleteMessage,
 }) => {
   const [isAtBottom, setIsAtBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -78,6 +80,20 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   };
 
   const renderMessageContent = (message: any) => {
+    if (message.error) {
+      return (
+        <div className="bb-sm-error-message">
+          <p>{message.content}</p>
+          <button
+            onClick={() => onRetry(message.message_id)}
+            className="bb-sm-retry-button flex items-center gap-1"
+          >
+            <FaRedo size={12} /> Retry
+          </button>
+        </div>
+      );
+    }
+
     if (!message.data) {
       return message.content;
     }
@@ -86,7 +102,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
       <>
         {message.content && (
           <div className="bb-sm-message-text">
-            <ReactMarkdown className=" bb-sm-prose-invert">
+            <ReactMarkdown className="bb-sm-prose-invert">
               {message.content}
             </ReactMarkdown>
           </div>
@@ -161,24 +177,9 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                   renderMessageContent(message)
                 )}
               </div>
-              {index > 0 && isBot && !isLoading && (
+              {index > 0 && isBot && !isLoading && !message.error && (
                 <div className="bb-sm-feedback-buttons">
-                  <div className="bb-sm-left-buttons">
-                    {/* <button
-                      onClick={() => handleCopy(message.content)}
-                      className="bb-sm-feedback-button text-xs flex items-center gap-1"
-                    >
-                      <FaCopy size={12} />
-                      Copy
-                    </button> */}
-                  </div>
                   <div className="bb-sm-right-buttons">
-                    {/* <button
-                      onClick={() => onRetry(message.message_id)}
-                      className="bb-sm-feedback-button"
-                    >
-                      <FaRedo size={12} />
-                    </button> */}
                     <button
                       onClick={() => handleFeedback(message.message_id, "like")}
                       className={`bb-sm-feedback-button ${
@@ -211,11 +212,6 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
         );
       })}
       <div ref={chatEndRef} />
-      {/* {!isAtBottom && (
-        <button className="bb-sm-scroll-to-bottom" onClick={scrollToBottom}>
-          ↓
-        </button>
-      )} */}
     </div>
   );
 };
