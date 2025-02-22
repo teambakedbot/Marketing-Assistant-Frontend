@@ -86,7 +86,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
       <>
         {message.content && (
           <div className="bb-sm-message-text">
-            <ReactMarkdown className="text-sm md:text-base bb-sm-prose bb-sm-prose-invert">
+            <ReactMarkdown className="bb-sm-prose bb-sm-prose-invert">
               {message.content}
             </ReactMarkdown>
           </div>
