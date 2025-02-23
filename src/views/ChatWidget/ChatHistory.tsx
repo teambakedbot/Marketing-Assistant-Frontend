@@ -95,7 +95,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   };
 
   const renderMessageContent = (message: any) => {
-    if (message.error) {
+    if (message.error || message.data?.error) {
       return (
         <div className="bb-sm-error-message">
           <p>{message.content}</p>
