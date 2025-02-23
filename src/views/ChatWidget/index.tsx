@@ -182,7 +182,17 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<
-    { type: string; content: string; message_id: string; error?: boolean }[]
+    {
+      type: string;
+      content: string;
+      message_id: string;
+      error?: boolean;
+      data?: {
+        suggested_next_questions?: string[];
+        images?: any[];
+        products?: any[];
+      };
+    }[]
   >([{ type: "ai", content: "Hey, how can I help?", message_id: "1" }]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -1628,6 +1638,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     addToCart(product);
   };
 
+  const handleSuggestedQuestionClick = (question: string) => {
+    setPrompts(question);
+    playHandler();
+  };
+
   if (isAllowed === null) {
     return <div>Loading...</div>;
   }
@@ -1822,6 +1837,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                               setSelectedProduct(product);
                               navigateTo("product");
                             }}
+                            onSuggestedQuestionClick={
+                              handleSuggestedQuestionClick
+                            }
                           />
                         </div>
                       )}
@@ -1834,8 +1852,30 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   currentView == "main") &&
                   isAllowed && (
                     <div className="bb-sm-chat-input">
+                      {/* {chatHistory.length > 0 &&
+                        !loading &&
+                        chatHistory[chatHistory.length - 1]?.data
+                          ?.suggested_next_questions && (
+                          <div className="bb-sm-quick-responses-container">
+                            {chatHistory[
+                              chatHistory.length - 1
+                            ]?.data?.suggested_next_questions?.map(
+                              (question: string, index: number) => (
+                                <button
+                                  key={`quick-response-${index}`}
+                                  className="bb-sm-quick-response-button"
+                                  onClick={() =>
+                                    handleSuggestedQuestionClick(question)
+                                  }
+                                >
+                                  {question}
+                                </button>
+                              )
+                            )}
+                          </div>
+                        )} */}
                       <textarea
-                        className="resize-none w-full placeholder-text-secondary  p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
+                        className="resize-none w-full placeholder-text-secondary p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && !e.shiftKey) {
                             if (currentView === "chat") {

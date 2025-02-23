@@ -18,6 +18,7 @@ interface ChatHistoryProps {
   allowCart?: boolean;
   onProductClick?: (product: Product) => void;
   onDeleteMessage?: (message_id: string) => void;
+  onSuggestedQuestionClick?: (question: string) => void;
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
@@ -32,12 +33,14 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
   updateQuantity,
   onProductClick,
   onDeleteMessage,
+  onSuggestedQuestionClick,
 }) => {
   const [isAtBottom, setIsAtBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [feedbackGiven, setFeedbackGiven] = useState<{
     [key: string]: "like" | "dislike" | null;
   }>({});
+  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
 
   const handleFeedback = (
     message_id: string,
@@ -75,6 +78,18 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
     checkIfAtBottom();
   }, [chatHistory, checkIfAtBottom]);
 
+  useEffect(() => {
+    // Update suggested questions when chat history changes
+    if (chatHistory.length > 0) {
+      const lastMessage = chatHistory[chatHistory.length - 1];
+      if (lastMessage.data?.suggested_next_questions) {
+        setSuggestedQuestions(lastMessage.data.suggested_next_questions);
+      } else {
+        setSuggestedQuestions([]);
+      }
+    }
+  }, [chatHistory]);
+
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -94,10 +109,6 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
       );
     }
 
-    if (!message.data) {
-      return message.content;
-    }
-
     return (
       <>
         {message.content && (
@@ -108,110 +119,119 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
           </div>
         )}
 
-        <div className="bb-sm-message-data">
-          {message.data.products && message.data.products.length > 0 && (
-            <div className="bb-sm-products-grid grid grid-cols-2 gap-4">
-              {message.data.products.map((product: any, index: number) => (
-                <ProductCard
-                  allowCart={allowCart}
-                  key={`${product.product_name}-${index}`}
-                  product={product}
-                  cart={cart}
-                  updateQuantity={updateQuantity}
-                  onAddToCart={onAddToCart}
-                  onProductClick={onProductClick}
-                />
-              ))}
-            </div>
-          )}
+        {message.data && (
+          <div className="bb-sm-message-data">
+            {/* Handle images */}
+            {message.data.images && message.data.images.length > 0 && (
+              <div className="bb-sm-images-grid grid grid-cols-2 gap-4 mt-2">
+                {message.data.images.map((image: any, index: number) => (
+                  <img
+                    key={`${image.url}-${index}`}
+                    src={image.url}
+                    alt={image.prompt || "Generated image"}
+                    className="w-full h-auto rounded-lg"
+                  />
+                ))}
+              </div>
+            )}
 
-          {message.data.retailers && message.data.retailers.length > 0 && (
-            <div className="bb-sm-retailers-grid">
-              {message.data.retailers.map((retailer: any) => (
-                <RetailerCard
-                  key={retailer.id}
-                  name={retailer.name}
-                  city={retailer.city}
-                  state={retailer.state}
-                  latitude={retailer.latitude}
-                  longitude={retailer.longitude}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+            {/* Handle products */}
+            {message.data.products && message.data.products.length > 0 && (
+              <div className="bb-sm-products-grid grid grid-cols-2 gap-4 mt-2">
+                {message.data.products.map((product: any, index: number) => (
+                  <ProductCard
+                    allowCart={allowCart}
+                    key={`${product.product_name}-${index}`}
+                    product={product}
+                    cart={cart}
+                    updateQuantity={updateQuantity}
+                    onAddToCart={onAddToCart}
+                    onProductClick={onProductClick}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </>
     );
   };
 
   return (
-    <div
-      className="bb-sm-chat-messages flex-1 overflow-y-auto mb-2"
-      ref={chatContainerRef}
-    >
-      {chatHistory?.map((message, index) => {
-        const isBot = message.type === "ai" || message.role === "ai";
-        const isLoading = loading && isBot && index === chatHistory.length - 1;
-        const messageClass = isBot ? "bb-sm-bot-message" : "bb-sm-user-message";
+    <div className="flex flex-col h-full">
+      <div
+        className="bb-sm-chat-messages flex-1 overflow-y-auto"
+        ref={chatContainerRef}
+      >
+        {chatHistory?.map((message, index) => {
+          const isBot = message.type === "ai" || message.role === "ai";
+          const isLoading =
+            loading && isBot && index === chatHistory.length - 1;
+          const messageClass = isBot
+            ? "bb-sm-bot-message"
+            : "bb-sm-user-message";
 
-        return (
-          <div
-            className={`flex ${isBot ? "justify-start" : "justify-end"} mb-4`}
-            key={index}
-          >
+          return (
             <div
-              className={`bb-sm-message-container ${
-                isBot ? "bb-sm-bot-container" : ""
-              }`}
+              className={`flex ${isBot ? "justify-start" : "justify-end"} mb-4`}
+              key={index}
             >
-              <div className={`bb-sm-message ${messageClass}`}>
-                {isLoading ? (
-                  <div className="bb-sm-loading-dots">
-                    <img
-                      src={loadingIcon}
-                      className="w-5 h-5 bb-sm-loading-icon"
-                      alt="Loading"
-                    />
+              <div
+                className={`bb-sm-message-container ${
+                  isBot ? "bb-sm-bot-container" : ""
+                }`}
+              >
+                <div className={`bb-sm-message ${messageClass}`}>
+                  {isLoading ? (
+                    <div className="bb-sm-loading-dots">
+                      <img
+                        src={loadingIcon}
+                        className="w-5 h-5 bb-sm-loading-icon"
+                        alt="Loading"
+                      />
+                    </div>
+                  ) : (
+                    renderMessageContent(message)
+                  )}
+                </div>
+                {index > 0 && isBot && !isLoading && !message.error && (
+                  <div className="bb-sm-feedback-buttons">
+                    <div className="bb-sm-right-buttons">
+                      <button
+                        onClick={() =>
+                          handleFeedback(message.message_id, "like")
+                        }
+                        className={`bb-sm-feedback-button ${
+                          feedbackGiven[message.message_id] === "like"
+                            ? "bb-sm-feedback-given"
+                            : ""
+                        }`}
+                        disabled={feedbackGiven[message.message_id] === null}
+                      >
+                        <FaThumbsUp size={12} />
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleFeedback(message.message_id, "dislike")
+                        }
+                        className={`bb-sm-feedback-button ${
+                          feedbackGiven[message.message_id] === "dislike"
+                            ? "bb-sm-feedback-given"
+                            : ""
+                        }`}
+                        disabled={feedbackGiven[message.message_id] === null}
+                      >
+                        <FaThumbsDown size={12} />
+                      </button>
+                    </div>
                   </div>
-                ) : (
-                  renderMessageContent(message)
                 )}
               </div>
-              {index > 0 && isBot && !isLoading && !message.error && (
-                <div className="bb-sm-feedback-buttons">
-                  <div className="bb-sm-right-buttons">
-                    <button
-                      onClick={() => handleFeedback(message.message_id, "like")}
-                      className={`bb-sm-feedback-button ${
-                        feedbackGiven[message.message_id] === "like"
-                          ? "bb-sm-feedback-given"
-                          : ""
-                      }`}
-                      disabled={feedbackGiven[message.message_id] === null}
-                    >
-                      <FaThumbsUp size={12} />
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleFeedback(message.message_id, "dislike")
-                      }
-                      className={`bb-sm-feedback-button ${
-                        feedbackGiven[message.message_id] === "dislike"
-                          ? "bb-sm-feedback-given"
-                          : ""
-                      }`}
-                      disabled={feedbackGiven[message.message_id] === null}
-                    >
-                      <FaThumbsDown size={12} />
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
-        );
-      })}
-      <div ref={chatEndRef} />
+          );
+        })}
+        <div ref={chatEndRef} />
+      </div>
     </div>
   );
 };
