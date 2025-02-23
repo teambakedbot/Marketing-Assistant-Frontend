@@ -34,7 +34,23 @@ function App() {
         path="widget/:customerID"
         element={
           <CartProvider>
-            <ChatWidget skipVerify />
+            <ChatWidget view="chat" skipVerify />
+          </CartProvider>
+        }
+      />
+      <Route
+        path="widget/deals/:customerID"
+        element={
+          <CartProvider>
+            <ChatWidget view="main" skipVerify />
+          </CartProvider>
+        }
+      />
+      <Route
+        path="widget/events/:customerID"
+        element={
+          <CartProvider>
+            <ChatWidget view="events" skipVerify />
           </CartProvider>
         }
       />

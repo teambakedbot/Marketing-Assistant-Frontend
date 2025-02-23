@@ -92,22 +92,25 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
           </div>
         )}
 
-        <div className="bb-sm-message-data">
-          {message.data.products && message.data.products.length > 0 && (
-            <div className="bb-sm-products-grid grid grid-cols-2 gap-4">
-              {message.data.products.map((product: any, index: number) => (
-                <ProductCard
-                  allowCart={allowCart}
-                  key={`${product.product_name}-${index}`}
-                  product={product}
-                  cart={cart}
-                  updateQuantity={updateQuantity}
-                  onAddToCart={onAddToCart}
-                  onProductClick={onProductClick}
-                />
-              ))}
-            </div>
-          )}
+<div className="bb-sm-message-data">
+  {message.data.products && message.data.products.length > 0 && (
+    <div className="bb-sm-products-scroll-wrapper overflow-x-auto whitespace-nowrap scrollbar-hide">
+      <div className="flex gap-4">
+        {message.data.products.map((product: any, index: number) => (
+          <ProductCard
+            allowCart={allowCart}
+            key={`${product.product_name}-${index}`}
+            product={product}
+            cart={cart}
+            updateQuantity={updateQuantity}
+            onAddToCart={onAddToCart}
+            onProductClick={onProductClick}
+            className="min-w-[160px]" // Adjust card width as needed
+          />
+        ))}
+      </div>
+    </div>
+  )}
 
           {message.data.retailers && message.data.retailers.length > 0 && (
             <div className="bb-sm-retailers-grid">

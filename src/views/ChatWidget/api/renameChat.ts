@@ -30,6 +30,9 @@ export interface Product {
   meta_sku: string;
   updated_at: string;
   id: string;
+  price: number | null
+  description : string,
+  product_id: string
 }
 
 export interface ProductResponse {

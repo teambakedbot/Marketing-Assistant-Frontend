@@ -60,10 +60,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({
   const addToCart = async (product: Product) => {
     setCart((prevCart) => {
       const newCart = { ...prevCart };
-      if (newCart[product.id]) {
-        newCart[product.id].quantity += 1;
+      if (newCart[product.id ?? product.product_id]) {
+        newCart[product.id ?? product.product_id].quantity += 1;
       } else {
-        newCart[product.id] = { product, quantity: 1 };
+        newCart[product.id ?? product.product_id] = { product, quantity: 1 };
       }
       return newCart;
     });

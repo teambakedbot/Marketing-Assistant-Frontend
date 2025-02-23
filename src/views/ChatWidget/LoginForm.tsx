@@ -28,7 +28,7 @@ const LoginForm: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
     return (
       <form
         onSubmit={handleSubmit}
-        className="bb-sm-login-form flex flex-col gap-6 w-full max-w-md"
+        className="bb-sm-login-form flex flex-col gap-2 w-full max-w-md"
       >
         <input
           type="email"
