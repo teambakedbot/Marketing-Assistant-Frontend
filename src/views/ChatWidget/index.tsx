@@ -993,18 +993,60 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
-      setCurrentView("order-confirm");
+      e.preventDefault();
+      setIsLoading(true);
 
-      // Commenting for later
+      try {
+        // Calculate total price
+        const totalPrice = Object.values(cart).reduce(
+          (sum, { product, quantity }) => sum + product.latest_price * quantity,
+          0
+        );
 
-      // e.preventDefault();
-      // setIsLoading(true);
-      // const contactInfo = {
-      //   [contactMethod]: contactValue,
-      // };
-      // await handleCheckout(customerName, contactInfo);
-      // setIsLoading(false);
-      // navigateTo("main");
+        // Format cart items with required fields
+        const formattedCart = Object.entries(cart).reduce(
+          (acc, [productId, { product, quantity }]) => {
+            acc[productId] = {
+              sku: productId,
+              product_name: product.product_name,
+              quantity: quantity,
+              price: product.latest_price,
+              weight: product.display_weight || undefined, // Include weight if available
+            };
+            return acc;
+          },
+          {} as Record<string, any>
+        );
+
+        // Prepare contact info
+        const contactInfo = {
+          [contactMethod]: contactValue,
+        };
+
+        // Prepare checkout data
+        const checkoutData = {
+          name: customerName,
+          contact_info: contactInfo,
+          cart: formattedCart,
+          total_price: totalPrice,
+        };
+
+        const token = await user?.getIdToken();
+        if (!token) throw new Error("No authentication token available");
+
+        await handleCheckout(token, checkoutData);
+        setCurrentView("order-confirm");
+      } catch (error) {
+        console.error("Checkout error:", error);
+        // You might want to show an error message to the user here
+        Swal.fire({
+          title: "Error",
+          text: "Failed to process checkout. Please try again.",
+          icon: "error",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     const isFormValid =

@@ -78,7 +78,17 @@ export const checkout = async (
   checkoutData: {
     name: string;
     contact_info: { email?: string; phone?: string };
-    cart: Record<string, { quantity: number }>;
+    cart: Record<
+      string,
+      {
+        sku: string;
+        product_name: string;
+        quantity: number;
+        price: number;
+        weight?: string;
+      }
+    >;
+    total_price: number;
   }
 ) => {
   const response = await axios.post(`${BASE_URL}/checkout`, checkoutData, {

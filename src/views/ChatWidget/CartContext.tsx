@@ -40,8 +40,22 @@ interface CartContextProps {
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, delta: number) => void;
   handleCheckout: (
-    name: string,
-    contactInfo: { email?: string; phone?: string }
+    token: string,
+    checkoutData: {
+      name: string;
+      contact_info: { email?: string; phone?: string };
+      cart: Record<
+        string,
+        {
+          sku: string;
+          product_name: string;
+          quantity: number;
+          price: number;
+          weight?: string;
+        }
+      >;
+      total_price: number;
+    }
   ) => void;
 }
 
@@ -94,30 +108,30 @@ export const CartProvider: React.FC<CartProviderProps> = ({
   };
 
   const handleCheckout = async (
-    name: string,
-    contactInfo: { email?: string; phone?: string }
+    token: string,
+    checkoutData: {
+      name: string;
+      contact_info: { email?: string; phone?: string };
+      cart: Record<
+        string,
+        {
+          sku: string;
+          product_name: string;
+          quantity: number;
+          price: number;
+          weight?: string;
+        }
+      >;
+      total_price: number;
+    }
   ) => {
     try {
-      const token = (await user?.getIdToken()) || "";
-      const checkoutData = {
-        name,
-        contact_info: contactInfo,
-        cart: Object.fromEntries(
-          Object.entries(cart).map(([id, { product, quantity }]) => [
-            id,
-            { quantity },
-          ])
-        ),
-      };
       const response = await checkout(token, checkoutData);
-      console.log("Checkout response:", response);
       setCart({});
-      alert(
-        "Order placed successfully! We will contact you for pickup details."
-      );
+      return response;
     } catch (error) {
-      console.error("Error during checkout:", error);
-      alert("There was an error processing your order. Please try again.");
+      console.error("Checkout error:", error);
+      throw error;
     }
   };
   return (
