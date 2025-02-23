@@ -1741,10 +1741,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     return <div>Loading...</div>;
   }
 
-  const handleLoadChatHistory = (chatId: string | null) => {
-    setActiveChatId(chatId);
-  };
-
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
@@ -2055,7 +2051,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 isLoggedIn={isLoggedIn}
                 chats={chats}
                 activeChatId={activeChatId}
-                onLoadChatHistory={handleLoadChatHistory}
+                onLoadChatHistory={loadChatHistory}
                 onLogin={handleLogin}
                 onViewSettings={handleViewSettings}
                 onViewStore={handleViewStore}
