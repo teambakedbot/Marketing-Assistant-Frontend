@@ -116,12 +116,12 @@ const getStateAbbreviation = (state: string): string => {
 //add props
 interface ChatWidgetProps {
   skipVerify?: boolean;
-  view: string;
+  view?: string;
 }
 
 export const ChatWidget: React.FC<ChatWidgetProps> = ({
   skipVerify = false,
-  view,
+  view = "chat",
 }) => {
   const { customerID } = useParams<{ customerID: string }>();
   const [isAllowed, setIsAllowed] = useState<boolean | null>(true);

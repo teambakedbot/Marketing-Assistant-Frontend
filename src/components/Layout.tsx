@@ -13,7 +13,7 @@ function Layout() {
         <div className="ml-[110px] min-h-screen">
           <CartProvider>
             <Outlet />
-            <ChatWidget skipVerify />
+            <ChatWidget view="main" skipVerify />
           </CartProvider>
         </div>
       </div>
