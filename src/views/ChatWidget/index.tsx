@@ -34,8 +34,7 @@ import {
   FaMinus,
   FaPlus,
   FaRegTrashAlt,
-  FaLongArrowAltRight 
-  
+  FaLongArrowAltRight,
 } from "react-icons/fa"; // Import the store icon and back arrow icon
 import { HiMiniBars3CenterLeft } from "react-icons/hi2";
 import { BASE_URL } from "../../utils/api";
@@ -44,11 +43,10 @@ import { CartContext } from "./CartContext";
 import { Product, getThemeSettings, ProductResponse } from "./api/renameChat";
 import { useParams } from "react-router-dom";
 import { ThemeSettings } from "./settings";
-import Sidebar from './Sidebar';
+import Sidebar from "./Sidebar";
 import EventList from "./Events";
 import { ArrowLeft } from "iconsax-react";
 import { FaWandMagicSparkles } from "react-icons/fa6";
-
 
 const Spinner: React.FC = () => (
   <div className="bb-sm-spinner">
@@ -123,7 +121,7 @@ interface ChatWidgetProps {
 
 export const ChatWidget: React.FC<ChatWidgetProps> = ({
   skipVerify = false,
-  view
+  view,
 }) => {
   const { customerID } = useParams<{ customerID: string }>();
   const [isAllowed, setIsAllowed] = useState<boolean | null>(true);
@@ -176,7 +174,17 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [chatHistory, setChatHistory] = useState<
-    { type: string; content: string; message_id: string }[]
+    {
+      type: string;
+      content: string;
+      message_id: string;
+      error?: boolean;
+      data?: {
+        suggested_next_questions?: string[];
+        images?: any[];
+        products?: any[];
+      };
+    }[]
   >([{ type: "ai", content: "Hey, how can I help?", message_id: "1" }]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -201,7 +209,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [userLocation, setUserLocation] =
     useState<GeolocationCoordinates | null>(null);
-  const [selectedProductType, setSelectedProductType] = useState<any>('')
+  const [selectedProductType, setSelectedProductType] = useState<any>("");
   const [userCity, setUserCity] = useState<string | null>(null);
   const [userState, setUserState] = useState<string | null>(null);
 
@@ -215,13 +223,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     | "feel"
     | "main"
     | "order-confirm"
-    | "events"
-    ;
+    | "events";
 
-  const [currentView, setCurrentView] = useState<Windows>(view === "main" ? "main" : view === "events" ? 'events' : 'chat');
+  const [currentView, setCurrentView] = useState<Windows>(
+    view === "main" ? "main" : view === "events" ? "events" : "chat"
+  );
   const [previousView, setPreviousView] = useState<Windows | null>(null);
 
-  const [shouldPlay, setShouldPlay ] = useState<Boolean>(false)
+  const [shouldPlay, setShouldPlay] = useState<boolean>(false);
 
   const [settings, setSettings] = useState<ThemeSettings>({
     defaultTheme: "custom",
@@ -476,13 +485,27 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       }
     }
 
+    const tempMessageId = Date.now().toString();
+    const userMessage = {
+      type: "human",
+      content: messageContent,
+      message_id: tempMessageId,
+    };
+    const loadingMessage = {
+      type: "ai",
+      content: "loading",
+      message_id: tempMessageId + "_response",
+      error: false,
+    };
+
     setChatHistory((prevHistory) => [
       ...prevHistory,
-      { type: "human", content: messageContent, message_id: "2" },
-      { type: "ai", content: "loading", message_id: "3" },
+      userMessage,
+      loadingMessage,
     ]);
     setPrompts("");
     setLoading(true);
+
     try {
       const token = await user?.getIdToken();
       const response = await sendMessage(
@@ -491,25 +514,127 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         currentChatId,
         token
       );
+
       setChatHistory((prevHistory) => {
         const updatedHistory = [...prevHistory];
-        updatedHistory[updatedHistory.length - 1] = response;
-
+        const loadingIndex = updatedHistory.findIndex(
+          (msg) => msg.message_id === tempMessageId + "_response"
+        );
+        if (loadingIndex !== -1) {
+          updatedHistory[loadingIndex] = response;
+        }
         return updatedHistory;
       });
+
       if (response.chat_id) {
         setCurrentChatId(response.chat_id);
         setActiveChatId(response.chat_id);
         fetchUserChats();
       }
     } catch (error: any) {
-      Swal.fire({
-        title: "Fetching Chat Answer",
-        text: error.message,
+      console.error("Chat error:", error);
+      setChatHistory((prevHistory) => {
+        const updatedHistory = [...prevHistory];
+        const loadingIndex = updatedHistory.findIndex(
+          (msg) => msg.message_id === tempMessageId + "_response"
+        );
+        if (loadingIndex !== -1) {
+          updatedHistory[loadingIndex] = {
+            type: "ai",
+            content: "Sorry, I encountered an error. Please try again.",
+            message_id: tempMessageId + "_response",
+            error: true,
+          };
+        }
+        return updatedHistory;
       });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRetry = async (message_id: string) => {
+    // Find the failed message and its corresponding user message
+    const messageIndex = chatHistory.findIndex(
+      (msg) => msg.message_id === message_id
+    );
+    if (messageIndex <= 0) return;
+
+    const userMessage = chatHistory[messageIndex - 1];
+    if (!userMessage || userMessage.type !== "human") return;
+
+    // Remove the failed message
+    setChatHistory((prevHistory) => {
+      const newHistory = [...prevHistory];
+      newHistory[messageIndex] = {
+        type: "ai",
+        content: "loading",
+        message_id: message_id,
+        error: false,
+      };
+      return newHistory;
+    });
+
+    setLoading(true);
+    try {
+      const token = await user?.getIdToken();
+      const response = await sendMessage(
+        userMessage.content,
+        "voiceType",
+        currentChatId,
+        token
+      );
+
+      setChatHistory((prevHistory) => {
+        const newHistory = [...prevHistory];
+        const retryIndex = newHistory.findIndex(
+          (msg) => msg.message_id === message_id
+        );
+        if (retryIndex !== -1) {
+          newHistory[retryIndex] = response;
+        }
+        return newHistory;
+      });
+
+      if (response.chat_id) {
+        setCurrentChatId(response.chat_id);
+        setActiveChatId(response.chat_id);
+        fetchUserChats();
+      }
+    } catch (error) {
+      console.error("Retry error:", error);
+      setChatHistory((prevHistory) => {
+        const newHistory = [...prevHistory];
+        const retryIndex = newHistory.findIndex(
+          (msg) => msg.message_id === message_id
+        );
+        if (retryIndex !== -1) {
+          newHistory[retryIndex] = {
+            type: "ai",
+            content: "Sorry, I encountered an error. Please try again.",
+            message_id: message_id,
+            error: true,
+          };
+        }
+        return newHistory;
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteMessage = (message_id: string) => {
+    setChatHistory((prevHistory) => {
+      const messageIndex = prevHistory.findIndex(
+        (msg) => msg.message_id === message_id
+      );
+      if (messageIndex === -1) return prevHistory;
+
+      // Remove both the error message and the user's message
+      const newHistory = [...prevHistory];
+      newHistory.splice(messageIndex - 1, 2);
+      return newHistory;
+    });
   };
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
@@ -754,77 +879,69 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     }
   };
 
-  const handleRetry = async (message_id: string) => {
-    try {
-      const token = await user?.getIdToken();
-      const response = await retryMessage(message_id, token);
-      if (!response.ok) {
-        throw new Error("Failed to retry message");
-      }
-      const result = await response.json();
-      // Update chat history with the new response
-      setChatHistory((prevHistory) => [...prevHistory, result]);
-    } catch (error) {
-      console.error("Error retrying message:", error);
-    }
-  };
-
   const CartView = () => (
     <div className="bb-sm-cart-view flex flex-col justify-between overflow-y-auto h-full">
       {Object.keys(cart).length === 0 ? (
         <p className="px-4">Your cart is empty.</p>
       ) : (
         <>
-            <div className="px-4 pb-4">
-              {Object.entries(cart).map(([productId, { product, quantity }]) => (
-                <div
-                  key={productId}
-                  className="flex items-center justify-between bg-white py-3 rounded-lg shadow-md"
-                >
-                  {/* Product Image */}
-                  <img
-                    src={product.image_url}
-                    alt={product.product_name}
-                    className="w-16 h-16 object-cover rounded-lg"
-                  />
+          <div className="px-4 pb-4">
+            {Object.entries(cart).map(([productId, { product, quantity }]) => (
+              <div
+                key={productId}
+                className="flex items-center justify-between bg-white py-3 rounded-lg shadow-md"
+              >
+                {/* Product Image */}
+                <img
+                  src={product.image_url}
+                  alt={product.product_name}
+                  className="w-16 h-16 object-cover rounded-lg"
+                />
 
-                  {/* Product Details */}
-                  <div className="flex flex-col flex-grow pl-2">
-                    <h3 className="font-medium text-xl">{product.product_name}</h3>
-                    <p className="font-normal text-sm py-1 opacity-40">
-                      THC: {product.percentage_thc ?? 0} | CBD: {product.percentage_cbd ?? 0}
-                    </p>
-                    <span className="text-xl font-medium">${(product.latest_price * quantity).toFixed(2)}</span>
-                  </div>
+                {/* Product Details */}
+                <div className="flex flex-col flex-grow pl-2">
+                  <h3 className="font-medium text-xl">
+                    {product.product_name}
+                  </h3>
+                  <p className="font-normal text-sm py-1 opacity-40">
+                    THC: {product.percentage_thc ?? 0} | CBD:{" "}
+                    {product.percentage_cbd ?? 0}
+                  </p>
+                  <span className="text-xl font-medium">
+                    ${(product.latest_price * quantity).toFixed(2)}
+                  </span>
+                </div>
 
-                  {/* Quantity Controls */}
-                  <div className="border rounded-lg opacity-60 border-opacity-100 flex items-center space-x-2 mr-4">
-                    <button
-                      onClick={() => updateQuantity(productId, -1)}
-                      className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                    >
-                      <FaMinus size={12} />
-                    </button>
-                    <span className="text-lg font-medium">{quantity.toString().padStart(2, '0')}</span>
-                    <button
-                      onClick={() => updateQuantity(productId, 1)}
-                      className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                    >
-                      <FaPlus size={12} />
-                    </button>
-                  </div>
-
-                  {/* Remove Button */}
+                {/* Quantity Controls */}
+                <div className="border rounded-lg opacity-60 border-opacity-100 flex items-center space-x-2 mr-4">
                   <button
-                    onClick={() => removeFromCart(productId)}
-                    className="bg-red-100 p-2 rounded-lg text-red-500 hover:bg-red-200 transition"
-                    aria-label="Remove item"
+                    onClick={() => updateQuantity(productId, -1)}
+                    className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
                   >
-                    <FaRegTrashAlt size={16} />
+                    <FaMinus size={12} />
+                  </button>
+                  <span className="text-lg font-medium">
+                    {quantity.toString().padStart(2, "0")}
+                  </span>
+                  <button
+                    onClick={() => updateQuantity(productId, 1)}
+                    className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                  >
+                    <FaPlus size={12} />
                   </button>
                 </div>
-              ))}
-            </div>
+
+                {/* Remove Button */}
+                <button
+                  onClick={() => removeFromCart(productId)}
+                  className="bg-red-100 p-2 rounded-lg text-red-500 hover:bg-red-200 transition"
+                  aria-label="Remove item"
+                >
+                  <FaRegTrashAlt size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
           <div className="bb-sm-cart-summary py-4 border-t border-gray-7000">
             <div className="font-normal flex justify-between mb-6 text-lg">
               <span>Subtotal</span>
@@ -856,13 +973,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   .toFixed(2)}
               </span>
             </div>
-              <button
-                onClick={() => navigateTo("checkOut")}
-                className="bb-sm-checkout-button w-full py-4 flex items-center justify-center space-x-2 rounded-lg text-lg font-semibold"
-              >
-                <span>Checkout</span>
-                <FaLongArrowAltRight />
-              </button>
+            <button
+              onClick={() => navigateTo("checkOut")}
+              className="bb-sm-checkout-button w-full py-4 flex items-center justify-center space-x-2 rounded-lg text-lg font-semibold"
+            >
+              <span>Checkout</span>
+              <FaLongArrowAltRight />
+            </button>
           </div>
         </>
       )}
@@ -876,8 +993,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
-
-      setCurrentView('order-confirm')
+      setCurrentView("order-confirm");
 
       // Commenting for later
 
@@ -897,40 +1013,46 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       <div className="h-full p-2">
         <h3 className="text-[16px] font-medium mb-4">Order Summary</h3>
         <div className="space-y-3 mb-4">
-              {Object.entries(cart).map(
-                ([productId, { product, quantity }]: any) => (
-                  <div key={productId} className="flex items-center justify-between text-sm">
-                    {/* Left Section: Image and Product Name */}
-                    <div className="flex items-center space-x-4">
-                      <img
-                        src={product.image_url}
-                        alt={product.product_name}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
-                      <span className="text-gray-800">{product.product_name} (x{quantity})</span>
-                    </div>
+          {Object.entries(cart).map(
+            ([productId, { product, quantity }]: any) => (
+              <div
+                key={productId}
+                className="flex items-center justify-between text-sm"
+              >
+                {/* Left Section: Image and Product Name */}
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={product.image_url}
+                    alt={product.product_name}
+                    className="w-16 h-16 object-cover rounded-lg"
+                  />
+                  <span className="text-gray-800">
+                    {product.product_name} (x{quantity})
+                  </span>
+                </div>
 
-                    {/* Right Section: Price */}
-                    <span className="font-semibold">${(product.latest_price * quantity).toFixed(2)}</span>
-                  </div>
-
-                )
-              )}
+                {/* Right Section: Price */}
+                <span className="font-semibold">
+                  ${(product.latest_price * quantity).toFixed(2)}
+                </span>
+              </div>
+            )
+          )}
         </div>
         <div className="flex justify-between font-bold text-md mb-4">
           <span>Total:</span>
-              <span>
-                $
-                {Object.values(cart)
-                  .reduce(
-                    (sum, { product, quantity }) =>
-                      sum + product.latest_price * quantity,
-                    0
-                  )
-                  .toFixed(2)}
-              </span>
+          <span>
+            $
+            {Object.values(cart)
+              .reduce(
+                (sum, { product, quantity }) =>
+                  sum + product.latest_price * quantity,
+                0
+              )
+              .toFixed(2)}
+          </span>
         </div>
-        
+
         {/* Coupon Code */}
         <div className="flex items-center border rounded-lg overflow-hidden mb-4">
           <input
@@ -939,21 +1061,31 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             placeholder="Coupon Code"
             className="flex-1 p-2 placeholder:text-sm border-none focus:outline-none"
           />
-          <button className="bb-sm-redeem-button rounded ml-2 px-4 py-2 text-sm mr-1 font-medium">Redeem</button>
+          <button className="bb-sm-redeem-button rounded ml-2 px-4 py-2 text-sm mr-1 font-medium">
+            Redeem
+          </button>
         </div>
-        
+
         {/* Email & Phone Toggle */}
         <div className="flex border-gray-300 pb-2 mb-4">
           <span
             className={`w-1/2 text-center cursor-pointer relative pb-2 
-      ${contactMethod === "email" ? "border-b-2 border-black font-semibold" : "text-gray-700 font-medium"}`}
+      ${
+        contactMethod === "email"
+          ? "border-b-2 border-black font-semibold"
+          : "text-gray-700 font-medium"
+      }`}
             onClick={() => setContactMethod("email")}
           >
             Email
           </span>
           <span
             className={`w-1/2 text-center cursor-pointer relative pb-2 
-      ${contactMethod === "phone" ? "border-b-2 border-black font-semibold" : "text-gray-700 font-medium"}`}
+      ${
+        contactMethod === "phone"
+          ? "border-b-2 border-black font-semibold"
+          : "text-gray-700 font-medium"
+      }`}
             onClick={() => setContactMethod("phone")}
           >
             Phone Number
@@ -980,7 +1112,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               </label>
               <input
                 type={contactMethod === "email" ? "email" : "tel"}
-                placeholder={`Enter ${contactMethod === "email" ? "Email Address" : "Phone Number"}`}
+                placeholder={`Enter ${
+                  contactMethod === "email" ? "Email Address" : "Phone Number"
+                }`}
                 value={contactValue}
                 onChange={(e) => setContactValue(e.target.value)}
                 required
@@ -1002,30 +1136,59 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   };
   const MainView: React.FC<any> = memo(() => {
     const flowers = [
-      { name: 'Flower', type: 'Traditional', description: 'Traditional cannabis buds', image: '/images/productType1.png' },
-      { name: 'Pre-Roll', type: 'Pre-Roll', description: 'Ready-to-smoke joints', image: '/images/productType2.png' },
-      { name: 'Vape', type: 'Vape', description: 'Ready-to-smoke joints', image: '/images/Vape.png' },
-      { name: 'Edible', type: 'Edible', description: 'Ready-to-smoke joints', image: '/images/Edible.png' },
+      {
+        name: "Flower",
+        type: "Traditional",
+        description: "Traditional cannabis buds",
+        image: "/images/productType1.png",
+      },
+      {
+        name: "Pre-Roll",
+        type: "Pre-Roll",
+        description: "Ready-to-smoke joints",
+        image: "/images/productType2.png",
+      },
+      {
+        name: "Vape",
+        type: "Vape",
+        description: "Ready-to-smoke joints",
+        image: "/images/Vape.png",
+      },
+      {
+        name: "Edible",
+        type: "Edible",
+        description: "Ready-to-smoke joints",
+        image: "/images/Edible.png",
+      },
     ];
-
 
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 2;
-  
+
     // Calculate sliced products for the current page
     const startIndex = currentPage * itemsPerPage;
-    const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
-  
+    const paginatedProducts = products.slice(
+      startIndex,
+      startIndex + itemsPerPage
+    );
+
     return (
       <>
         <div className="bb-sm-store-view h-full flex flex-col">
           <div className="flex rounded p-1 bg-[#F6F6F6]">
-            <img src="/images/StoreHeader.jpeg" alt="Sample Image" className="rounded-full w-[35px] h-[35px]" />
+            <img
+              src="/images/StoreHeader.jpeg"
+              alt="Sample Image"
+              className="rounded-full w-[35px] h-[35px]"
+            />
             <div className="flex flex-col px-2">
-              <p className="text-base font-semibold">Hey there! I'm Bud, your Ultra Cannabis assistant.</p>
-              <p className="text-base">Here are products matching your preferences!</p>
+              <p className="text-base font-semibold">
+                Hey there! I'm Bud, your Ultra Cannabis assistant.
+              </p>
+              <p className="text-base">
+                Here are products matching your preferences!
+              </p>
             </div>
-
           </div>
           <div className="flex justify-between">
             <div className="font-medium text-lg py-1 self-center">
@@ -1042,12 +1205,15 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               </button>
               <button
                 onClick={() =>
-                  setCurrentPage((prev) => (startIndex + itemsPerPage < products.length ? prev + 1 : prev))
+                  setCurrentPage((prev) =>
+                    startIndex + itemsPerPage < products.length
+                      ? prev + 1
+                      : prev
+                  )
                 }
                 disabled={startIndex + itemsPerPage >= products.length}
                 className="px-2 py-2 rounded disabled:opacity-50"
               >
-
                 <FaChevronRight />
               </button>
             </div>
@@ -1088,9 +1254,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       </p>
                       <p className="text-secondary-color">{product.category}</p>
                       <p className="font-medium text-base">
-                        ${product.latest_price?.toFixed(2)}&nbsp;&nbsp;{product.display_weight}
+                        ${product.latest_price?.toFixed(2)}&nbsp;&nbsp;
+                        {product.display_weight}
                       </p>
-                      <p className="text-sm text-gray-400 mb-3 line-clamp-2">{product.description}</p>
 
                       {cart[product.id] ? (
                         <div className="py-1 bb-sm-quantity-selector flex items-center justify-between gap-3 mt-auto rounded">
@@ -1101,7 +1267,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                             <FaMinus size={10} />
                           </button>
                           <span className="text-lg">
-                            {String(cart[product.id].quantity)?.padStart(2, "0")}
+                            {String(cart[product.id].quantity)?.padStart(
+                              2,
+                              "0"
+                            )}
                           </span>
                           <button
                             onClick={() => updateQuantity(product.id, 1)}
@@ -1125,9 +1294,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             </div>
           )}
 
-          <div className="font-medium text-lg py-1">
-            Shop by Product Type
-          </div>
+          <div className="font-medium text-lg py-1">Shop by Product Type</div>
 
           <div className="flex-1">
             <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-2 gap-2">
@@ -1138,10 +1305,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   onClick={() => {
                     setSelectedProductType(flower);
                     setSelectedProductType(flower);
-                    setCurrentView('feel');
+                    setCurrentView("feel");
                   }}
                 >
-
                   <img
                     src={flower.image}
                     alt={flower.name}
@@ -1158,7 +1324,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       </>
     );
   });
-
 
   const StoreView: React.FC<any> = memo(() => {
     return (
@@ -1275,55 +1440,92 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     );
   });
 
-
   interface FeelingScreenProps {
     selectedProductType: any | null;
-
   }
 
-  const FeelingsScreen: React.FC<FeelingScreenProps> = memo(({
-    selectedProductType
-  }) => {
-    const feelings = [
-    { name: 'Creative', description: 'Induce happiness', image: '/images/creative.png' },
-    { name: 'Energized', description: 'Boost imagination', image: '/images/energized.png' },
-    { name: 'Focused', description: 'Increase vitality', image: '/images/focused.png' },
-    { name: 'Euphoric', description: 'Enhance Concentration', image: '/images/euorphic.png' },
-    { name: 'Giggly', description: 'Elevate mood', image: '/images/gigly.png' },
-    { name: 'Relaxed', description: 'Induce happiness', image: '/images/relaxed.png' },
-    { name: 'Tingly', description: 'Aid relaxation', image: '/images/tingly.png' },
-    { name: 'Stimulated', description: 'Aid relaxation', image: '/images/stimulated.png' }
-  ]
-  const [selectedFeelings, setSelectedFeelings] = useState<any>([]);
-console.log("SELECTED FEELINGS",shouldPlay)
-  const handleSelect = (feel) => {
-    if (selectedFeelings.includes(feel)) {
-      if (selectedFeelings.length === 1) return;
-      setSelectedFeelings(selectedFeelings.filter((f) => f !== feel));
-    } else {
-      if (selectedFeelings.length >= 2) return;
-      setSelectedFeelings([...selectedFeelings, feel]);
-    }
-  };
+  const FeelingsScreen: React.FC<FeelingScreenProps> = memo(
+    ({ selectedProductType }) => {
+      const feelings = [
+        {
+          name: "Creative",
+          description: "Induce happiness",
+          image: "/images/creative.png",
+        },
+        {
+          name: "Energized",
+          description: "Boost imagination",
+          image: "/images/energized.png",
+        },
+        {
+          name: "Focused",
+          description: "Increase vitality",
+          image: "/images/focused.png",
+        },
+        {
+          name: "Euphoric",
+          description: "Enhance Concentration",
+          image: "/images/euorphic.png",
+        },
+        {
+          name: "Giggly",
+          description: "Elevate mood",
+          image: "/images/gigly.png",
+        },
+        {
+          name: "Relaxed",
+          description: "Induce happiness",
+          image: "/images/relaxed.png",
+        },
+        {
+          name: "Tingly",
+          description: "Aid relaxation",
+          image: "/images/tingly.png",
+        },
+        {
+          name: "Stimulated",
+          description: "Aid relaxation",
+          image: "/images/stimulated.png",
+        },
+      ];
+      const [selectedFeelings, setSelectedFeelings] = useState<any>([]);
+      console.log("SELECTED FEELINGS", shouldPlay);
+      const handleSelect = (feel) => {
+        if (selectedFeelings.includes(feel)) {
+          if (selectedFeelings.length === 1) return;
+          setSelectedFeelings(selectedFeelings.filter((f) => f !== feel));
+        } else {
+          if (selectedFeelings.length >= 2) return;
+          setSelectedFeelings([...selectedFeelings, feel]);
+        }
+      };
 
-
-
-  const handleClick = () => {
-    setCurrentView("chat");
-    setPrompts(`Show me the ${selectedProductType.name} that makes me feel ${selectedFeelings.join(" and ")}`);
-    setShouldPlay(true);
-  };
-    return (
-      <div>
-        <h3 className="py-1 text-[17px] font-medium text-center">How do you want to feel?</h3>
-        <p className="pt-1 pb-2 text-center">Select up to two effects</p>
-        <div className="flex-1 overflow-y-auto py-2">
-          <div className="bb-sm-product-grid grid grid-cols-3 md:grid-cols-3 gap-2 overflow-scroll">
+      const handleClick = () => {
+        setCurrentView("chat");
+        setPrompts(
+          `Show me the ${
+            selectedProductType.name
+          } that makes me feel ${selectedFeelings.join(" and ")}`
+        );
+        setShouldPlay(true);
+      };
+      return (
+        <div>
+          <h3 className="py-1 text-[17px] font-medium text-center">
+            How do you want to feel?
+          </h3>
+          <p className="pt-1 pb-2 text-center">Select up to two effects</p>
+          <div className="flex-1 overflow-y-auto py-2">
+            <div className="bb-sm-product-grid grid grid-cols-3 md:grid-cols-3 gap-2 overflow-scroll">
               {feelings?.map((feel, index) => (
                 <div
                   key={index}
                   className={`border p-2 flex flex-col rounded-lg overflow-hidden cursor-pointer transition duration-300
-          ${selectedFeelings.includes(feel.name) ? "border border-[#65715F] bg-[#65715F]/10" : "border-gray-300"}`}
+          ${
+            selectedFeelings.includes(feel.name)
+              ? "border border-[#65715F] bg-[#65715F]/10"
+              : "border-gray-300"
+          }`}
                   onClick={() => handleSelect(feel.name)}
                 >
                   <div className="self-center">
@@ -1340,11 +1542,20 @@ console.log("SELECTED FEELINGS",shouldPlay)
               ))}
             </div>
           </div>
-        <button onClick={handleClick} disabled={selectedFeelings.length === 0} className="bb-sm-next-button w-full flex items-center justify-center space-x-2 m p-1 rounded-lg mt-2 disabled:opacity-75">Next <FaLongArrowAltRight className="ml-1" /></button>
-          <p className="text-center text-md mt-2">By using this product, you agree to our Terms & Privcy Policy</p>
+          <button
+            onClick={handleClick}
+            disabled={selectedFeelings.length === 0}
+            className="bb-sm-next-button w-full flex items-center justify-center space-x-2 m p-1 rounded-lg mt-2 disabled:opacity-75"
+          >
+            Next <FaLongArrowAltRight className="ml-1" />
+          </button>
+          <p className="text-center text-md mt-2">
+            By using this product, you agree to our Terms & Privcy Policy
+          </p>
         </div>
-    )
-  })
+      );
+    }
+  );
   interface ProductDetailProps {
     product?: Product | null;
   }
@@ -1418,33 +1629,55 @@ console.log("SELECTED FEELINGS",shouldPlay)
     );
   };
 
-  const OrderConfirmation:React.FC<any> = () => {
+  const OrderConfirmation: React.FC<any> = () => {
     const [confirmed, setConfirmed] = useState(false);
-  
+
     return (
       <div className="flex flex-col items-center justify-center h-screen p-6">
         {!confirmed ? (
           <div className="text-center max-w-md w-full">
-            <img src="/images/pointing.png" alt="Order Confirmation" className="mx-auto h-[220px]" />
+            <img
+              src="/images/pointing.png"
+              alt="Order Confirmation"
+              className="mx-auto h-[220px]"
+            />
             <h2 className="text-2xl font-medium">Order Confirmation</h2>
             <p className="text-gray-600 mt-2">
-              Your order will be ready for pick up in 15 minutes. Use code <span className="font-bold">"UltraHigh"</span> to save on your next order.
+              Your order will be ready for pick up in 15 minutes. Use code{" "}
+              <span className="font-bold">"UltraHigh"</span> to save on your
+              next order.
             </p>
             <div className="flex gap-4 mt-6">
-              <button className="w-full p-2 border-2 border-[var(--primary-color)] text-[var(--primary-color)] font-semibold rounded-lg" onClick={()=> setCurrentView('checkOut')}>Cancel</button>
-              <button className="w-full p-2 bg-[var(--primary-color)] text-white rounded-lg font-semibold" onClick={() => setConfirmed(true)}>Confirm</button>
+              <button
+                className="w-full p-2 border-2 border-[var(--primary-color)] text-[var(--primary-color)] font-semibold rounded-lg"
+                onClick={() => setCurrentView("checkOut")}
+              >
+                Cancel
+              </button>
+              <button
+                className="w-full p-2 bg-[var(--primary-color)] text-white rounded-lg font-semibold"
+                onClick={() => setConfirmed(true)}
+              >
+                Confirm
+              </button>
             </div>
           </div>
         ) : (
           <div className="text-center max-w-md w-full">
-            <img src="/images/thankyou-order.png" alt="Thank You" className="h-[220px] mx-auto mb-4" />
+            <img
+              src="/images/thankyou-order.png"
+              alt="Thank You"
+              className="h-[220px] mx-auto mb-4"
+            />
             <h2 className="text-2xl font-semibold">Thank you! For The Order</h2>
             <p className="text-gray-600 mt-2">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
-            <button 
+            <button
               className="flex-1 bb-sm-place-order-button w-full py-3 rounded-lg text-lg font-semibold flex justify-center items-center disabled:opacity-50 mt-8"
-              onClick={()=> setCurrentView('store')}>
+              onClick={() => setCurrentView("store")}
+            >
               <ArrowLeft size={16} /> Back to Shop
             </button>
           </div>
@@ -1452,10 +1685,14 @@ console.log("SELECTED FEELINGS",shouldPlay)
       </div>
     );
   };
-  
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
+  };
+
+  const handleSuggestedQuestionClick = (question: string) => {
+    setPrompts(question);
+    playHandler();
   };
 
   if (isAllowed === null) {
@@ -1474,16 +1711,15 @@ console.log("SELECTED FEELINGS",shouldPlay)
     store: "Chat",
     cart: "Checkout",
     feel: "Chat",
-    chat:"Chat",
-    main:"Chat",
-    checkOut: "Checkout"
+    chat: "Chat",
+    main: "Chat",
+    checkOut: "Checkout",
     // Add more mappings as needed
   };
 
   const getViewName = (view: string): string => {
     return HeaderNames[view] || "Default View"; // Fallback if the view isn't in the mapping
   };
-  
 
   return (
     <div className="bb-sm-chat-widget bb-sm-body">
@@ -1504,9 +1740,11 @@ console.log("SELECTED FEELINGS",shouldPlay)
                       {currentView !== "chat" ? (
                         <FaArrowLeft />
                       ) : (
-                          <>
-                            {!isMenuOpen && <HiMiniBars3CenterLeft fontWeight={'bolder'} />}
-                          </>
+                        <>
+                          {!isMenuOpen && (
+                            <HiMiniBars3CenterLeft fontWeight={"bolder"} />
+                          )}
+                        </>
                       )}
                     </button>
                   </div>
@@ -1560,7 +1798,9 @@ console.log("SELECTED FEELINGS",shouldPlay)
                 {currentView === "product" && (
                   <ProductDetailView product={selectedProduct} />
                 )}
-                {currentView === "feel" && <FeelingsScreen selectedProductType={selectedProductType} />}
+                {currentView === "feel" && (
+                  <FeelingsScreen selectedProductType={selectedProductType} />
+                )}
                 {currentView === "settings" && (
                   <SettingsPage
                     onClose={handleSettingsClose}
@@ -1570,8 +1810,8 @@ console.log("SELECTED FEELINGS",shouldPlay)
                 )}
                 {currentView === "cart" && <CartView />}
                 {currentView === "checkOut" && <CheckoutView />}
-                {currentView === 'order-confirm' && <OrderConfirmation />}
-                {currentView === 'events' && <EventList />}
+                {currentView === "order-confirm" && <OrderConfirmation />}
+                {currentView === "events" && <EventList />}
                 {currentView === "chat" &&
                   (!isAllowed ? (
                     <div className="flex justify-center items-center h-full flex-col">
@@ -1668,17 +1908,45 @@ console.log("SELECTED FEELINGS",shouldPlay)
                               setSelectedProduct(product);
                               navigateTo("product");
                             }}
+                            onSuggestedQuestionClick={
+                              handleSuggestedQuestionClick
+                            }
                           />
                         </div>
                       )}
                     </>
                   ))}
 
-                {(currentView == "store" || currentView == "chat" || currentView == 'feel' || currentView == 'main') &&
+                {(currentView == "store" ||
+                  currentView == "chat" ||
+                  currentView == "feel" ||
+                  currentView == "main") &&
                   isAllowed && (
                     <div className="bb-sm-chat-input">
+                      {/* {chatHistory.length > 0 &&
+                        !loading &&
+                        chatHistory[chatHistory.length - 1]?.data
+                          ?.suggested_next_questions && (
+                          <div className="bb-sm-quick-responses-container">
+                            {chatHistory[
+                              chatHistory.length - 1
+                            ]?.data?.suggested_next_questions?.map(
+                              (question: string, index: number) => (
+                                <button
+                                  key={`quick-response-${index}`}
+                                  className="bb-sm-quick-response-button"
+                                  onClick={() =>
+                                    handleSuggestedQuestionClick(question)
+                                  }
+                                >
+                                  {question}
+                                </button>
+                              )
+                            )}
+                          </div>
+                        )} */}
                       <textarea
-                        className="resize-none w-full placeholder-text-secondary  p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
+                        className="resize-none w-full placeholder-text-secondary p-2 min-h-[40px] max-h-[120px] overflow-y-auto"
                         onKeyDown={(e) => {
                           if (e.key === "Enter" && !e.shiftKey) {
                             if (currentView === "chat") {
@@ -1741,7 +2009,7 @@ console.log("SELECTED FEELINGS",shouldPlay)
 
               {/* Side menu */}
               <Sidebar
-                isMenuOpen={isMenuOpen} // Pass state as prop
+                isMenuOpen={isMenuOpen}
                 isLoggedIn={isLoggedIn}
                 chats={chats}
                 activeChatId={activeChatId}
@@ -1749,6 +2017,8 @@ console.log("SELECTED FEELINGS",shouldPlay)
                 onLogin={handleLogin}
                 onViewSettings={handleViewSettings}
                 onViewStore={handleViewStore}
+                onRenameChat={handleRenameChat}
+                onDeleteChat={handleDeleteChat}
               />
 
               {/* Right panel */}
@@ -1858,6 +2128,5 @@ console.log("SELECTED FEELINGS",shouldPlay)
     </div>
   );
 };
-
 
 export default ChatWidget;
