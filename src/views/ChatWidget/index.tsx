@@ -5,6 +5,7 @@ import React, {
   useCallback,
   memo,
   useContext,
+  useMemo,
 } from "react";
 import axios from "axios";
 import loadingIcon from "/images/loading-spinner-white.gif";
@@ -413,7 +414,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   };
 
   const handleViewChat = () => {
-    loadChatHistory(null)
+    loadChatHistory(null);
     navigateTo("chat");
     setIsMenuOpen(false);
   };
@@ -999,9 +1000,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     </div>
   );
 
-
-
-
   const ProductType: React.FC<any> = memo(() => {
     const productTypes = [
       {
@@ -1024,30 +1022,30 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         description: "Cannabis-infused foods",
         image: "/images/Edible.png",
       },
-      {
-        name: "Concentrate",
-        description: "Potent extracts",
-        image: "/images/concentrate.png",
-      },
-      {
-        name: "Tincture",
-        description: "Liquid extracts",
-        image: "/images/tincture.png",
-      },
-      {
-        name: "Topical",
-        description: "Skin applications",
-        image: "/images/topical.png",
-      },
-      {
-        name: "Accessories",
-        description: "Smoking devices",
-        image: "/images/accessories.png",
-      },
+      // {
+      //   name: "Concentrate",
+      //   description: "Potent extracts",
+      //   image: "/images/concentrate.png",
+      // },
+      // {
+      //   name: "Tincture",
+      //   description: "Liquid extracts",
+      //   image: "/images/tincture.png",
+      // },
+      // {
+      //   name: "Topical",
+      //   description: "Skin applications",
+      //   image: "/images/topical.png",
+      // },
+      // {
+      //   name: "Accessories",
+      //   description: "Smoking devices",
+      //   image: "/images/accessories.png",
+      // },
     ];
 
     return (
-      <div className="flex flex-col justify-between overflow-y-scroll">
+      <div className="flex flex-col justify-between overflow-y-scroll mt-3">
         <h3 className="py-1 text-[17px] font-medium text-center">
           What type of product are you looking for?
         </h3>
@@ -1079,123 +1077,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               </div>
             ))}
           </div>
-        </div>
-      </div>
-    );
-  });
-
-  const StoreView: React.FC<any> = memo(() => {
-    return (
-      <div className="bb-sm-store-view h-full flex flex-col overflow-hidden">
-        <div className="bb-sm-results-header flex justify-between items-center p-4 border-b border-gray-700">
-          <h2 className="text-lg">Showing results "{totalProducts}"</h2>
-          <button
-            className="text-sm hover:opacity-80"
-            onClick={() => {
-              setSearchQuery("");
-              fetchProducts();
-            }}
-          >
-            See all
-          </button>
-        </div>
-
-        {error && (
-          <div className="bb-sm-error-message border border-red-400 text-red-700 px-4 py-3 rounded relative m-4">
-            <strong className="font-bold">Error:</strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-        )}
-
-        {isLoading ? (
-          <div className="bb-sm-loading-container flex justify-center items-center h-64">
-            <Spinner />
-          </div>
-        ) : (
-          <div className="flex-1 overflow-y-auto p-4">
-            <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-2 gap-4">
-              {products?.map((product) => (
-                <div
-                  key={product.id}
-                  className="bb-sm-product-item p-[10px] flex flex-col rounded-lg overflow-hidden"
-                >
-                  <div className="relative pt-[50%]">
-                    <img
-                      src={product.image_url}
-                      alt={product.product_name}
-                      className="absolute top-0 left-0 w-full h-full object-cover cursor-pointer"
-                      onClick={() => handleProductClick(product)}
-                    />
-                  </div>
-                  <div className="p-3 flex flex-col flex-1">
-                    <h3
-                      className="text-md font-semibold cursor-pointer mb-1 line-clamp-2"
-                      onClick={() => handleProductClick(product)}
-                    >
-                      {product.product_name}
-                    </h3>
-                    <p className="text-lg font-bold mb-2">
-                      ${product.latest_price?.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-400 mb-3 line-clamp-2">
-                      {product.description}
-                    </p>
-
-                    {cart[product.id] ? (
-                      <div className="bb-sm-quantity-selector flex items-center justify-center gap-3 mt-auto">
-                        <button
-                          onClick={() => updateQuantity(product.id, -1)}
-                          className="bb-sm-quantity-button w-8 h-8 rounded-full flex items-center justify-center"
-                        >
-                          <FaMinus size={10} />
-                        </button>
-                        <span className="text-lg">
-                          {cart[product.id].quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(product.id, 1)}
-                          className="bb-sm-quantity-button w-8 h-8 rounded-full flex items-center justify-center"
-                        >
-                          <FaPlus size={10} />
-                        </button>
-                      </div>
-                    ) : (
-<button
-  type="button"
-  className="bb-sm-add-to-cart-button w-full py-1"
-  onClick={() => handleAddToCart(product)}
->
-  Add to cart
-</button>
-
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="bb-sm-pagination flex justify-center items-center gap-4 p-4 border-t border-gray-700">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1 || isLoading}
-            className="bb-sm-pagination-button w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-50"
-            aria-label="Previous page"
-          >
-            <FaChevronLeft />
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages || isLoading}
-            className="bb-sm-pagination-button w-8 h-8 rounded-full flex items-center justify-center disabled:opacity-50"
-            aria-label="Next page"
-          >
-            <FaChevronRight />
-          </button>
         </div>
       </div>
     );
@@ -1271,7 +1152,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         setShouldPlay(true);
       };
       return (
-        <div className="flex flex-col justify-between h-full overflow-y-scroll">
+        <div className="flex flex-col justify-between h-full overflow-y-scroll mt-3">
           <h3 className="py-1 text-[17px] font-medium text-center">
             How do you want to feel?
           </h3>
@@ -1456,6 +1337,32 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     playHandler();
   };
 
+  // Update contact info state initialization
+  const [contactInfo, setContactInfo] = useState<{
+    email: string;
+    phone: string;
+  }>(() => ({
+    email: user?.email || "",
+    phone: "",
+  }));
+
+  // Update the hasValidEmail computation to ensure it returns a boolean
+  const hasValidEmail = useMemo(() => {
+    return Boolean(
+      contactInfo.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email)
+    );
+  }, [contactInfo.email]);
+
+  // Update contact info when user changes or logs in
+  useEffect(() => {
+    if (user?.email && !contactInfo.email) {
+      setContactInfo((prev) => ({
+        ...prev,
+        email: user.email,
+      }));
+    }
+  }, [user]);
+
   if (isAllowed === null) {
     return <div>Loading...</div>;
   }
@@ -1470,9 +1377,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     feel: "Chat",
     chat: "Chat",
     new: "Chat",
-    main: "Chat",
+    main: "Deals of the day",
     checkOut: "Checkout",
-    'product-type':'Product types'
+    events: "Events near you",
+    "product-type": "Product types",
     // Add more mappings as needed
   };
 
@@ -1515,9 +1423,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       className="px-5 p-1 bg-primary-color rounded"
                       onClick={()=>setCurrentView('chat')}><FaWandMagicSparkles color="white" /></button> */}
                     {Object.keys(cart).length > 0 && (
-                    <div className="bg-primary-color text-white rounded text-base p-[6px]">
-                      <button className="flex justify-between  whitespace-nowrap min-w-max" onClick={() => navigateTo("checkOut")}>
-                        Checkout Now
+                      <div className="bg-primary-color text-white rounded text-base p-[6px]">
+                        <button
+                          className="flex justify-between  whitespace-nowrap min-w-max"
+                          onClick={() => navigateTo("checkOut")}
+                        >
+                          Checkout Now
                           <span className="bb-sm-cart-count self-center text-sm">
                             {Object.values(cart).reduce(
                               (sum, { product, quantity }) => sum + quantity,
@@ -1558,7 +1469,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     ></button> */}
                   </div>
                 </div>
-                {currentView === "main" && <DealsView products={products} error={error} isLoading={isLoading} />}
+                {currentView === "main" && (
+                  <DealsView
+                    products={products}
+                    error={error}
+                    isLoading={isLoading}
+                  />
+                )}
                 {currentView === "store" && <StoreView />}
                 {currentView === "product-type" && <ProductType />}
                 {currentView === "product" && (
@@ -1575,7 +1492,15 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   />
                 )}
                 {currentView === "cart" && <CartView />}
-                {currentView === "checkOut" && <CheckoutView navigateTo={navigateTo} setCurrentView={setCurrentView} />}
+                {currentView === "checkOut" && (
+                  <CheckoutView
+                    navigateTo={navigateTo as (view: Windows) => void}
+                    setCurrentView={setCurrentView as (view: Windows) => void}
+                    contactInfo={contactInfo}
+                    setContactInfo={setContactInfo}
+                    hasValidEmail={hasValidEmail}
+                  />
+                )}
                 {currentView === "order-confirm" && <OrderConfirmation />}
                 {currentView === "events" && <EventList />}
                 {currentView === "chat" &&
@@ -1606,9 +1531,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                             <div className="bb-sm-new-chat-buttons">
                               <button
                                 className="bb-sm-new-chat-button"
-                                onMouseDown={() =>
-                                  setPrompts("Show me Deals of the day")
-                                }
+                                onMouseDown={() => setCurrentView("main")}
                                 onClick={() => playHandler()}
                               >
                                 <span className="bb-sm-new-chat-button-icon">
@@ -1618,9 +1541,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                               </button>
                               <button
                                 className="bb-sm-new-chat-button"
-                                onMouseDown={() =>
-                                  setPrompts("Show me events near me")
-                                }
+                                onMouseDown={() => setCurrentView("events")}
                                 onClick={() => playHandler()}
                               >
                                 <span className="bb-sm-new-chat-button-icon">
