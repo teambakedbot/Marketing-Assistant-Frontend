@@ -689,6 +689,7 @@
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
+  max-height: 100vh;
 }
 .bb-sm-store-header {
 
