@@ -51,6 +51,7 @@ import { ArrowLeft } from "iconsax-react";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import DealsView from "./DealsView";
 import CheckoutView from "./OrderSummary";
+import StoreView from "./StoreView";
 
 export const Spinner: React.FC = () => (
   <div className="bb-sm-spinner">
@@ -1344,7 +1345,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     if (user?.email && !contactInfo.email) {
       setContactInfo((prev) => ({
         ...prev,
-        email: user.email,
+        email: user.email || "", // Ensure email is always a string
       }));
     }
   }, [user]);
