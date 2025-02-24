@@ -1458,7 +1458,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     ];
 
     return (
-      <div>
+      <div className="flex flex-col justify-between overflow-y-scroll">
         <h3 className="py-1 text-[17px] font-medium text-center">
           What type of product are you looking for?
         </h3>
@@ -1471,7 +1471,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 className="border p-2 flex flex-col rounded-lg overflow-hidden cursor-pointer hover:border-[#65715F] hover:bg-[#65715F]/10 transition-all duration-300"
                 onClick={() => {
                   setSelectedProductType(type);
-                  setCurrentView("feel");
+                  navigateTo("feel");
                 }}
               >
                 <div className="self-center">
@@ -1680,7 +1680,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         setShouldPlay(true);
       };
       return (
-        <div>
+        <div className="flex flex-col justify-between h-full overflow-y-scroll">
           <h3 className="py-1 text-[17px] font-medium text-center">
             How do you want to feel?
           </h3>
@@ -1880,6 +1880,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     chat: "Chat",
     main: "Chat",
     checkOut: "Checkout",
+    'product-type':'Product types'
     // Add more mappings as needed
   };
 
@@ -1914,7 +1915,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       )}
                     </button>
                   </div>
-                  <p className="p-1 text-xl md:text-xl font-bold flex-1">
+                  <p className="p-1 text-[1.05rem] font-bold flex-1">
                     {getViewName(currentView || "")}
                   </p>
                   <div className="flex flex-row gap-5 justify-end items-center flex-1">
@@ -1922,13 +1923,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       className="px-5 p-1 bg-primary-color rounded"
                       onClick={()=>setCurrentView('chat')}><FaWandMagicSparkles color="white" /></button> */}
                     {Object.keys(cart).length > 0 && (
-                      <div className="bg-primary-color text-white rounded text-xs p-[6px] w-[102px]">
-                        <button
-                          className=""
-                          onClick={() => navigateTo("checkOut")}
-                        >
-                          Checkout Now
-                          <span className="bb-sm-cart-count text-xs">
+                    <div className="bg-primary-color text-white rounded text-base p-[6px]">
+                      <button className="flex justify-between  whitespace-nowrap min-w-max" onClick={() => navigateTo("checkOut")}>
+                        Checkout Now
+                          <span className="bb-sm-cart-count self-center text-sm">
                             {Object.values(cart).reduce(
                               (sum, { product, quantity }) => sum + quantity,
                               0
