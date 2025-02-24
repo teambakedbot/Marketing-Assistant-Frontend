@@ -818,17 +818,29 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     }
   };
 
-  const handleContextMenu = (e: React.MouseEvent, chatId: string) => {
-    e.preventDefault();
-    setContextMenu({ x: e.clientX, y: e.clientY, chatId });
-  };
-
-  const handleRenameChat = (chatId: string) => {
-    setEditingChatId(chatId);
-    setNewChatName(
-      chats.find((chat: any) => chat.chat_id === chatId)?.name || ""
-    );
-    setContextMenu(null);
+  const handleRenameChat = async (chatId: string, newName?: string) => {
+    if (newName) {
+      // This is the save operation
+      try {
+        const token = await user?.getIdToken();
+        await renameChat(chatId, newName, token);
+        setChats(
+          chats.map((chat: any) =>
+            chat.chat_id === chatId ? { ...chat, name: newName } : chat
+          )
+        );
+        setEditingChatId(null);
+      } catch (error) {
+        console.error("Error renaming chat:", error);
+      }
+    } else {
+      // This is the initial rename setup
+      setEditingChatId(chatId);
+      setNewChatName(
+        chats.find((chat: any) => chat.chat_id === chatId)?.name || ""
+      );
+      setContextMenu(null);
+    }
   };
 
   useEffect(() => {
@@ -845,32 +857,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       setContextMenu(null);
     } catch (error) {
       console.error("Error deleting chat:", error);
-    }
-  };
-
-  const handleSaveRename = async () => {
-    if (!editingChatId || !newChatName.trim()) return;
-    try {
-      const token = await user?.getIdToken();
-      renameChat(editingChatId, newChatName, token);
-      setChats(
-        chats.map((chat: any) =>
-          chat.chat_id === editingChatId ? { ...chat, name: newChatName } : chat
-        )
-      );
-      setEditingChatId(null);
-    } catch (error) {
-      console.error("Error renaming chat:", error);
-    }
-  };
-
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages && !isLoading) {
-      if (searchQuery) {
-        handleSearch(newPage);
-      } else {
-        fetchProducts(newPage);
-      }
     }
   };
 

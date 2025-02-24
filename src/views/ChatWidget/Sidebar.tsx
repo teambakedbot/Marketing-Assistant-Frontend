@@ -1,5 +1,5 @@
 import React from "react";
-import { FaEllipsisV } from "react-icons/fa";
+import { FaEllipsisV, FaCheck } from "react-icons/fa";
 import LoginForm from "./LoginForm";
 import robotIcon from "/images/pointing.png"; // Import the robot icon
 import notLoggedInIcon from "/images/blunt-smokey.png"; // Import the not logged in icon
@@ -14,7 +14,7 @@ interface SidebarProps {
   onLogin: () => void;
   onViewSettings: () => void;
   onViewStore: () => void;
-  onRenameChat: (chatId: string) => void;
+  onRenameChat: (chatId: string, newName: string) => void;
   onDeleteChat: (chatId: string) => void;
   setIsMenuOpen: React.Dispatch<React.SetStateAction<any>>;
 }
@@ -30,20 +30,45 @@ const Sidebar: React.FC<SidebarProps> = ({
   onViewStore,
   onRenameChat,
   onDeleteChat,
-  setIsMenuOpen
+  setIsMenuOpen,
 }) => {
   const [editingChatId, setEditingChatId] = React.useState<string | null>(null);
   const [newChatName, setNewChatName] = React.useState("");
   const renameInputRef = React.useRef<HTMLInputElement>(null);
+  const renameContainerRef = React.useRef<HTMLDivElement>(null);
   const [contextMenu, setContextMenu] = React.useState<{
     x: number;
     y: number;
     chatId: string;
   } | null>(null);
 
+  // Focus the input when a chat is being renamed
+  React.useEffect(() => {
+    if (editingChatId && renameInputRef.current) {
+      renameInputRef.current.focus();
+    }
+  }, [editingChatId]);
+
+  // Add click outside handling for the rename container
+  React.useEffect(() => {
+    if (!editingChatId) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        renameContainerRef.current &&
+        !renameContainerRef.current.contains(e.target as Node)
+      ) {
+        setEditingChatId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [editingChatId]);
+
   const handleSaveRename = () => {
-    // Add logic to save the renamed chat
-    console.log("Saving new chat name:", newChatName);
+    if (editingChatId) {
+      console.log("Saving new chat name:", newChatName);
+      onRenameChat(editingChatId, newChatName);
+    }
     setEditingChatId(null);
   };
 
@@ -69,7 +94,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div className={`bb-sm-side-menu ${isMenuOpen ? "bb-sm-open" : ""}`}>
       <div className="bb-sm-side-menu-header">
-        <button className="ml-auto font-semibold" onClick={()=> setIsMenuOpen(false)}>X</button>
+        <button
+          className="ml-auto font-semibold"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          X
+        </button>
         <div className="bb-sm-robot-icon-container">
           <img
             src={isLoggedIn ? robotIcon : notLoggedInIcon}
@@ -98,11 +128,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                   className="bb-sm-chat-item-container"
                 >
                   {editingChatId === chat_id ? (
-                    <div className="bb-sm-chat-rename-input">
+                    <div
+                      className="bb-sm-chat-rename-input flex items-center"
+                      ref={renameContainerRef}
+                    >
                       <input
                         ref={renameInputRef}
                         type="text"
-                        className="text-sm h-10"
+                        className="text-sm h-10 flex-1"
                         value={newChatName}
                         onChange={(e) => setNewChatName(e.target.value)}
                         onKeyDown={(e) => {
@@ -110,6 +143,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                           if (e.key === "Escape") setEditingChatId(null);
                         }}
                       />
+                      <button
+                        onClick={handleSaveRename}
+                        className="ml-2 text-primary-color"
+                      >
+                        <FaCheck size={16} />
+                      </button>
                     </div>
                   ) : (
                     <div className="bb-sm-chat-item-wrapper">
@@ -163,7 +202,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         >
           <button
             onClick={() => {
-              onRenameChat(contextMenu.chatId);
+              // Set rename mode and populate with current name.
+              const chat = chats.find((c) => c.chat_id === contextMenu.chatId);
+              if (chat) {
+                setNewChatName(chat.name);
+                setEditingChatId(chat.chat_id);
+              }
               setContextMenu(null);
             }}
           >
