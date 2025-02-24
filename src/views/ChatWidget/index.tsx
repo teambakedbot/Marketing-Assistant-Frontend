@@ -51,7 +51,6 @@ import { ArrowLeft } from "iconsax-react";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import DealsView from "./DealsView";
 import CheckoutView from "./OrderSummary";
-import StoreView from "./StoreView";
 
 export const Spinner: React.FC = () => (
   <div className="bb-sm-spinner">
@@ -1463,7 +1462,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     isLoading={isLoading}
                   />
                 )}
-                {currentView === "store" && <StoreView />}
                 {currentView === "product-type" && <ProductType />}
                 {currentView === "product" && (
                   <ProductDetailView product={selectedProduct} />
