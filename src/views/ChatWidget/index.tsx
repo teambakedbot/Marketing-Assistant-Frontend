@@ -997,9 +997,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   );
 
   const CheckoutView = () => {
-    const [customerName, setCustomerName] = useState("");
-    const [contactMethod, setContactMethod] = useState("email");
-    const [contactValue, setContactValue] = useState("");
+    const [customerName, setCustomerName] = useState(user?.displayName || "");
+    const [contactInfo, setContactInfo] = useState({
+      email: user?.email || "",
+      phone: "",
+      useAltEmail: false, // New flag to track if user wants to use different email
+    });
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -1029,14 +1032,16 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         );
 
         // Prepare contact info
-        const contactInfo = {
-          [contactMethod]: contactValue,
+        const contactDetails = {
+          // renamed from contactInfo
+          email: contactInfo.email,
+          phone: contactInfo.phone,
         };
 
         // Prepare checkout data
         const checkoutData = {
           name: customerName,
-          contact_info: contactInfo,
+          contact_info: contactDetails, // use renamed variable
           cart: formattedCart,
           total_price: totalPrice,
         };
@@ -1060,7 +1065,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     };
 
     const isFormValid =
-      customerName.trim() !== "" && contactValue.trim() !== "";
+      customerName.trim() !== "" &&
+      (contactInfo.email.trim() !== "" || contactInfo.phone.trim() !== "");
     return (
       <div className="h-full p-2 overflow-y-scroll">
         <h3 className="text-[16px] font-medium mb-4">Order Summary</h3>
@@ -1069,18 +1075,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             ([productId, { product, quantity }]: any) => (
               <div
                 key={productId}
-                className="flex items-center justify-between text-sm"
+                className="flex items-center justify-between text-sm bg-white p-2 rounded-lg"
               >
-                {/* Left Section: Image and Product Name */}
-                <div className="flex items-center space-x-4">
+                {/* Left Section: Image and Product Info */}
+                <div className="flex items-center gap-3 flex-1">
                   <img
                     src={product.image_url}
                     alt={product.product_name}
-                    className="w-16 h-16 object-cover rounded-lg"
+                    className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
                   />
-                  <div className="flex flex-col">
-                    <span className="text-gray-800">
-                      {product.product_name} (x{quantity})
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-gray-800 truncate">
+                      {product.product_name}
                     </span>
                     <p className="font-normal text-xs opacity-40">
                       THC: {product.percentage_thc ?? 0} | CBD:{" "}
@@ -1092,34 +1098,36 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   </div>
                 </div>
 
-                {/* Right Section: Price */}
+                {/* Right Section: Controls */}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {/* Quantity Stepper */}
+                  <div className="flex items-center border rounded-lg bg-gray-50 h-8">
+                    <button
+                      onClick={() => updateQuantity(productId, -1)}
+                      className="w-8 h-full flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                    >
+                      <FaMinus size={12} />
+                    </button>
+                    <span className="w-8 text-center font-medium">
+                      {quantity.toString().padStart(2, "0")}
+                    </span>
+                    <button
+                      onClick={() => updateQuantity(productId, 1)}
+                      className="w-8 h-full flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                    >
+                      <FaPlus size={12} />
+                    </button>
+                  </div>
 
-                <div className="border rounded-lg opacity-60 border-opacity-100 flex items-center space-x-2 mr-4">
+                  {/* Delete Button */}
                   <button
-                    onClick={() => updateQuantity(productId, -1)}
-                    className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                    onClick={() => removeFromCart(productId)}
+                    className="w-8 h-8 flex items-center justify-center bg-red-100 rounded-lg text-red-500 hover:bg-red-200 transition"
+                    aria-label="Remove item"
                   >
-                    <FaMinus size={12} />
-                  </button>
-                  <span className="text-lg font-medium">
-                    {quantity.toString().padStart(2, "0")}
-                  </span>
-                  <button
-                    onClick={() => updateQuantity(productId, 1)}
-                    className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
-                  >
-                    <FaPlus size={12} />
+                    <FaRegTrashAlt size={16} />
                   </button>
                 </div>
-
-                {/* Remove Button */}
-                <button
-                  onClick={() => removeFromCart(productId)}
-                  className="bg-red-100 p-2 rounded-lg text-red-500 hover:bg-red-200 transition"
-                  aria-label="Remove item"
-                >
-                  <FaRegTrashAlt size={16} />
-                </button>
               </div>
             )
           )}
@@ -1151,71 +1159,89 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           </button>
         </div>
 
-        {/* Email & Phone Toggle */}
-        <div className="flex border-gray-300 pb-2 mb-4">
-          <span
-            className={`w-1/2 text-center cursor-pointer relative pb-2 
-      ${
-        contactMethod === "email"
-          ? "border-b-2 border-black font-semibold"
-          : "text-gray-700 font-medium"
-      }`}
-            onClick={() => setContactMethod("email")}
-          >
-            Email
-          </span>
-          <span
-            className={`w-1/2 text-center cursor-pointer relative pb-2 
-      ${
-        contactMethod === "phone"
-          ? "border-b-2 border-black font-semibold"
-          : "text-gray-700 font-medium"
-      }`}
-            onClick={() => setContactMethod("phone")}
-          >
-            Phone Number
-          </span>
+        {/* Updated Contact Information Section */}
+        <div className="space-y-4 mt-4">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">Contact Information</label>
+            {user?.email ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  {/* hide this if not useing alt email */}
+                  <div className="flex items-center gap-2 text-sm">
+                    {!contactInfo.useAltEmail && (
+                      <>
+                        <span className="text-gray-600">
+                          ✓ Using account email:
+                        </span>
+                        <span className="font-medium">{user.email}</span>
+                      </>
+                    )}
+                  </div>
+                  <button
+                    onClick={() =>
+                      setContactInfo((prev) => ({
+                        ...prev,
+                        useAltEmail: !prev.useAltEmail,
+                      }))
+                    }
+                    className="text-xs text-primary-color hover:underline"
+                  >
+                    {contactInfo.useAltEmail
+                      ? "Use account email"
+                      : "Change email"}
+                  </button>
+                </div>
+                {contactInfo.useAltEmail && (
+                  <input
+                    type="email"
+                    placeholder="Enter alternative email"
+                    value={contactInfo.email}
+                    onChange={(e) =>
+                      setContactInfo({ ...contactInfo, email: e.target.value })
+                    }
+                    className="w-full p-2 text-sm border rounded focus:ring-1 focus:ring-primary-color"
+                  />
+                )}
+              </div>
+            ) : (
+              <input
+                type="email"
+                placeholder="Email"
+                value={contactInfo.email}
+                onChange={(e) =>
+                  setContactInfo({ ...contactInfo, email: e.target.value })
+                }
+                className="w-full p-2 text-sm border rounded focus:ring-1 focus:ring-primary-color"
+              />
+            )}
+          </div>
+
+          {/* Phone number input */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-500">
+              Phone Number (Optional)
+            </label>
+            <input
+              type="tel"
+              placeholder="Phone number"
+              value={contactInfo.phone}
+              onChange={(e) =>
+                setContactInfo({ ...contactInfo, phone: e.target.value })
+              }
+              className="p-2 text-sm border rounded focus:ring-1 focus:ring-primary-color"
+            />
+          </div>
         </div>
 
-        {/* Input Fields */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-4 flex flex-col">
-            <div className="flex-none">
-              <label className="text-sm font-medium">Full Name</label>
-              <input
-                type="text"
-                placeholder="Enter Full Name"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                required
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-            <div className="flex-none">
-              <label className="text-sm font-medium">
-                {contactMethod === "email" ? "Email Address" : "Phone Number"}
-              </label>
-              <input
-                type={contactMethod === "email" ? "email" : "tel"}
-                placeholder={`Enter ${
-                  contactMethod === "email" ? "Email Address" : "Phone Number"
-                }`}
-                value={contactValue}
-                onChange={(e) => setContactValue(e.target.value)}
-                required
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-          </div>
-          {/* Place Order Button */}
-          <button
-            type="submit"
-            disabled={isLoading || !isFormValid}
-            className="flex-1 bb-sm-place-order-button w-full py-3 rounded-lg text-lg font-semibold flex justify-center items-center disabled:opacity-50 mt-8"
-          >
-            {isLoading ? "Placing Order..." : "Place Order"}
-          </button>
-        </form>
+        {/* Place Order Button */}
+        <button
+          type="submit"
+          disabled={isLoading || (!contactInfo.email && !contactInfo.phone)}
+          onClick={handleSubmit}
+          className="flex-1 bb-sm-place-order-button w-full py-3 rounded-lg text-lg font-semibold flex justify-center items-center disabled:opacity-50 mt-8"
+        >
+          {isLoading ? "Placing Order..." : "Place Order"}
+        </button>
       </div>
     );
   };
