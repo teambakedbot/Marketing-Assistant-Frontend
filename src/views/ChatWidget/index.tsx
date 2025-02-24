@@ -219,7 +219,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   type Windows =
     | "chat"
-    | "store"
     | "product"
     | "settings"
     | "cart"
@@ -1304,7 +1303,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             </p>
             <button
               className="flex-1 bb-sm-place-order-button w-full py-3 rounded-lg text-lg font-semibold flex justify-center items-center disabled:opacity-50 mt-8"
-              onClick={() => setCurrentView("store")}
+              onClick={() => setCurrentView("main")}
             >
               <ArrowLeft size={16} /> Back to Shop
             </button>
@@ -1589,9 +1588,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     </>
                   ))}
 
-                {(currentView == "store" ||
-                  currentView == "chat" ||
-                  currentView == "main") &&
+                {(currentView == "chat" || currentView == "main") &&
                   isAllowed && (
                     <div className="bb-sm-chat-input">
                       {/* {chatHistory.length > 0 &&
@@ -1624,10 +1621,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                               e.preventDefault();
                               playHandler();
                             }
-                            if (currentView === "store") {
-                              e.preventDefault();
-                              handleSearch();
-                            }
                           }
                         }}
                         placeholder={
@@ -1652,9 +1645,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                             if (chatInput) {
                               chatInput.style.minHeight = `${newHeight + 24}px`; // 24px for padding
                             }
-                          }
-                          if (currentView === "store") {
-                            setSearchQuery(e.target.value);
                           }
                         }}
                         rows={1}

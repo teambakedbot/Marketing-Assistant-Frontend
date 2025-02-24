@@ -68,37 +68,14 @@ const CheckoutView: React.FC<CheckoutViewProps> = ({
     setIsLoading(true);
 
     try {
-      const totalPrice = Object.values(cart).reduce(
-        (sum, { product, quantity }) => sum + product.latest_price * quantity,
-        0
-      );
+      const success = await handleCheckout({
+        email: displayedEmail,
+        phone: contactInfo.phone,
+      });
 
-      const formattedCart = Object.entries(cart).reduce(
-        (acc, [productId, { product, quantity }]) => {
-          acc[productId] = {
-            sku: productId,
-            product_name: product.product_name,
-            quantity,
-            price: product.latest_price,
-            weight: product.display_weight || undefined,
-          };
-          return acc;
-        },
-        {} as Record<string, any>
-      );
-
-      const checkoutData = {
-        name: displayedName,
-        contact_info: { ...contactInfo, email: displayedEmail },
-        cart: formattedCart,
-        total_price: totalPrice,
-      };
-
-      const token = await user?.getIdToken();
-      if (!token) throw new Error("No authentication token available");
-
-      await handleCheckout(token, checkoutData);
-      setCurrentView("order-confirm");
+      if (success) {
+        setCurrentView("order-confirm");
+      }
     } catch (error) {
       console.error("Checkout error:", error);
       Swal.fire({
