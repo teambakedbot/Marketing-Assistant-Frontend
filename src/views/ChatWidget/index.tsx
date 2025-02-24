@@ -35,6 +35,7 @@ import {
   FaPlus,
   FaRegTrashAlt,
   FaLongArrowAltRight,
+  FaHome,
 } from "react-icons/fa"; // Import the store icon and back arrow icon
 import { HiMiniBars3CenterLeft } from "react-icons/hi2";
 import { BASE_URL } from "../../utils/api";
@@ -223,7 +224,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     | "feel"
     | "main"
     | "order-confirm"
-    | "events";
+    | "events"
+    | "product-type";
 
   const [currentView, setCurrentView] = useState<Windows>(
     view === "main" ? "main" : view === "events" ? "events" : "chat"
@@ -408,8 +410,16 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     }
   };
 
+  const handleViewChat = () => {
+    navigateTo("chat");
+    setIsMenuOpen(false);
+  };
   const handleViewStore = () => {
-    navigateTo("store");
+    navigateTo("main");
+    setIsMenuOpen(false);
+  };
+  const handleViewProductType = () => {
+    navigateTo("product-type");
     setIsMenuOpen(false);
   };
 
@@ -1052,7 +1062,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     const isFormValid =
       customerName.trim() !== "" && contactValue.trim() !== "";
     return (
-      <div className="h-full p-2">
+      <div className="h-full p-2 overflow-y-scroll">
         <h3 className="text-[16px] font-medium mb-4">Order Summary</h3>
         <div className="space-y-3 mb-4">
           {Object.entries(cart).map(
@@ -1068,15 +1078,49 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     alt={product.product_name}
                     className="w-16 h-16 object-cover rounded-lg"
                   />
+                  <div className="flex flex-col">
                   <span className="text-gray-800">
                     {product.product_name} (x{quantity})
                   </span>
+                  <p className="font-normal text-xs opacity-40">
+                    THC: {product.percentage_thc ?? 0} | CBD:{" "}
+                    {product.percentage_cbd ?? 0}
+                  </p>
+                  <span className="font-semibold">
+                  ${(product.latest_price * quantity).toFixed(2)}
+                </span>
+                </div>
                 </div>
 
                 {/* Right Section: Price */}
-                <span className="font-semibold">
-                  ${(product.latest_price * quantity).toFixed(2)}
-                </span>
+                
+                <div className="border rounded-lg opacity-60 border-opacity-100 flex items-center space-x-2 mr-4">
+                  <button
+                    onClick={() => updateQuantity(productId, -1)}
+                    className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                  >
+                    <FaMinus size={12} />
+                  </button>
+                  <span className="text-lg font-medium">
+                    {quantity.toString().padStart(2, "0")}
+                  </span>
+                  <button
+                    onClick={() => updateQuantity(productId, 1)}
+                    className="p-2 w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200"
+                  >
+                    <FaPlus size={12} />
+                  </button>
+                </div>
+
+                {/* Remove Button */}
+                <button
+                  onClick={() => removeFromCart(productId)}
+                  className="bg-red-100 p-2 rounded-lg text-red-500 hover:bg-red-200 transition"
+                  aria-label="Remove item"
+                >
+                  <FaRegTrashAlt size={16} />
+                </button>
+
               </div>
             )
           )}
@@ -1233,11 +1277,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
             </div>
           </div>
           <div className="flex justify-between">
-            <div className="font-medium text-lg py-1 self-center">
+            <div className="font-medium text-lg py-2 px-1 self-center">
               Deals of the day :
             </div>
             {/* Pagination Controls */}
-            <div className="flex justify-between">
+            {/* <div className="flex justify-between">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
                 disabled={currentPage === 0}
@@ -1258,7 +1302,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               >
                 <FaChevronRight />
               </button>
-            </div>
+            </div> */}
           </div>
           {error && (
             <div className="bb-sm-error-message border border-red-400 text-red-700 px-4 py-3 rounded relative m-4">
@@ -1274,7 +1318,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           ) : (
             <div className="flex-1">
               <div className="bb-sm-product-grid grid grid-cols-2 gap-2">
-                {paginatedProducts.map((product) => (
+                {products.map((product) => (
                   <div
                     key={product.id}
                     className="bb-sm-product-item p-[10px] flex flex-col rounded-lg overflow-hidden"
@@ -1300,7 +1344,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                         {product.display_weight}
                       </p>
 
-                      {cart[product.id] ? (
+                      {cart[product.id ?? product.product_id] ? (
                         <div className="py-1 bb-sm-quantity-selector flex items-center justify-between gap-3 mt-auto rounded">
                           <button
                             onClick={() => updateQuantity(product.id, -1)}
@@ -1309,13 +1353,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                             <FaMinus size={10} />
                           </button>
                           <span className="text-lg">
-                            {String(cart[product.id].quantity)?.padStart(
+                            {String(cart[product.id ?? product.product_id].quantity)?.padStart(
                               2,
                               "0"
                             )}
                           </span>
                           <button
-                            onClick={() => updateQuantity(product.id, 1)}
+                            onClick={() => updateQuantity(product.id ?? product.product_id, 1)}
                             className="bb-sm-quantity-button w-8 h-8 rounded-full flex items-center justify-center"
                           >
                             <FaPlus size={10} />
@@ -1335,8 +1379,70 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               </div>
             </div>
           )}
+        </div>
+      </>
+    );
+  });
 
-          <div className="font-medium text-lg py-1">Shop by Product Type</div>
+
+  const ProductType: React.FC<any> = memo(() => {
+    const flowers = [
+      {
+        name: "Flower",
+        type: "Traditional",
+        description: "Traditional cannabis buds",
+        image: "/images/productType1.png",
+      },
+      {
+        name: "Pre-Roll",
+        type: "Pre-Roll",
+        description: "Ready-to-smoke joints",
+        image: "/images/productType2.png",
+      },
+      {
+        name: "Vape",
+        type: "Vape",
+        description: "Ready-to-smoke joints",
+        image: "/images/Vape.png",
+      },
+      {
+        name: "Edible",
+        type: "Edible",
+        description: "Ready-to-smoke joints",
+        image: "/images/Edible.png",
+      },
+    ];
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const itemsPerPage = 2;
+
+    // Calculate sliced products for the current page
+    const startIndex = currentPage * itemsPerPage;
+    const paginatedProducts = products.slice(
+      startIndex,
+      startIndex + itemsPerPage
+    );
+
+    return (
+      <>
+        <div className="bb-sm-store-view h-full flex flex-col">
+          <div className="flex rounded p-1 bg-[#F6F6F6]">
+            <img
+              src="/images/StoreHeader.jpeg"
+              alt="Sample Image"
+              className="rounded-full w-[35px] h-[35px]"
+            />
+            <div className="flex flex-col px-2">
+              <p className="text-base font-semibold">
+                Hey there! I'm Bud, your Ultra Cannabis assistant.
+              </p>
+              <p className="text-base">
+                Here are products matching your preferences!
+              </p>
+            </div>
+          </div>
+
+          <div className="font-medium text-lg py-3">Shop by Product Type</div>
 
           <div className="flex-1">
             <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-2 gap-2">
@@ -1793,24 +1899,31 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     {/* <button 
                       className="px-5 p-1 bg-primary-color rounded"
                       onClick={()=>setCurrentView('chat')}><FaWandMagicSparkles color="white" /></button> */}
-                    <div className="bg-primary-color text-white rounded text-base p-[6px]">
-                      <button className="" onClick={() => navigateTo("cart")}>
+                    {Object.keys(cart).length > 0 && (
+                    <div className="bg-primary-color text-white rounded text-xs p-[6px] w-[102px]">
+                      <button className="" onClick={() => navigateTo("checkOut")}>
                         Checkout Now
-                        {Object.keys(cart).length > 0 && (
-                          <span className="bb-sm-cart-count">
+                          <span className="bb-sm-cart-count text-xs">
                             {Object.values(cart).reduce(
                               (sum, { product, quantity }) => sum + quantity,
                               0
                             )}
                           </span>
-                        )}
+                        
                       </button>
                     </div>
+                  )}
                     <button
                       className="bb-sm-header-icon"
-                      onClick={handleViewStore}
+                      onClick={handleViewProductType}
                     >
-                      <FaStore size={20} />
+                      <FaWandMagicSparkles size={20} />
+                    </button>
+                    <button
+                      className="bb-sm-header-icon"
+                      onClick={handleViewChat}
+                    >
+                      <FaHome size={20} />
                     </button>
                     {/* <div className="bb-sm-cart-icon-container bb-sm-header-icon">
                       <button className="" onClick={() => navigateTo("cart")}>
@@ -1833,6 +1946,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 </div>
                 {currentView === "main" && <MainView />}
                 {currentView === "store" && <StoreView />}
+                {currentView === "product-type" && <ProductType />}
                 {currentView === "product" && (
                   <ProductDetailView product={selectedProduct} />
                 )}
@@ -1879,19 +1993,19 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                               <button
                                 className="bb-sm-new-chat-button"
                                 onMouseDown={() =>
-                                  setPrompts("Show me new products")
+                                  setPrompts("Show me Deals of the day")
                                 }
                                 onClick={() => playHandler()}
                               >
                                 <span className="bb-sm-new-chat-button-icon">
                                   📦
                                 </span>
-                                See new products
+                                Deals of the day
                               </button>
                               <button
                                 className="bb-sm-new-chat-button"
                                 onMouseDown={() =>
-                                  setPrompts("Show me Product Deals")
+                                  setPrompts("Show me events near me")
                                 }
                                 onClick={() => playHandler()}
                               >
@@ -1899,7 +2013,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                                   💰
                                 </span>
                                 <span className="bb-sm-new-chat-button-text">
-                                  NEW DEALS!
+                                  Events near me
                                 </span>
                               </button>
                               <button
@@ -2057,6 +2171,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 onViewStore={handleViewStore}
                 onRenameChat={handleRenameChat}
                 onDeleteChat={handleDeleteChat}
+                setIsMenuOpen={setIsMenuOpen}
               />
 
               {/* Right panel */}

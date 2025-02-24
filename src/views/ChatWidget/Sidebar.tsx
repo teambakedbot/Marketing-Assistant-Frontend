@@ -16,6 +16,7 @@ interface SidebarProps {
   onViewStore: () => void;
   onRenameChat: (chatId: string) => void;
   onDeleteChat: (chatId: string) => void;
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -29,6 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onViewStore,
   onRenameChat,
   onDeleteChat,
+  setIsMenuOpen
 }) => {
   const [editingChatId, setEditingChatId] = React.useState<string | null>(null);
   const [newChatName, setNewChatName] = React.useState("");
@@ -67,6 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div className={`bb-sm-side-menu ${isMenuOpen ? "bb-sm-open" : ""}`}>
       <div className="bb-sm-side-menu-header">
+        <button className="ml-auto font-semibold" onClick={()=> setIsMenuOpen(false)}>X</button>
         <div className="bb-sm-robot-icon-container">
           <img
             src={isLoggedIn ? robotIcon : notLoggedInIcon}

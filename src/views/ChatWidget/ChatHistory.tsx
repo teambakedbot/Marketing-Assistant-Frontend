@@ -137,7 +137,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
 
             {/* Handle products */}
             {message.data.products && message.data.products.length > 0 && (
-              <div className="bb-sm-products-grid grid grid-cols-2 gap-4 mt-2">
+              <div className="bb-sm-products-grid grid grid-cols-2 gap-2 mt-2">
                 {message.data.products.map((product: any, index: number) => (
                   <ProductCard
                     allowCart={allowCart}
@@ -147,7 +147,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                     updateQuantity={updateQuantity}
                     onAddToCart={onAddToCart}
                     onProductClick={onProductClick}
-                    className="min-w-[160px]"
+                    // className="min-w-[110px]"
                   />
                 ))}
               </div>
