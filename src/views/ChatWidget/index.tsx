@@ -1079,21 +1079,21 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                     className="w-16 h-16 object-cover rounded-lg"
                   />
                   <div className="flex flex-col">
-                  <span className="text-gray-800">
-                    {product.product_name} (x{quantity})
-                  </span>
-                  <p className="font-normal text-xs opacity-40">
-                    THC: {product.percentage_thc ?? 0} | CBD:{" "}
-                    {product.percentage_cbd ?? 0}
-                  </p>
-                  <span className="font-semibold">
-                  ${(product.latest_price * quantity).toFixed(2)}
-                </span>
-                </div>
+                    <span className="text-gray-800">
+                      {product.product_name} (x{quantity})
+                    </span>
+                    <p className="font-normal text-xs opacity-40">
+                      THC: {product.percentage_thc ?? 0} | CBD:{" "}
+                      {product.percentage_cbd ?? 0}
+                    </p>
+                    <span className="font-semibold">
+                      ${(product.latest_price * quantity).toFixed(2)}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Right Section: Price */}
-                
+
                 <div className="border rounded-lg opacity-60 border-opacity-100 flex items-center space-x-2 mr-4">
                   <button
                     onClick={() => updateQuantity(productId, -1)}
@@ -1120,7 +1120,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                 >
                   <FaRegTrashAlt size={16} />
                 </button>
-
               </div>
             )
           )}
@@ -1353,13 +1352,17 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                             <FaMinus size={10} />
                           </button>
                           <span className="text-lg">
-                            {String(cart[product.id ?? product.product_id].quantity)?.padStart(
-                              2,
-                              "0"
-                            )}
+                            {String(
+                              cart[product.id ?? product.product_id].quantity
+                            )?.padStart(2, "0")}
                           </span>
                           <button
-                            onClick={() => updateQuantity(product.id ?? product.product_id, 1)}
+                            onClick={() =>
+                              updateQuantity(
+                                product.id ?? product.product_id,
+                                1
+                              )
+                            }
                             className="bb-sm-quantity-button w-8 h-8 rounded-full flex items-center justify-center"
                           >
                             <FaPlus size={10} />
@@ -1384,92 +1387,85 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     );
   });
 
-
   const ProductType: React.FC<any> = memo(() => {
-    const flowers = [
+    const productTypes = [
       {
         name: "Flower",
-        type: "Traditional",
         description: "Traditional cannabis buds",
         image: "/images/productType1.png",
       },
       {
         name: "Pre-Roll",
-        type: "Pre-Roll",
         description: "Ready-to-smoke joints",
         image: "/images/productType2.png",
       },
       {
         name: "Vape",
-        type: "Vape",
-        description: "Ready-to-smoke joints",
+        description: "Vaporizer cartridges",
         image: "/images/Vape.png",
       },
       {
         name: "Edible",
-        type: "Edible",
-        description: "Ready-to-smoke joints",
+        description: "Cannabis-infused foods",
         image: "/images/Edible.png",
+      },
+      {
+        name: "Concentrate",
+        description: "Potent extracts",
+        image: "/images/concentrate.png",
+      },
+      {
+        name: "Tincture",
+        description: "Liquid extracts",
+        image: "/images/tincture.png",
+      },
+      {
+        name: "Topical",
+        description: "Skin applications",
+        image: "/images/topical.png",
+      },
+      {
+        name: "Accessories",
+        description: "Smoking devices",
+        image: "/images/accessories.png",
       },
     ];
 
-    const [currentPage, setCurrentPage] = useState(0);
-    const itemsPerPage = 2;
-
-    // Calculate sliced products for the current page
-    const startIndex = currentPage * itemsPerPage;
-    const paginatedProducts = products.slice(
-      startIndex,
-      startIndex + itemsPerPage
-    );
-
     return (
-      <>
-        <div className="bb-sm-store-view h-full flex flex-col">
-          <div className="flex rounded p-1 bg-[#F6F6F6]">
-            <img
-              src="/images/StoreHeader.jpeg"
-              alt="Sample Image"
-              className="rounded-full w-[35px] h-[35px]"
-            />
-            <div className="flex flex-col px-2">
-              <p className="text-base font-semibold">
-                Hey there! I'm Bud, your Ultra Cannabis assistant.
-              </p>
-              <p className="text-base">
-                Here are products matching your preferences!
-              </p>
-            </div>
-          </div>
-
-          <div className="font-medium text-lg py-3">Shop by Product Type</div>
-
-          <div className="flex-1">
-            <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-2 gap-2">
-              {flowers?.map((flower, index) => (
-                <div
-                  key={index}
-                  className="cursor-pointer border p-1 flex rounded-lg overflow-hidden justify-center"
-                  onClick={() => {
-                    setSelectedProductType(flower);
-                    setSelectedProductType(flower);
-                    setCurrentView("feel");
-                  }}
-                >
+      <div>
+        <h3 className="py-1 text-[17px] font-medium text-center">
+          What type of product are you looking for?
+        </h3>
+        <p className="pt-1 pb-2 text-center">Select a product category</p>
+        <div className="flex-1 overflow-y-auto py-2">
+          <div className="bb-sm-product-grid grid grid-cols-2 md:grid-cols-2 gap-2">
+            {productTypes.map((type, index) => (
+              <div
+                key={index}
+                className="border p-2 flex flex-col rounded-lg overflow-hidden cursor-pointer hover:border-[#65715F] hover:bg-[#65715F]/10 transition-all duration-300"
+                onClick={() => {
+                  setSelectedProductType(type);
+                  setCurrentView("feel");
+                }}
+              >
+                <div className="self-center">
                   <img
-                    src={flower.image}
-                    alt={flower.name}
-                    className="self-center rounded-full w-[25px] h-[25px]"
+                    src={type.image}
+                    alt={type.name}
+                    className="h-[40px] w-[40px] object-contain"
                   />
-                  <div className="flex px-2">
-                    <p className="text-sm font-semibold py-2">{flower.name}</p>
-                  </div>
                 </div>
-              ))}
-            </div>
+                <div className="pt-2 flex flex-col flex-1 items-center">
+                  <p className="font-medium">{type.name}</p>
+                  <p className="text-xs text-center text-gray-500">
+                    {type.description}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </>
+      </div>
     );
   });
 
@@ -1900,19 +1896,21 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       className="px-5 p-1 bg-primary-color rounded"
                       onClick={()=>setCurrentView('chat')}><FaWandMagicSparkles color="white" /></button> */}
                     {Object.keys(cart).length > 0 && (
-                    <div className="bg-primary-color text-white rounded text-xs p-[6px] w-[102px]">
-                      <button className="" onClick={() => navigateTo("checkOut")}>
-                        Checkout Now
+                      <div className="bg-primary-color text-white rounded text-xs p-[6px] w-[102px]">
+                        <button
+                          className=""
+                          onClick={() => navigateTo("checkOut")}
+                        >
+                          Checkout Now
                           <span className="bb-sm-cart-count text-xs">
                             {Object.values(cart).reduce(
                               (sum, { product, quantity }) => sum + quantity,
                               0
                             )}
                           </span>
-                        
-                      </button>
-                    </div>
-                  )}
+                        </button>
+                      </div>
+                    )}
                     <button
                       className="bb-sm-header-icon"
                       onClick={handleViewProductType}
@@ -2071,7 +2069,6 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
                 {(currentView == "store" ||
                   currentView == "chat" ||
-                  currentView == "feel" ||
                   currentView == "main") &&
                   isAllowed && (
                     <div className="bb-sm-chat-input">
